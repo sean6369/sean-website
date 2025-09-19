@@ -3,7 +3,7 @@ import { Renderer, Program, Mesh, Triangle, Vec3 } from 'ogl';
 import './Orb.css';
 
 export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, forceHoverState = false }) {
-  const ctnDom = useRef(null);
+  const ctnDom = useRef<HTMLDivElement>(null);
 
   // Function to get theme colors
   const getThemeColors = () => {
@@ -11,7 +11,7 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
     const computedStyle = getComputedStyle(root);
 
     // Convert hex colors to RGB values (0-1 range)
-    const hexToRgb = (hex) => {
+    const hexToRgb = (hex: string) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
         r: parseInt(result[1], 16) / 255,
@@ -248,7 +248,7 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
     let currentRot = 0;
     const rotationSpeed = 0.3;
 
-    const handlePointerMove = e => {
+    const handlePointerMove = (e: PointerEvent | MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -283,7 +283,7 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
       const root = document.documentElement;
       const computedStyle = getComputedStyle(root);
 
-      const hexToRgb = (hex) => {
+      const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? [
           parseInt(result[1], 16) / 255,
@@ -301,7 +301,7 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
       program.uniforms.accentColor.value = accent;
     };
 
-    let rafId;
+    let rafId: number;
     let isVisible = true;
     let lastUpdateTime = 0;
     const updateInterval = 1000 / 60; // Target 60fps, but can be reduced for mobile
@@ -312,7 +312,7 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
     }, { threshold: 0.1 });
     observer.observe(container);
 
-    const update = t => {
+    const update = (t: number) => {
       rafId = requestAnimationFrame(update);
 
       // Throttle updates for better mobile performance

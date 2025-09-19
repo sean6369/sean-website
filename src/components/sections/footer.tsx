@@ -21,13 +21,14 @@ export function Footer() {
             }
         )
 
-        if (footerRef.current) {
-            observer.observe(footerRef.current)
+        const currentFooterRef = footerRef.current
+        if (currentFooterRef) {
+            observer.observe(currentFooterRef)
         }
 
         return () => {
-            if (footerRef.current) {
-                observer.unobserve(footerRef.current)
+            if (currentFooterRef) {
+                observer.unobserve(currentFooterRef)
             }
         }
     }, [])
