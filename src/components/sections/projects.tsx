@@ -121,6 +121,90 @@ function useScrollState() {
     return { scrollRef, canScrollLeft, canScrollRight, updateScrollState }
 }
 
+// Helper component for video section
+const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0] }): JSX.Element | null => {
+    if (!('video' in selectedProject) || !selectedProject.video) {
+        return null;
+    }
+
+    const videoUrl = selectedProject.video as string;
+
+    return (
+        <div className="mt-6">
+            <h4 className="text-lg font-semibold mb-3 text-foreground">Project Demo</h4>
+            {videoUrl.includes('youtu.be') || videoUrl.includes('youtube.com') ? (
+                <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary">
+                    <iframe
+                        src={`https://www.youtube.com/embed/${videoUrl.split('youtu.be/')[1] || videoUrl.split('youtube.com/watch?v=')[1]?.split('&')[0]}`}
+                        className="w-full h-full"
+                        title={`${selectedProject.title} Demo Video`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    />
+                    <div className="absolute top-2 right-2">
+                        <a
+                            href={videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors duration-200"
+                        >
+                            Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            ) : videoUrl.includes('/videos/') || videoUrl.endsWith('.mp4') || videoUrl.endsWith('.mov') || videoUrl.endsWith('.webm') ? (
+                <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary bg-black">
+                    <video
+                        src={videoUrl}
+                        className="w-full h-full object-contain"
+                        controls
+                        preload="metadata"
+                        playsInline
+                        webkit-playsinline="true"
+                        title={`${selectedProject.title} Demo Video`}
+                        onError={(e) => {
+                            console.error('Video load error:', e);
+                            console.error('Video src:', videoUrl);
+                        }}
+                        onLoadStart={() => {
+                            console.log('Video loading started:', videoUrl);
+                        }}
+                        onCanPlay={() => {
+                            console.log('Video can play:', videoUrl);
+                        }}
+                    >
+                        <source src={videoUrl} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            ) : (
+                <div className="w-full h-96 rounded-lg border border-surface-secondary bg-surface-primary flex flex-col items-center justify-center p-6">
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <ExternalLink className="w-8 h-8 text-primary" />
+                        </div>
+                        <h5 className="text-lg font-semibold mb-2 text-foreground">Project Demo Video</h5>
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Watch the demo video to see {selectedProject.title} in action
+                        </p>
+                        <motion.a
+                            href={videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-primary text-background px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <ExternalLink className="w-4 h-4" />
+                            Watch Demo Video
+                        </motion.a>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 export function Projects() {
     const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
 
@@ -160,7 +244,7 @@ export function Projects() {
 
                             return (
                                 <>
-                                    {project.achievement && (
+                                    {'achievement' in project && project.achievement && (
                                         <div className="mb-2 relative group">
                                             <div
                                                 ref={scrollRef}
@@ -217,7 +301,7 @@ export function Projects() {
                                     <span className="px-3 py-1 bg-surface text-foreground-secondary text-xs font-semibold rounded-full">
                                         {project.category}
                                     </span>
-                                    {project.hackathon && (
+                                    {'hackathon' in project && project.hackathon && (
                                         <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full">
                                             {project.hackathon}
                                         </span>
@@ -252,7 +336,7 @@ export function Projects() {
 
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2 sm:gap-3">
-                                        {project.github && (
+                                        {'github' in project && project.github && (
                                             <a
                                                 href={project.github}
                                                 target="_blank"
@@ -264,7 +348,7 @@ export function Projects() {
                                                 <Github className="w-4 h-4 sm:w-5 sm:h-5" />
                                             </a>
                                         )}
-                                        {project.live && (
+                                        {'live' in project && project.live && (
                                             <a
                                                 href={project.live}
                                                 target="_blank"
@@ -313,7 +397,7 @@ export function Projects() {
                                 </button>
                             </div>
 
-                            {selectedProject.achievement && (
+                            {'achievement' in selectedProject && selectedProject.achievement && (
                                 <div className="mb-4 relative group">
                                     <div className="overflow-x-auto scrollbar-hide">
                                         <span className="text-base font-menlo text-secondary font-semibold whitespace-nowrap">
@@ -368,7 +452,7 @@ export function Projects() {
                             </div>
 
                             <div className="flex gap-4">
-                                {selectedProject.live && (
+                                {'live' in selectedProject && selectedProject.live && (
                                     <motion.a
                                         href={selectedProject.live}
                                         target="_blank"
@@ -381,7 +465,7 @@ export function Projects() {
                                         Live Demo
                                     </motion.a>
                                 )}
-                                {selectedProject.cms && (
+                                {'cms' in selectedProject && selectedProject.cms && (
                                     <motion.a
                                         href={selectedProject.cms}
                                         target="_blank"
@@ -397,7 +481,7 @@ export function Projects() {
                             </div>
 
                             {/* Live Website Preview */}
-                            {selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS') && (
+                            {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS') && (
                                 <div className="mt-6">
                                     <h4 className="text-lg font-semibold mb-3 text-foreground">Live Website Preview</h4>
                                     <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary">
@@ -423,129 +507,13 @@ export function Projects() {
                             )}
 
                             {/* Video Demo */}
-                            {selectedProject.video && (
-                                <div className="mt-6">
-                                    <h4 className="text-lg font-semibold mb-3 text-foreground">Project Demo</h4>
-                                    {selectedProject.video.includes('youtu.be') || selectedProject.video.includes('youtube.com') ? (
-                                        <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary">
-                                            <iframe
-                                                src={`https://www.youtube.com/embed/${selectedProject.video.split('youtu.be/')[1] || selectedProject.video.split('youtube.com/watch?v=')[1]?.split('&')[0]}`}
-                                                className="w-full h-full"
-                                                title={`${selectedProject.title} Demo Video`}
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                            />
-                                            <div className="absolute top-2 right-2">
-                                                <a
-                                                    href={selectedProject.video}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors duration-200"
-                                                >
-                                                    Watch on YouTube
-                                                </a>
-                                            </div>
-                                        </div>
-                                    ) : selectedProject.video.includes('/videos/') || selectedProject.video.endsWith('.mp4') || selectedProject.video.endsWith('.mov') || selectedProject.video.endsWith('.webm') ? (
-                                        <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary bg-black">
-                                            <video
-                                                src={selectedProject.video}
-                                                className="w-full h-full object-contain"
-                                                controls
-                                                preload="metadata"
-                                                playsInline
-                                                webkit-playsinline="true"
-                                                title={`${selectedProject.title} Demo Video`}
-                                                onError={(e) => {
-                                                    console.error('Video load error:', e);
-                                                    console.error('Video src:', selectedProject.video);
-                                                }}
-                                                onLoadStart={() => {
-                                                    console.log('Video loading started:', selectedProject.video);
-                                                }}
-                                                onCanPlay={() => {
-                                                    console.log('Video can play:', selectedProject.video);
-                                                }}
-                                            >
-                                                <source src={selectedProject.video} type="video/mp4" />
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </div>
-                                    ) : (
-                                        <div className="w-full h-96 rounded-lg border border-surface-secondary bg-surface-primary flex flex-col items-center justify-center p-6">
-                                            <div className="text-center">
-                                                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                                    <ExternalLink className="w-8 h-8 text-primary" />
-                                                </div>
-                                                <h5 className="text-lg font-semibold mb-2 text-foreground">Project Demo Video</h5>
-                                                <p className="text-sm text-muted-foreground mb-4">
-                                                    Watch the demo video to see {selectedProject.title} in action
-                                                </p>
-                                                <motion.a
-                                                    href={selectedProject.video}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 bg-primary text-background px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200"
-                                                    whileHover={{ scale: 1.05 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                    Watch Demo Video
-                                                </motion.a>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                            {(() => {
+                                if (selectedProject) {
+                                    return <VideoSection selectedProject={selectedProject} /> as React.ReactNode;
+                                }
+                                return null;
+                            })()}
 
-                            {/* Presentation */}
-                            {selectedProject.presentation && (
-                                <div className="mt-6">
-                                    <h4 className="text-lg font-semibold mb-3 text-foreground">Project Presentation</h4>
-                                    {selectedProject.presentation.endsWith('.pdf') ? (
-                                        <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary">
-                                            <iframe
-                                                src={`${selectedProject.presentation}#toolbar=1&navpanes=1&scrollbar=1`}
-                                                className="w-full h-full"
-                                                title={`${selectedProject.title} Presentation`}
-                                            />
-                                            <div className="absolute top-2 right-2">
-                                                <a
-                                                    href={selectedProject.presentation}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors duration-200"
-                                                >
-                                                    Open in New Tab
-                                                </a>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="w-full h-96 rounded-lg border border-surface-secondary bg-surface-primary flex flex-col items-center justify-center p-6">
-                                            <div className="text-center">
-                                                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                                    <ExternalLink className="w-8 h-8 text-primary" />
-                                                </div>
-                                                <h5 className="text-lg font-semibold mb-2 text-foreground">Project Presentation</h5>
-                                                <p className="text-sm text-muted-foreground mb-4">
-                                                    View the presentation deck for {selectedProject.title}
-                                                </p>
-                                                <motion.a
-                                                    href={selectedProject.presentation}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 bg-primary text-background px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200"
-                                                    whileHover={{ scale: 1.05 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                    View Presentation
-                                                </motion.a>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
                         </motion.div>
                     </motion.div>
                 )}
