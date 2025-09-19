@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --font-new-york: 'New York', 'Times New Roman', Georgia, serif;
+        --font-menlo: Menlo, Monaco, 'Courier New', monospace;
+
+        /* Light theme colors - Custom backgrounds with Anupuccin Latte text */
+        --background: #F0E6DD;
+        --background-secondary: #E6DBD1;
+        --background-tertiary: #D4C4B0;
+        --foreground: #4c4f69;
+        /* Anupuccin Latte text */
+        --foreground-secondary: #5c5f77;
+        /* Anupuccin Latte subtext1 */
+        --foreground-tertiary: #6c6f85;
+        /* Anupuccin Latte subtext0 */
+        --surface: #F7F3F0;
+        --surface-secondary: #F0E9E2;
+        --surface-tertiary: #E8DDD4;
+        --overlay: #9ca0b0;
+        /* Anupuccin Latte overlay2 */
+        --overlay-secondary: #8c8fa1;
+        /* Anupuccin Latte overlay1 */
+        --overlay-tertiary: #7c7f93;
+        /* Anupuccin Latte overlay0 */
+        /* Theme-aware accent colors for light mode - Rose Pine */
+        --primary: #e6a85c;
+        /* Rose Pine gold - darker warm yellow-orange */
+        --secondary: #d48a87;
+        /* Rose Pine rose - darker soft coral */
+        --accent: #04a5e5;
+        /* Anupuccin Latte sky */
+    }
+
+    .dark {
+        /* Dark theme colors (Anupuccin) */
+        --background: #1e1e2e;
+        --background-secondary: #181825;
+        --background-tertiary: #11111b;
+        --foreground: #cdd6f4;
+        --foreground-secondary: #bac2de;
+        --foreground-tertiary: #a6adc8;
+        --surface: #313244;
+        --surface-secondary: #585b70;
+        --surface-tertiary: #45475a;
+        --overlay: #6c7086;
+        --overlay-secondary: #7f849c;
+        --overlay-tertiary: #9399b2;
+        /* Theme-aware accent colors for dark mode */
+        --primary: #cba6f7;
+        --secondary: #f5c2e7;
+        --accent: #89dceb;
+    }
+
+    * {
+        @apply border-surface-secondary;
+    }
+
+    body {
+        @apply bg-background text-foreground font-new-york;
+    }
+
+    ::selection {
+        background-color: var(--primary);
+        color: var(--background);
+        opacity: 0.2;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-background;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-surface rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-surface-secondary;
+    }
+}
+
+@layer components {
+    .glass-effect {
+        @apply backdrop-blur-md border border-surface;
+        background-color: var(--background);
+        opacity: 0.8;
+    }
+
+    .gradient-text {
+        @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+    }
+
+    .gradient-border {
+        @apply relative;
+    }
+
+    .gradient-border::before {
+        @apply absolute inset-0 rounded-lg p-[1px] bg-gradient-to-r from-primary to-secondary;
+        content: '';
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+    }
+
+    .button-primary {
+        @apply bg-primary text-background font-medium px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+        background-color: var(--primary);
+    }
+
+    .button-primary:hover {
+        background-color: var(--primary);
+        opacity: 0.9;
+    }
+
+    .button-secondary {
+        @apply border border-surface-secondary hover:border-primary text-foreground hover:text-primary font-medium px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+    }
+
+    .section-padding {
+        @apply py-16 md:py-24 lg:py-32;
+    }
+
+    .container-custom {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    /* Hide scrollbar for mobile stepper */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+        /* Safari and Chrome */
+    }
+}
