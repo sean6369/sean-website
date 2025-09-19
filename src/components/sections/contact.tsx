@@ -226,7 +226,11 @@ export function Contact() {
                                     href={info.href}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
+                                    transition={{
+                                        duration: 0.6,
+                                        delay: 0.5 + index * 0.05,
+                                        ease: "easeOut"
+                                    }}
                                     viewport={{ once: true }}
                                     whileHover={{ scale: 1.02 }}
                                     className="flex items-center gap-4 p-4 glass-effect rounded-lg hover:border-primary/20 transition-all duration-300 group"

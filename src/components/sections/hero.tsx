@@ -114,7 +114,7 @@ export function Hero() {
                                     "Hello, I'm a Developer",
                                     "Hello, I'm a Creator"
                                 ]}
-                                typingSpeed={100}
+                                typingSpeed={50}
                                 pauseDuration={2000}
                                 initialDelay={500}
                                 showCursor={true}
@@ -138,8 +138,8 @@ export function Hero() {
                         >
                             <TextType
                                 text='const role = NUS Computer Engineering Student'
-                                typingSpeed={60}
-                                initialDelay={1700} // Start typing at 1.7s
+                                typingSpeed={30}
+                                initialDelay={1200} // Start typing at 1.2s
                                 showCursor={true}
                                 cursorCharacter="_"
                                 loop={false}
@@ -157,8 +157,8 @@ export function Hero() {
                     >
                         <TextType
                             text="I am dedicated to building practical, impactful, and user-friendly products that bridge the gap between ideas and execution. Passionate about creating solutions that combine functionality with beautiful design."
-                            typingSpeed={30}
-                            initialDelay={3300} // Start typing at 3.3s
+                            typingSpeed={15}
+                            initialDelay={2000} // Start typing at 2s
                             showCursor={true}
                             cursorCharacter="|"
                             loop={false}
@@ -171,7 +171,7 @@ export function Hero() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 11.0 }} // Delayed to appear at 11s
+                        transition={{ duration: 0.8, delay: 8.0 }} // Delayed to appear at 8s
                         className="flex justify-center gap-6 mb-16 pointer-events-auto"
                     >
                         {socialLinks.map((link, index) => (
@@ -199,7 +199,7 @@ export function Hero() {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 12.0 }} // Delayed to appear after social links (11s + 0.8s + 0.2s buffer)
+                transition={{ duration: 1, delay: 9.0 }} // Delayed to appear at 9s
                 className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
             >
                 <motion.button

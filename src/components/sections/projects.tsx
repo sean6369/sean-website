@@ -50,7 +50,6 @@ const projects = [
         github: 'https://github.com/Path-yang/DSTA-Code-Exp-2025',
         hackathon: '@DSTA Brainhack-Code EXP 2025',
         video: '/videos/SigmaShield demo video.mp4',
-        presentation: '/presentations/sigmashield.pdf',
         category: 'Mobile App',
     },
     {
