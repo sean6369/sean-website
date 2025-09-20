@@ -31,13 +31,9 @@ export function About() {
                         viewport={{ once: true }}
                         className="space-y-6"
                     >
-                        <div className="prose prose-lg max-w-none">
+                        <div className="prose prose-lg max-w-none space-y-8">
                             <p className="text-foreground-secondary leading-relaxed font-medium text-base sm:text-lg">
-                                I am a Computer Engineering student at NUS with a passion for building AI-powered solutions that blend functionality with beautiful design. With experience in software development and data analysis, I enjoy exploring how technology can drive meaningful impact.
-                            </p>
-
-                            <p className="text-foreground-secondary leading-relaxed font-medium text-base sm:text-lg">
-                                I believe great products balance functionality with design, and I strive to bring both into every project I take on. From developing mobile applications to analyzing complex datasets, I am driven by curiosity about how things work and motivated to transform ideas into practical, user-centered solutions.
+                                I am a Computer Engineering student at NUS, passionate about building AI-powered solutions that blend functionality with beautiful design. With experience in software development and data analysis, I enjoy exploring how technology can drive meaningful impact. I believe great products balance functionality with design, and I strive to bring both into every project I take on. From developing mobile applications to analyzing complex datasets, I am driven by curiosity about how things work and motivated to transform ideas into practical, user-centered solutions.
                             </p>
 
                             <p className="text-foreground-secondary leading-relaxed font-medium text-base sm:text-lg">

@@ -146,10 +146,10 @@ export function Milestones() {
                                         viewport={{ once: true }}
                                         className="mb-4"
                                     >
-                                        <h3 className="text-2xl font-semibold text-primary mb-2">
+                                        <h3 className="text-xl font-semibold text-primary mb-2">
                                             {milestone.company}
                                         </h3>
-                                        <h4 className="text-xl font-medium text-foreground">
+                                        <h4 className="text-lg font-medium text-foreground">
                                             {milestone.role}
                                         </h4>
                                     </motion.div>
@@ -227,10 +227,10 @@ export function Milestones() {
                                         viewport={{ once: true }}
                                         className="mb-4"
                                     >
-                                        <h3 className="text-2xl font-semibold text-primary mb-2">
+                                        <h3 className="text-xl font-semibold text-primary mb-2">
                                             {edu.institution}
                                         </h3>
-                                        <h4 className="text-xl font-medium text-foreground">
+                                        <h4 className="text-lg font-medium text-foreground">
                                             {edu.degree}
                                         </h4>
                                     </motion.div>

@@ -207,6 +207,18 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0]
 
 export function Projects() {
     const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640)
+        }
+
+        checkMobile()
+        window.addEventListener('resize', checkMobile)
+
+        return () => window.removeEventListener('resize', checkMobile)
+    }, [])
 
 
     return (
@@ -302,19 +314,19 @@ export function Projects() {
                                         {project.category}
                                     </span>
                                     {'hackathon' in project && project.hackathon && (
-                                        <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full">
+                                        <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full ml-4">
                                             {project.hackathon}
                                         </span>
                                     )}
                                 </div>
 
-                                <h3 className="text-base sm:text-lg font-bold mb-2 text-foreground group-hover:text-primary transition-colors duration-300">
+                                <h3 className="text-lg sm:text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors duration-300">
                                     {project.title}
                                 </h3>
 
                                 <GridAchievementCard project={project} />
 
-                                <p className="text-foreground-secondary text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed font-medium">
+                                <p className="text-foreground-secondary text-sm sm:text-base mb-3 sm:mb-4 leading-relaxed font-medium">
                                     {project.description}
                                 </p>
 
@@ -484,20 +496,26 @@ export function Projects() {
                             {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS') && (
                                 <div className="mt-6">
                                     <h4 className="text-lg font-semibold mb-3 text-foreground">Live Website Preview</h4>
-                                    <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary">
+                                    <div className="relative w-full h-80 sm:h-[500px] rounded-lg overflow-hidden border border-surface-secondary">
                                         <iframe
                                             src={selectedProject.live}
                                             className="w-full h-full"
                                             title={`${selectedProject.title} Live Preview`}
                                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
                                             loading="lazy"
+                                            style={{
+                                                width: isMobile ? '200%' : '100%',
+                                                height: isMobile ? '200%' : '100%',
+                                                transform: isMobile ? 'scale(0.5)' : 'scale(1)',
+                                                transformOrigin: 'top left'
+                                            }}
                                         />
                                         <div className="absolute top-2 right-2">
                                             <a
                                                 href={selectedProject.live}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors duration-200"
+                                                className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/60 hover:scale-105 hover:shadow-lg transition-all duration-300"
                                             >
                                                 Open in New Tab
                                             </a>

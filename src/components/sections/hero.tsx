@@ -114,11 +114,12 @@ export function Hero() {
                                     "Hello, I'm a Developer",
                                     "Hello, I'm a Creator"
                                 ]}
-                                typingSpeed={50}
+                                typingSpeed={80}
                                 pauseDuration={2000}
                                 initialDelay={500}
                                 showCursor={true}
                                 cursorCharacter="|"
+                                cursorBlinkDuration={999999}
                                 loop={false}
                                 className="gradient-text"
                                 onSentenceComplete={(sentence, index) => {
@@ -138,7 +139,7 @@ export function Hero() {
                         >
                             <TextType
                                 text='const role = NUS Computer Engineering Student'
-                                typingSpeed={30}
+                                typingSpeed={50}
                                 initialDelay={1200} // Start typing at 1.2s
                                 showCursor={true}
                                 cursorCharacter="_"
@@ -152,18 +153,10 @@ export function Hero() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.8 }} // Show container early
-                        className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto mb-8 leading-relaxed"
+                        transition={{ duration: 1.5, delay: 5.0 }}
+                        className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto mb-8 leading-relaxed text-center font-medium"
                     >
-                        <TextType
-                            text="I am dedicated to building practical, impactful, and user-friendly products that bridge the gap between ideas and execution. Passionate about creating solutions that combine functionality with beautiful design."
-                            typingSpeed={15}
-                            initialDelay={2000} // Start typing at 2s
-                            showCursor={true}
-                            cursorCharacter="|"
-                            loop={false}
-                            className="text-center font-medium"
-                        />
+                        I am dedicated to building practical, impactful, and user-friendly products that bridge the gap between ideas and execution. Passionate about creating solutions that combine functionality with beautiful design.
                     </motion.div>
 
 
@@ -171,7 +164,7 @@ export function Hero() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 8.0 }} // Delayed to appear at 8s
+                        transition={{ duration: 0.8, delay: 6.0 }} // Delayed to appear at 6s
                         className="flex justify-center gap-6 mb-16 pointer-events-auto"
                     >
                         {socialLinks.map((link, index) => (
@@ -199,8 +192,8 @@ export function Hero() {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 9.0 }} // Delayed to appear at 9s
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+                transition={{ duration: 1, delay: 7.0 }} // Delayed to appear at 7s
+                className="absolute bottom-20 md:bottom-8 left-1/2 transform -translate-x-1/2"
             >
                 <motion.button
                     onClick={() => scrollToSection('about')}

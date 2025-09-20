@@ -66,8 +66,8 @@ export function Contact() {
 
     return (
         <section id="contact" className="pt-16 md:pt-24 lg:pt-32 pb-0 relative">
-            {/* Bottom blur transition */}
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background/80 via-background/40 to-transparent backdrop-blur-lg pointer-events-none"></div>
+            {/* Bottom blur transition for smooth footer connection */}
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background via-background/60 to-transparent backdrop-blur-sm pointer-events-none"></div>
             <div className="container-custom pb-16 md:pb-24 lg:pb-32">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -228,11 +228,11 @@ export function Contact() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{
                                         duration: 0.6,
-                                        delay: 0.5 + index * 0.05,
+                                        delay: index * 0.1,
                                         ease: "easeOut"
                                     }}
                                     viewport={{ once: true }}
-                                    whileHover={{ scale: 1.02 }}
+                                    whileHover={{ scale: 1.02, y: -2 }}
                                     className="flex items-center gap-4 p-4 glass-effect rounded-lg hover:border-primary/20 transition-all duration-300 group"
                                 >
                                     <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
@@ -251,7 +251,7 @@ export function Contact() {
                         </div>
 
                         {/* Social Links */}
-                        <div>
+                        <div className="relative z-10">
                             <h4 className="text-lg font-semibold mb-4 text-foreground">
                                 Follow me
                             </h4>
@@ -268,7 +268,7 @@ export function Contact() {
                                         viewport={{ once: true }}
                                         whileHover={{ scale: 1.1, y: -2 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="p-3 bg-surface hover:bg-surface-secondary rounded-lg transition-all duration-300 group"
+                                        className="p-3 bg-surface hover:bg-surface-secondary rounded-lg transition-all duration-300 group relative z-10"
                                         aria-label={link.name}
                                     >
                                         <link.icon className="w-5 h-5 text-foreground-secondary group-hover:text-primary transition-colors duration-300" />

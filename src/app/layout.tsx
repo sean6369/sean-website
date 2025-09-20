@@ -53,9 +53,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className="min-h-screen antialiased"
+                className="min-h-screen antialiased bg-background text-foreground"
                 style={{
                     fontFamily: newYork.style.fontFamily,
+                    backgroundColor: 'var(--background)',
                 }}
             >
                 {children}
