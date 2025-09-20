@@ -225,7 +225,7 @@ export const Stepper: React.FC<StepperProps> = ({
         <div className={cn("w-full", className)}>
             {/* Stepper Steps Container with horizontal scroll for mobile */}
             <div className="flex items-start overflow-x-auto scrollbar-hide pb-2 -mb-2">
-                <div className="flex items-start min-w-max px-1">
+                <div className="flex items-start min-w-max px-1 max-w-full">
                     {steps.map((step, index) => {
                         const isActive = step.step === currentStep
                         const isCompleted = index < currentStepIndex

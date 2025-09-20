@@ -497,19 +497,23 @@ export function Projects() {
                                 <div className="mt-6">
                                     <h4 className="text-lg font-semibold mb-3 text-foreground">Live Website Preview</h4>
                                     <div className="relative w-full h-80 sm:h-[500px] rounded-lg overflow-hidden border border-surface-secondary">
-                                        <iframe
-                                            src={selectedProject.live}
+                                        <div
                                             className="w-full h-full"
-                                            title={`${selectedProject.title} Live Preview`}
-                                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                                            loading="lazy"
                                             style={{
-                                                width: isMobile ? '200%' : '100%',
-                                                height: isMobile ? '200%' : '100%',
                                                 transform: isMobile ? 'scale(0.5)' : 'scale(1)',
-                                                transformOrigin: 'top left'
+                                                transformOrigin: 'top left',
+                                                width: isMobile ? '200%' : '100%',
+                                                height: isMobile ? '200%' : '100%'
                                             }}
-                                        />
+                                        >
+                                            <iframe
+                                                src={selectedProject.live}
+                                                className="w-full h-full"
+                                                title={`${selectedProject.title} Live Preview`}
+                                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                                                loading="lazy"
+                                            />
+                                        </div>
                                         <div className="absolute top-2 right-2">
                                             <a
                                                 href={selectedProject.live}
