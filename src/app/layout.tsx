@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
     title: 'Sean | Personal Website',
-    description: 'A modern personal website showcasing projects, skills, and experiences.',
+    description: 'Student passionate about creating beautiful, functional, and user-friendly digital experiences. Always learning, always building.',
     keywords: ['developer', 'portfolio', 'personal website', 'projects'],
     authors: [{ name: 'Sean' }],
     creator: 'Sean',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
         locale: 'en_US',
         url: 'https://your-domain.com',
         title: 'Sean | Personal Website',
-        description: 'A modern personal website showcasing projects, skills, and experiences.',
+        description: 'Student passionate about creating beautiful, functional, and user-friendly digital experiences. Always learning, always building.',
         siteName: 'Sean',
         images: [
             {
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Sean | Personal Website',
-        description: 'A modern personal website showcasing projects, skills, and experiences.',
+        description: 'Student passionate about creating beautiful, functional, and user-friendly digital experiences. Always learning, always building.',
         images: ['/images/sean_logo.png'],
     },
     robots: {
