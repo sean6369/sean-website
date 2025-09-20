@@ -10,6 +10,15 @@ export const metadata: Metadata = {
     authors: [{ name: 'Sean' }],
     creator: 'Sean',
     metadataBase: new URL('https://your-domain.com'),
+    icons: {
+        icon: [
+            { url: '/favicon.ico', sizes: 'any' },
+            { url: '/images/sean_logo.png', sizes: '32x32', type: 'image/png' },
+            { url: '/images/sean_logo.png', sizes: '16x16', type: 'image/png' },
+        ],
+        shortcut: '/favicon.ico',
+        apple: '/images/sean_logo.png',
+    },
     openGraph: {
         type: 'website',
         locale: 'en_US',
@@ -19,7 +28,7 @@ export const metadata: Metadata = {
         siteName: 'Sean',
         images: [
             {
-                url: '/og-image.jpg',
+                url: '/images/sean_logo.png',
                 width: 1200,
                 height: 630,
                 alt: 'Sean - Personal Website',
@@ -30,7 +39,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Sean | Personal Website',
         description: 'A modern personal website showcasing projects, skills, and experiences.',
-        images: ['/og-image.jpg'],
+        images: ['/images/sean_logo.png'],
     },
     robots: {
         index: true,

@@ -148,4 +148,15 @@
         display: none;
         /* Safari and Chrome */
     }
+
+    /* Logo styling with rounded edges */
+    .logo-rounded {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    /* Apply rounded corners to favicon and metadata images */
+    img[src*="sean_logo.png"] {
+        border-radius: 12px;
+    }
 }

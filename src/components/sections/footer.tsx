@@ -119,7 +119,7 @@ export function Footer() {
                     </p>
                     <div className="mt-2 flex gap-3" style={{ color: `var(--primary)` }}>
                         <a
-                            href="https://github.com/yourusername"
+                            href="https://github.com/sean6369"
                             aria-label="GitHub"
                             className="group relative p-2 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-3 hover:shadow-lg hover:shadow-primary/25"
                             style={{ background: 'transparent' }}
@@ -209,7 +209,7 @@ export function Footer() {
                                 </a>
                             </li>
                             <li className="group">
-                                <a href="https://github.com/yourusername" className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105">
+                                <a href="https://github.com/sean6369" className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105">
                                     <span className="relative z-10">GitHub</span>
                                     <div className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></div>
                                 </a>
