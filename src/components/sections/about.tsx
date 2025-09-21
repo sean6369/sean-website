@@ -70,7 +70,7 @@ export function About() {
                             <div className="absolute -inset-8 rounded-full overflow-hidden z-20 flex items-center justify-center">
                                 <div className="w-full h-full">
                                     <Orb
-                                        hoverIntensity={0.5}
+                                        hoverIntensity={1}
                                         rotateOnHover={true}
                                         hue={0}
                                         forceHoverState={false}

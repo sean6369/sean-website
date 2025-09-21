@@ -146,18 +146,18 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
       float len = length(uv);
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
       
-      float n0 = snoise3(vec3(uv * noiseScale, iTime * 0.5)) * 0.5 + 0.5;
+      float n0 = snoise3(vec3(uv * noiseScale, iTime * 0.8)) * 0.5 + 0.5;
       float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
       float d0 = distance(uv, (r0 * invLen) * uv);
       float v0 = light1(1.0, 10.0, d0);
       v0 *= smoothstep(r0 * 1.05, r0, len);
-      float cl = cos(ang + iTime * 2.0) * 0.5 + 0.5;
+      float cl = cos(ang + iTime * 3.0) * 0.5 + 0.5;
       
       float a = iTime * -1.0;
       vec2 pos = vec2(cos(a), sin(a)) * r0;
       float d = distance(uv, pos);
-      float v1 = light2(1.5, 5.0, d);
-      v1 *= light1(1.0, 50.0, d0);
+      float v1 = light2(2.5, 3.0, d);
+      v1 *= light1(1.5, 30.0, d0);
       
       float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
       float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
@@ -180,8 +180,8 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
       
-      uv.x += hover * hoverIntensity * 0.1 * sin(uv.y * 10.0 + iTime);
-      uv.y += hover * hoverIntensity * 0.1 * sin(uv.x * 10.0 + iTime);
+      uv.x += hover * hoverIntensity * 0.05 * sin(uv.y * 10.0 + iTime);
+      uv.y += hover * hoverIntensity * 0.05 * sin(uv.x * 10.0 + iTime);
       
       return draw(uv);
     }
@@ -246,7 +246,7 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
     let targetHover = 0;
     let lastTime = 0;
     let currentRot = 0;
-    const rotationSpeed = 0.3;
+    const rotationSpeed = 0.4;
 
     const handlePointerMove = (e: PointerEvent | MouseEvent) => {
       const rect = container.getBoundingClientRect();

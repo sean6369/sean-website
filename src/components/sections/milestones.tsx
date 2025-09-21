@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Calendar, MapPin, Briefcase, Award, GraduationCap } from 'lucide-react'
+import Image from 'next/image'
 
 const milestones = [
     {
@@ -121,10 +122,52 @@ export function Milestones() {
                                 className="relative flex items-start"
                             >
                                 {/* Timeline Dot */}
-                                <div className="absolute left-1/4 transform -translate-x-1/2 w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full border-4 border-background z-10" />
+                                {milestone.company === 'Oxley Pawnshop' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/oxleyLogo3.jpg"
+                                            alt="Oxley Pawnshop Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : milestone.company === 'Goldjewel Pte. Ltd.' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/goldjewelLogo2.png"
+                                            alt="Goldjewel Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : milestone.company === 'Yoga Movement' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/logo-yoga-movement.png"
+                                            alt="Yoga Movement Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : milestone.company === 'Singapore Armed Forces' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/singapore_army_saf.jpg"
+                                            alt="Singapore Armed Forces Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10" />
+                                )}
 
                                 {/* Date on the left */}
-                                <div className="w-1/4 pr-6 text-right">
+                                <div className="w-1/4 pr-8 text-right">
                                     <motion.div
                                         initial={{ opacity: 0, x: -30 }}
                                         whileInView={{ opacity: 1, x: 0 }}
@@ -137,7 +180,7 @@ export function Milestones() {
                                 </div>
 
                                 {/* Content on the right */}
-                                <div className="w-3/4 pl-6">
+                                <div className="w-3/4 pl-8">
                                     {/* Header */}
                                     <motion.div
                                         initial={{ opacity: 0, x: 30 }}
@@ -202,10 +245,42 @@ export function Milestones() {
                                 className="relative flex items-start"
                             >
                                 {/* Timeline Dot */}
-                                <div className="absolute left-1/4 transform -translate-x-1/2 w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full border-4 border-background z-10" />
+                                {edu.institution === 'National University of Singapore' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/nus_logo.jpg"
+                                            alt="NUS Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : edu.institution === 'Eunoia Junior College' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/eunoia_logo.png"
+                                            alt="Eunoia Junior College Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : edu.institution === 'Catholic High School' ? (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logos/chs_logo.jpg"
+                                            alt="Catholic High School Logo"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full object-cover object-center"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="absolute left-1/4 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 border-primary bg-background z-10" />
+                                )}
 
                                 {/* Date on the left */}
-                                <div className="w-1/4 pr-6 text-right">
+                                <div className="w-1/4 pr-8 text-right">
                                     <motion.div
                                         initial={{ opacity: 0, x: -30 }}
                                         whileInView={{ opacity: 1, x: 0 }}
@@ -218,7 +293,7 @@ export function Milestones() {
                                 </div>
 
                                 {/* Content on the right */}
-                                <div className="w-3/4 pl-6">
+                                <div className="w-3/4 pl-8">
                                     {/* Header */}
                                     <motion.div
                                         initial={{ opacity: 0, x: 30 }}
