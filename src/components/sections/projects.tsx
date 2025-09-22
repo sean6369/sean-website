@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { ExternalLink, Github, ChevronRight, X, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
+import MagicBento from '../ui/MagicBento'
 
 const projects = [
     {
@@ -225,10 +226,20 @@ export function Projects() {
         <section id="projects" className="section-padding bg-background-secondary">
             <div className="container-custom">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    viewport={{ once: true }}
+                    initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                    whileInView={{
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: {
+                            duration: 0.9,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                            opacity: { duration: 0.7 },
+                            y: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
+                            scale: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
+                        }
+                    }}
+                    viewport={{ once: true, margin: "-100px" }}
                     className="text-center mb-16"
                 >
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
@@ -242,158 +253,94 @@ export function Projects() {
 
 
 
-                {/* All Projects Grid */}
+                {/* Magic Bento Grid */}
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    viewport={{ once: true }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-                >
-                    {projects.map((project, index) => {
-                        const GridAchievementCard = ({ project }: { project: typeof projects[0] }) => {
-                            const { scrollRef, canScrollLeft, canScrollRight, updateScrollState } = useScrollState()
-
-                            return (
-                                <>
-                                    {'achievement' in project && project.achievement && (
-                                        <div className="mb-2 relative group">
-                                            <div
-                                                ref={scrollRef}
-                                                className="overflow-x-auto scrollbar-hide"
-                                                onScroll={updateScrollState}
-                                            >
-                                                <span className="text-xs font-menlo text-secondary font-semibold whitespace-nowrap">
-                                                    {project.achievement}
-                                                </span>
-                                            </div>
-                                            {canScrollLeft && (
-                                                <button
-                                                    className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background-secondary via-background-secondary/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:bg-gradient-to-r hover:from-primary/20 hover:via-primary/10 hover:to-transparent hover:scale-105 active:scale-95"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        if (scrollRef.current) scrollRef.current.scrollBy({ left: -80, behavior: 'smooth' });
-                                                    }}
-                                                >
-                                                    <ChevronLeft className="w-3 h-3 text-primary drop-shadow-sm" />
-                                                </button>
-                                            )}
-                                            {canScrollRight && (
-                                                <button
-                                                    className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background-secondary via-background-secondary/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:bg-gradient-to-l hover:from-primary/20 hover:via-primary/10 hover:to-transparent hover:scale-105 active:scale-95"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        if (scrollRef.current) scrollRef.current.scrollBy({ left: 80, behavior: 'smooth' });
-                                                    }}
-                                                >
-                                                    <ChevronRightIcon className="w-3 h-3 text-primary drop-shadow-sm" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                </>
-                            )
+                    initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                    whileInView={{
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: {
+                            duration: 1.0,
+                            delay: 0.3,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                            opacity: { duration: 0.8, delay: 0.3 },
+                            y: { duration: 1.0, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+                            scale: { duration: 0.7, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }
                         }
-
-                        return (
-                            <motion.div
-                                key={project.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                viewport={{ once: true }}
-                                whileHover={{ y: -5 }}
-                                className="glass-effect p-4 sm:p-6 rounded-xl group hover:border-primary/20 transition-all duration-300 cursor-pointer touch-manipulation"
-                                onClick={() => setSelectedProject(project)}
-                                style={{ WebkitTapHighlightColor: 'transparent' }}
-                            >
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="px-3 py-1 bg-surface text-foreground-secondary text-xs font-semibold rounded-full">
-                                        {project.category}
-                                    </span>
-                                    {'hackathon' in project && project.hackathon && (
-                                        <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full ml-4">
-                                            {project.hackathon}
-                                        </span>
-                                    )}
-                                </div>
-
-                                <h3 className="text-lg sm:text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors duration-300">
-                                    {project.title}
-                                </h3>
-
-                                <GridAchievementCard project={project} />
-
-                                <p className="text-foreground-secondary text-sm sm:text-base mb-3 sm:mb-4 leading-relaxed font-medium">
-                                    {project.description}
-                                </p>
-
-                                <div className="flex flex-wrap gap-1 mb-3 sm:mb-4">
-                                    {project.technologies.slice(0, 2).map((tech) => (
-                                        <span
-                                            key={tech}
-                                            className="px-2 py-1 bg-surface text-foreground-secondary text-xs font-menlo rounded"
-                                        >
-                                            {tech}
-                                        </span>
-                                    ))}
-                                    {project.technologies.length > 2 && (
-                                        <span className="px-2 py-1 text-foreground-tertiary text-xs">
-                                            +{project.technologies.length - 2}
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 sm:gap-3">
-                                        {'github' in project && project.github && (
-                                            <a
-                                                href={project.github}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="text-foreground-secondary hover:text-primary transition-colors duration-300 p-1 touch-manipulation"
-                                                style={{ WebkitTapHighlightColor: 'transparent' }}
-                                            >
-                                                <Github className="w-4 h-4 sm:w-5 sm:h-5" />
-                                            </a>
-                                        )}
-                                        {'live' in project && project.live && (
-                                            <a
-                                                href={project.live}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="text-foreground-secondary hover:text-primary transition-colors duration-300 p-1 touch-manipulation"
-                                                style={{ WebkitTapHighlightColor: 'transparent' }}
-                                            >
-                                                <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
-                                            </a>
-                                        )}
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-foreground-tertiary group-hover:text-primary transition-colors duration-300" />
-                                </div>
-                            </motion.div>
-                        )
-                    })}
+                    }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    className="flex justify-center"
+                >
+                    <MagicBento
+                        textAutoHide={true}
+                        enableStars={true}
+                        enableSpotlight={true}
+                        enableBorderGlow={true}
+                        enableTilt={true}
+                        enableMagnetism={true}
+                        clickEffect={true}
+                        spotlightRadius={300}
+                        particleCount={12}
+                        projects={projects}
+                        onCardClick={(e) => {
+                            // Find the project index based on the card clicked
+                            const cardElement = e.currentTarget;
+                            if (cardElement.parentNode) {
+                                const cardIndex = Array.from(cardElement.parentNode.children).indexOf(cardElement);
+                                if (projects[cardIndex]) {
+                                    setSelectedProject(projects[cardIndex]);
+                                }
+                            }
+                        }}
+                    />
                 </motion.div>
 
                 {/* Project Modal */}
                 {selectedProject && (
                     <motion.div
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
+                        animate={{
+                            opacity: 1,
+                            transition: {
+                                duration: 0.3,
+                                ease: [0.25, 0.46, 0.45, 0.94]
+                            }
+                        }}
+                        exit={{
+                            opacity: 0,
+                            transition: {
+                                duration: 0.2,
+                                ease: [0.25, 0.46, 0.45, 0.94]
+                            }
+                        }}
+                        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
                         onClick={() => setSelectedProject(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            className="glass-effect p-4 sm:p-6 rounded-xl max-w-2xl w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto"
+                            initial={{ scale: 0.85, opacity: 0, y: 20 }}
+                            animate={{
+                                scale: 1,
+                                opacity: 1,
+                                y: 0,
+                                transition: {
+                                    duration: 0.4,
+                                    ease: [0.25, 0.46, 0.45, 0.94],
+                                    scale: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
+                                    opacity: { duration: 0.3 },
+                                    y: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }
+                                }
+                            }}
+                            exit={{
+                                scale: 0.85,
+                                opacity: 0,
+                                y: 20,
+                                transition: {
+                                    duration: 0.3,
+                                    ease: [0.25, 0.46, 0.45, 0.94]
+                                }
+                            }}
+                            className="glass-effect p-3 sm:p-6 rounded-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[80vh] overflow-y-auto mx-2 sm:mx-0"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex items-center justify-between mb-4">
@@ -411,38 +358,147 @@ export function Projects() {
 
                             {'achievement' in selectedProject && selectedProject.achievement && (
                                 <div className="mb-4 relative group">
-                                    <div className="overflow-x-auto scrollbar-hide">
+                                    <div
+                                        className="overflow-x-auto scrollbar-hide"
+                                        ref={(el) => {
+                                            if (el) {
+                                                const checkScrollability = () => {
+                                                    const canScroll = el.scrollWidth > el.clientWidth;
+                                                    const leftBtn = el.parentElement?.querySelector('.achievement-left-btn') as HTMLElement;
+                                                    const rightBtn = el.parentElement?.querySelector('.achievement-right-btn') as HTMLElement;
+
+                                                    if (canScroll) {
+                                                        // Show/hide arrows based on scroll position
+                                                        const isAtStart = el.scrollLeft <= 0;
+                                                        const isAtEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
+
+                                                        if (leftBtn) leftBtn.style.display = isAtStart ? 'none' : 'flex';
+                                                        if (rightBtn) rightBtn.style.display = isAtEnd ? 'none' : 'flex';
+                                                    } else {
+                                                        // Hide both arrows if content fits
+                                                        if (leftBtn) leftBtn.style.display = 'none';
+                                                        if (rightBtn) rightBtn.style.display = 'none';
+                                                    }
+                                                };
+
+                                                checkScrollability();
+                                                el.addEventListener('scroll', checkScrollability);
+                                                window.addEventListener('resize', checkScrollability);
+                                            }
+                                        }}
+                                    >
                                         <span className="text-base font-menlo text-secondary font-semibold whitespace-nowrap">
                                             {selectedProject.achievement}
                                         </span>
                                     </div>
-                                    <button
-                                        className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-background via-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:bg-gradient-to-r hover:from-primary/20 hover:via-primary/10 hover:to-transparent hover:scale-105 active:scale-95"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            const container = e.currentTarget.parentElement?.querySelector('.overflow-x-auto') as HTMLElement;
-                                            if (container) container.scrollBy({ left: -120, behavior: 'smooth' });
+                                    <div
+                                        className="achievement-left-btn absolute left-0 -top-2 -bottom-2 w-8 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer z-10"
+                                        style={{
+                                            background: 'linear-gradient(90deg, var(--background) 0%, var(--background) 80%, transparent 100%)'
+                                        }}
+                                        ref={(el) => {
+                                            if (el) {
+                                                const handleClick = (e: Event) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    e.stopImmediatePropagation();
+                                                    const container = el.parentElement?.querySelector('.overflow-x-auto') as HTMLElement;
+                                                    if (container) container.scrollBy({ left: -120, behavior: 'smooth' });
+                                                };
+                                                el.addEventListener('click', handleClick, true);
+                                                el.addEventListener('mousedown', (e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    e.stopImmediatePropagation();
+                                                }, true);
+                                                el.addEventListener('mouseup', (e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    e.stopImmediatePropagation();
+                                                }, true);
+
+                                                // Add hover effects
+                                                const getPrimaryRgb = () => {
+                                                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+                                                    const hexToRgb = (hex: string) => {
+                                                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                                                        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '230, 168, 92';
+                                                    };
+                                                    return hexToRgb(primaryColor);
+                                                };
+
+                                                el.addEventListener('mouseenter', () => {
+                                                    const primaryRgb = getPrimaryRgb();
+                                                    el.style.background = `linear-gradient(90deg, rgba(${primaryRgb}, 0.2) 0%, rgba(${primaryRgb}, 0.1) 80%, transparent 100%)`;
+                                                });
+                                                el.addEventListener('mouseleave', () => {
+                                                    el.style.background = 'linear-gradient(90deg, var(--background) 0%, var(--background) 80%, transparent 100%)';
+                                                });
+                                            }
                                         }}
                                     >
-                                        <ChevronLeft className="w-5 h-5 text-primary drop-shadow-sm" />
-                                    </button>
-                                    <button
-                                        className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-background via-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:bg-gradient-to-l hover:from-primary/20 hover:via-primary/10 hover:to-transparent hover:scale-105 active:scale-95"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            const container = e.currentTarget.parentElement?.querySelector('.overflow-x-auto') as HTMLElement;
-                                            if (container) container.scrollBy({ left: 120, behavior: 'smooth' });
+                                        <ChevronLeft className="w-4 h-4 text-primary drop-shadow-sm" />
+                                    </div>
+                                    <div
+                                        className="achievement-right-btn absolute right-0 -top-2 -bottom-2 w-8 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer z-10"
+                                        style={{
+                                            background: 'linear-gradient(270deg, var(--background) 0%, var(--background) 80%, transparent 100%)'
+                                        }}
+                                        ref={(el) => {
+                                            if (el) {
+                                                const handleClick = (e: Event) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    e.stopImmediatePropagation();
+                                                    const container = el.parentElement?.querySelector('.overflow-x-auto') as HTMLElement;
+                                                    if (container) container.scrollBy({ left: 120, behavior: 'smooth' });
+                                                };
+                                                el.addEventListener('click', handleClick, true);
+                                                el.addEventListener('mousedown', (e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    e.stopImmediatePropagation();
+                                                }, true);
+                                                el.addEventListener('mouseup', (e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    e.stopImmediatePropagation();
+                                                }, true);
+
+                                                // Add hover effects
+                                                const getPrimaryRgb = () => {
+                                                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+                                                    const hexToRgb = (hex: string) => {
+                                                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                                                        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '230, 168, 92';
+                                                    };
+                                                    return hexToRgb(primaryColor);
+                                                };
+
+                                                el.addEventListener('mouseenter', () => {
+                                                    const primaryRgb = getPrimaryRgb();
+                                                    el.style.background = `linear-gradient(270deg, rgba(${primaryRgb}, 0.2) 0%, rgba(${primaryRgb}, 0.1) 80%, transparent 100%)`;
+                                                });
+                                                el.addEventListener('mouseleave', () => {
+                                                    el.style.background = 'linear-gradient(270deg, var(--background) 0%, var(--background) 80%, transparent 100%)';
+                                                });
+                                            }
                                         }}
                                     >
-                                        <ChevronRightIcon className="w-5 h-5 text-primary drop-shadow-sm" />
-                                    </button>
+                                        <ChevronRightIcon className="w-4 h-4 text-primary drop-shadow-sm" />
+                                    </div>
                                 </div>
                             )}
 
-                            <div className="mb-4">
+                            <div className="mb-4 flex justify-between items-center">
                                 <span className="px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full">
                                     {selectedProject.category}
                                 </span>
+                                {selectedProject.hackathon && (
+                                    <span className="text-xs px-2 py-1 bg-secondary border border-secondary rounded-xl text-background whitespace-nowrap font-semibold">
+                                        {selectedProject.hackathon}
+                                    </span>
+                                )}
                             </div>
 
                             <p className="text-foreground-secondary mb-6 leading-relaxed font-medium">
@@ -455,7 +511,7 @@ export function Projects() {
                                     {selectedProject.technologies.map((tech) => (
                                         <span
                                             key={tech}
-                                            className="px-3 py-1 bg-surface text-foreground-secondary text-sm font-menlo rounded border border-surface-secondary"
+                                            className="text-xs px-2 py-1 rounded-lg text-background whitespace-nowrap bg-primary border border-primary font-semibold"
                                         >
                                             {tech}
                                         </span>
@@ -463,7 +519,7 @@ export function Projects() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                 {'live' in selectedProject && selectedProject.live && (
                                     <motion.a
                                         href={selectedProject.live}
@@ -471,10 +527,23 @@ export function Projects() {
                                         rel="noopener noreferrer"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="button-primary flex items-center gap-2"
+                                        className="text-sm px-3 py-2 sm:py-1 bg-primary/10 border border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
                                     >
                                         <ExternalLink className="w-4 h-4" />
                                         Live Demo
+                                    </motion.a>
+                                )}
+                                {'github' in selectedProject && selectedProject.github && (
+                                    <motion.a
+                                        href={selectedProject.github}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                    >
+                                        <Github className="w-4 h-4" />
+                                        View Code
                                     </motion.a>
                                 )}
                                 {'cms' in selectedProject && selectedProject.cms && (
@@ -484,7 +553,7 @@ export function Projects() {
                                         rel="noopener noreferrer"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="button-secondary flex items-center gap-2"
+                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
                                     >
                                         <ExternalLink className="w-4 h-4" />
                                         Live Demo (CMS)
