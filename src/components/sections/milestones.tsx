@@ -6,22 +6,22 @@ import Image from 'next/image'
 
 const milestones = [
     {
-        company: 'Goldjewel Pte. Ltd.',
-        role: 'Software Engineer',
-        period: 'Jul 2025 – Aug 2025',
-        location: 'Singapore',
-        description: 'Built and deployed a modern jewelry business website with custom CMS featuring dynamic animations, image cropping tools, and real-time updates optimized for mobile.',
-        icon: Briefcase,
-        color: 'from-primary to-primary/60'
-    },
-    {
         company: 'Oxley Pawnshop',
         role: 'Software Engineer',
-        period: 'Jun 2025 - Jul 2025',
+        period: 'Jul 2025 – Aug 2025',
         location: 'Singapore',
         description: 'Designed and launched a modern pawnshop website as solo developer, featuring interactive animations, integrated contact forms, real-time gold price updates, and complete email system setup.',
         icon: Briefcase,
         color: 'from-secondary to-secondary/60'
+    },
+    {
+        company: 'Goldjewel Pte. Ltd.',
+        role: 'Software Engineer',
+        period: 'Jun 2025 - Jul 2025',
+        location: 'Singapore',
+        description: 'Built and deployed a modern jewelry business website with custom CMS featuring dynamic animations, image cropping tools, and real-time updates optimized for mobile.',
+        icon: Briefcase,
+        color: 'from-primary to-primary/60'
     },
     {
         company: 'Yoga Movement',

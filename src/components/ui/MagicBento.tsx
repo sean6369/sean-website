@@ -569,6 +569,7 @@ interface Project {
     hackathon?: string;
     video?: string;
     achievement?: string;
+    date?: string;
 }
 
 interface MagicBentoProps {
@@ -856,6 +857,11 @@ const MagicBento = ({
                                                 <ExternalLink className="card__link-icon" />
                                             </a>
                                         )}
+                                    </div>
+                                )}
+                                {project.date && (
+                                    <div className="card__date">
+                                        {project.date}
                                     </div>
                                 )}
                             </ParticleCard>
@@ -1180,6 +1186,11 @@ const MagicBento = ({
                                                 <ExternalLink className="card__link-icon" />
                                             </a>
                                         )}
+                                    </div>
+                                )}
+                                {project.date && (
+                                    <div className="card__date">
+                                        {project.date}
                                     </div>
                                 )}
                             </div>

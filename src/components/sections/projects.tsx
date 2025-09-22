@@ -8,17 +8,6 @@ import MagicBento from '../ui/MagicBento'
 const projects = [
     {
         id: 1,
-        title: 'Goldjewel Website & CMS',
-        description: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS).',
-        longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
-        image: '/projects/goldjewel.jpg',
-        technologies: ['Frontend Development', 'CMS Development', 'Database Management', 'Image Processing', 'Real-time Updates'],
-        live: 'https://www.goldjewel.sg/',
-        cms: 'https://cms.goldjewel.sg/login',
-        category: 'Web App',
-    },
-    {
-        id: 2,
         title: 'Oxley Pawnshop Website',
         description: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern.',
         longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
@@ -26,9 +15,10 @@ const projects = [
         technologies: ['Frontend Development', 'Backend Integration', 'API Integration', 'Email Services', 'Real-time Data'],
         live: 'https://www.oxleypawnshop.com/',
         category: 'Web App',
+        date: 'Jul 2025 - Aug 2025',
     },
     {
-        id: 3,
+        id: 2,
         title: 'SigmaHealth',
         achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award • Best team for Theme 1 (Health and Wellbeing)',
         description: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform.',
@@ -39,6 +29,19 @@ const projects = [
         hackathon: '@NUS Lifehack 2025',
         video: '/videos/SigmaHealth demo video.mp4',
         category: 'Mobile App',
+        date: 'Jul 2025',
+    },
+    {
+        id: 3,
+        title: 'Goldjewel Website & CMS',
+        description: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS).',
+        longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
+        image: '/projects/goldjewel.jpg',
+        technologies: ['Frontend Development', 'CMS Development', 'Database Management', 'Image Processing', 'Real-time Updates'],
+        live: 'https://www.goldjewel.sg/',
+        cms: 'https://cms.goldjewel.sg/login',
+        category: 'Web App',
+        date: 'Jun 2025 - Aug 2025',
     },
     {
         id: 4,
@@ -52,6 +55,7 @@ const projects = [
         hackathon: '@DSTA Brainhack-Code EXP 2025',
         video: '/videos/SigmaShield demo video.mp4',
         category: 'Mobile App',
+        date: 'Jun 2025 - Jul 2025',
     },
     {
         id: 5,
@@ -64,6 +68,7 @@ const projects = [
         hackathon: '@Orbital 2025',
         video: '/videos/gymfit video.mp4',
         category: 'Mobile App',
+        date: 'May 2025 - Aug 2025',
     },
     {
         id: 6,
@@ -76,6 +81,7 @@ const projects = [
         live: 'https://geekshackinghackathon-8ygu.vercel.app',
         hackathon: '@Hackomania 2025',
         category: 'Web App',
+        date: 'Feb 2025',
     },
     {
         id: 7,
@@ -88,6 +94,7 @@ const projects = [
         github: 'https://github.com/Path-yang/Maritime-Hackathon-2025',
         hackathon: '@Maritime Hackathon 2025',
         category: 'AI/ML',
+        date: 'Jan 2025',
     },
 ]
 

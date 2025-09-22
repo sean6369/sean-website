@@ -259,7 +259,7 @@
 }
 
 .card__tech-tag {
-    font-size: 10px;
+    font-size: 12px;
     padding: 0.2em 0.4em;
     background: rgba(var(--bento-glow-primary-rgb), 0.15);
     border: 1px solid rgba(var(--bento-glow-primary-rgb), 0.5);
@@ -269,7 +269,7 @@
 }
 
 .card__tech-more {
-    font-size: 10px;
+    font-size: 12px;
     padding: 0.2em 0.4em;
     background: rgba(var(--bento-glow-primary-rgb), 0.1);
     border: 1px solid rgba(var(--bento-glow-primary-rgb), 0.4);
@@ -309,6 +309,17 @@
 .card__link-icon {
     width: 0.75em;
     height: 0.75em;
+}
+
+.card__date {
+    position: absolute;
+    bottom: 1.25em;
+    right: 1.25em;
+    font-size: 11px;
+    color: var(--bento-foreground-tertiary);
+    font-weight: 500;
+    opacity: 0.8;
+    z-index: 20;
 }
 
 .card--text-autohide .card__title,
@@ -391,12 +402,12 @@
     }
 
     .card__tech-tag {
-        font-size: 9px;
+        font-size: 11px;
         padding: 0.15em 0.3em;
     }
 
     .card__tech-more {
-        font-size: 9px;
+        font-size: 11px;
         padding: 0.15em 0.3em;
     }
 
@@ -415,6 +426,12 @@
     .card__link-icon {
         width: 0.8em;
         height: 0.8em;
+    }
+
+    .card__date {
+        bottom: 1em;
+        right: 1em;
+        font-size: 10px;
     }
 
     /* Mobile achievement scroll adjustments */
