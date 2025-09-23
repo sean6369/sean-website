@@ -17,7 +17,7 @@ const milestones = [
     {
         company: 'Goldjewel Pte. Ltd.',
         role: 'Software Engineer',
-        period: 'Jun 2025 - Jul 2025',
+        period: 'Jun 2025 - Aug 2025',
         location: 'Singapore',
         description: 'Built and deployed a modern jewelry business website with custom CMS featuring dynamic animations, image cropping tools, and real-time updates optimized for mobile.',
         icon: Briefcase,

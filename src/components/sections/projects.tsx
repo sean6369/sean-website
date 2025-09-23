@@ -8,6 +8,44 @@ import MagicBento from '../ui/MagicBento'
 const projects = [
     {
         id: 1,
+        title: 'SilverSigma',
+        description: 'A comprehensive web-app platform for seniors featuring real-time interactive AI avatar companionship, hobby discovery hub, and a safe social media network to enhance mental health, life fulfillment and connectivity.',
+        longDescription: 'Part of a team of 5 to build a web-app platform for seniors, featuring real-time interactive AI avatar companionship, hobby discovery hub, and a safe social media network, to enhance mental health, life fulfillment and connectivity. The platform includes an AI-powered companion with HeyGen streaming avatar technology supporting 4 languages (English, Mandarin, Bahasa Melayu, Tamil), a comprehensive hobby hub with 30+ activities across 6 categories, SeniorGram social feed for safe sharing, and community classes integration with 32+ workshop options across Singapore. Built with accessibility-first design featuring WCAG AA+ compliance, mobile-first approach, and voice-first interaction options.',
+        image: '/projects/silversigma.jpg',
+        technologies: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'HeyGen AI Avatar', 'OpenAI', 'Supabase', 'WebSocket', 'PWA'],
+        github: 'https://github.com/Path-yang/SilverSigma',
+        live: 'https://silver-sigma.vercel.app',
+        hackathon: '@SUTD What the Hack',
+        category: 'Web App',
+        date: 'Sep 2025',
+    },
+    {
+        id: 2,
+        title: 'SentinelAI',
+        description: 'An AI-powered system that transforms IP cameras into real-time anomaly detectors for falls, emergencies, and safety hazards, with applications in elderly care, pet monitoring, and industrial safety.',
+        longDescription: 'Part of a team of 5 to develop an AI-powered system that transforms IP cameras into real-time anomaly detectors for falls, emergencies, and safety hazards, with applications in elderly care, pet monitoring, and industrial safety. The system features cloud-first architecture with automatic RTSP to HLS conversion, real-time AI processing with WebSocket-based alerts, cross-platform compatibility, and enterprise-grade security with HTTPS encryption. While our project didn\'t advance, we reflected on challenges such as scaling difficulties, limited long-term differentiation, and missing safeguards like background checks, highlighting the importance of focusing on innovative approaches that address the limitations of current offerings and stronger market validation.',
+        image: '/projects/sentinelai.jpg',
+        technologies: ['Machine Learning', 'Fullstack Development', 'Cloud Architecture', 'Real-time Streaming', 'AI Detection', 'WebSocket', 'RTSP', 'HLS'],
+        github: 'https://github.com/Path-yang/SentinelAI',
+        live: 'https://sentinel-ai-web-ll3v.vercel.app',
+        hackathon: '@IDP IDEATE • @NUS SoC VIP Grant',
+        videos: [
+            {
+                title: 'IDP IDEATE Demo',
+                url: '/videos/IDEATE2025_demo.mp4',
+                hackathon: '@IDP IDEATE'
+            },
+            {
+                title: 'NUS SoC VIP',
+                url: '/videos/VIP@SoC SentinelAI Demo.mp4',
+                hackathon: '@NUS SoC VIP Grant'
+            }
+        ],
+        category: 'AI/ML',
+        date: 'Aug 2025 - Sep 2025',
+    },
+    {
+        id: 3,
         title: 'Oxley Pawnshop Website',
         description: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern.',
         longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
@@ -18,7 +56,7 @@ const projects = [
         date: 'Jul 2025 - Aug 2025',
     },
     {
-        id: 2,
+        id: 4,
         title: 'SigmaHealth',
         achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award • Best team for Theme 1 (Health and Wellbeing)',
         description: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform.',
@@ -32,7 +70,7 @@ const projects = [
         date: 'Jul 2025',
     },
     {
-        id: 3,
+        id: 5,
         title: 'Goldjewel Website & CMS',
         description: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS).',
         longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
@@ -44,7 +82,7 @@ const projects = [
         date: 'Jun 2025 - Aug 2025',
     },
     {
-        id: 4,
+        id: 6,
         title: 'SigmaShield',
         achievement: '🏆 Finalist (top 20 of 80+ teams)',
         description: 'An AI-powered mobile app that helps users detect, understand, and prevent online scams. It offers real-time URL analysis, educational content, scam analytics, and a community forum for sharing experiences and insights.',
@@ -58,7 +96,7 @@ const projects = [
         date: 'Jun 2025 - Jul 2025',
     },
     {
-        id: 5,
+        id: 7,
         title: 'GymFit',
         description: 'Built during Orbital 2025, a cross-platform fitness app built with Flutter and Firebase, featuring real-time workout tracking and timers, YouTube video integration, and science-based calorie calculations.',
         longDescription: 'Built during Orbital 2025, a cross-platform fitness app built with Flutter and Firebase, featuring real-time workout tracking and timers, YouTube video integration, and science-based calorie calculations. It includes social networking, workout history tracking and statistics, advanced muscle recovery monitoring, and personalized workout recommendations.',
@@ -71,7 +109,7 @@ const projects = [
         date: 'May 2025 - Aug 2025',
     },
     {
-        id: 6,
+        id: 8,
         title: 'NoFap',
         description: 'Built during Hackomania 2025, a modern web app designed to help users stay motivated on their NoFap journey through progress tracking, achievements, and community support.',
         longDescription: 'Built during Hackomania 2025, a modern web app designed to help users stay motivated on their NoFap journey through progress tracking, achievements, and community support. It features donation-based support platform enabling micro-donations through the Open Payments API to assist individuals overcoming addiction.',
@@ -84,7 +122,7 @@ const projects = [
         date: 'Feb 2025',
     },
     {
-        id: 7,
+        id: 9,
         title: 'Ship Vessel Risk Detection Model',
         achievement: '🏆 Top 3',
         description: 'A two-stage AI pipeline to predict vessel deficiency severity from Port State Control inspection text.',
@@ -131,6 +169,47 @@ function useScrollState() {
 
 // Helper component for video section
 const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0] }): JSX.Element | null => {
+    // Check for multiple videos first
+    if ('videos' in selectedProject && selectedProject.videos && Array.isArray(selectedProject.videos)) {
+        return (
+            <div className="mt-6">
+                <h4 className="text-lg font-semibold mb-3 text-foreground">Project Demos</h4>
+                <div className="space-y-6">
+                    {selectedProject.videos.map((video, index) => (
+                        <div key={index} className="space-y-2">
+                            <h5 className="text-base font-medium text-foreground">{video.title}</h5>
+                            <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary bg-black">
+                                <video
+                                    src={video.url}
+                                    className="w-full h-full object-contain"
+                                    controls
+                                    preload="metadata"
+                                    playsInline
+                                    webkit-playsinline="true"
+                                    title={`${selectedProject.title} - ${video.title}`}
+                                    onError={(e) => {
+                                        console.error('Video load error:', e);
+                                        console.error('Video src:', video.url);
+                                    }}
+                                    onLoadStart={() => {
+                                        console.log('Video loading started:', video.url);
+                                    }}
+                                    onCanPlay={() => {
+                                        console.log('Video can play:', video.url);
+                                    }}
+                                >
+                                    <source src={video.url} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Fallback to single video
     if (!('video' in selectedProject) || !selectedProject.video) {
         return null;
     }
@@ -534,7 +613,7 @@ export function Projects() {
                                         rel="noopener noreferrer"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="text-sm px-3 py-2 sm:py-1 bg-primary/10 border border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
+                                        className="text-sm px-3 py-2 sm:py-1 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
                                     >
                                         <ExternalLink className="w-4 h-4" />
                                         Live Demo
@@ -547,7 +626,7 @@ export function Projects() {
                                         rel="noopener noreferrer"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
                                     >
                                         <Github className="w-4 h-4" />
                                         View Code
@@ -560,7 +639,7 @@ export function Projects() {
                                         rel="noopener noreferrer"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
                                     >
                                         <ExternalLink className="w-4 h-4" />
                                         Live Demo (CMS)
@@ -569,7 +648,7 @@ export function Projects() {
                             </div>
 
                             {/* Live Website Preview */}
-                            {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS') && (
+                            {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
                                 <div className="mt-6">
                                     <h4 className="text-lg font-semibold mb-3 text-foreground">Live Website Preview</h4>
                                     <div className="relative w-full h-80 sm:h-[500px] rounded-lg overflow-hidden border border-surface-secondary">

@@ -30,6 +30,34 @@
     /* Light theme surface */
 }
 
+/* Enhanced light theme visibility */
+:root .magic-bento .card {
+    border: 2px solid rgba(var(--bento-glow-primary-rgb), 0.5);
+    background: rgba(var(--bento-surface-rgb), 0.2);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(var(--bento-glow-primary-rgb), 0.2);
+}
+
+:root .magic-bento .card:hover {
+    background: rgba(var(--bento-surface-rgb), 0.3);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(var(--bento-glow-primary-rgb), 0.3);
+}
+
+:root .magic-bento .card--border-glow {
+    box-shadow: 0 0 0 3px rgba(var(--bento-glow-primary-rgb), 0.4);
+    border: 2px solid rgba(var(--bento-glow-primary-rgb), 0.6);
+}
+
+:root .magic-bento .card--border-glow:hover {
+    box-shadow:
+        0 0 0 4px rgba(var(--bento-glow-primary-rgb), 0.6),
+        0 4px 20px rgba(var(--bento-glow-primary-rgb), 0.5),
+        0 0 30px rgba(var(--bento-glow-primary-rgb), 0.3);
+}
+
 /* Dark theme overrides */
 .dark .magic-bento {
     --bento-glow-primary-rgb: 203, 166, 247;
@@ -377,6 +405,17 @@
         box-shadow: 0 0 0 4px rgba(var(--bento-glow-primary-rgb), 0.3);
     }
 
+    /* Enhanced mobile light theme visibility */
+    :root .card {
+        border: 3px solid rgba(var(--bento-glow-primary-rgb), 0.6);
+        background: rgba(var(--bento-surface-rgb), 0.25);
+    }
+
+    :root .card--border-glow {
+        border: 3px solid rgba(var(--bento-glow-primary-rgb), 0.7);
+        box-shadow: 0 0 0 4px rgba(var(--bento-glow-primary-rgb), 0.4);
+    }
+
     /* Mobile typography adjustments */
     .card__title {
         font-size: 16px;
@@ -490,6 +529,17 @@
         box-shadow: 0 0 0 4px rgba(var(--bento-glow-primary-rgb), 0.3);
     }
 
+    /* Enhanced iOS Safari light theme visibility */
+    :root .card {
+        border: 3px solid rgba(var(--bento-glow-primary-rgb), 0.6);
+        background: rgba(var(--bento-surface-rgb), 0.25);
+    }
+
+    :root .card--border-glow {
+        border: 3px solid rgba(var(--bento-glow-primary-rgb), 0.7);
+        box-shadow: 0 0 0 4px rgba(var(--bento-glow-primary-rgb), 0.4);
+    }
+
     /* iOS Safari touch optimizations */
     .card__link {
         -webkit-tap-highlight-color: transparent;
@@ -536,6 +586,16 @@
     opacity: 1;
 }
 
+/* Enhanced border glow for light theme */
+:root .card--border-glow::after {
+    background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+            rgba(var(--bento-glow-primary-rgb), calc(var(--glow-intensity) * 1.2)) 0%,
+            rgba(var(--bento-glow-primary-rgb), calc(var(--glow-intensity) * 0.8)) 25%,
+            rgba(var(--bento-glow-primary-rgb), calc(var(--glow-intensity) * 0.4)) 50%,
+            transparent 70%);
+    opacity: 1.2;
+}
+
 .card--border-glow:hover::after {
     opacity: 1;
 }
@@ -568,6 +628,14 @@
     box-shadow:
         0 4px 20px rgba(var(--bento-glow-primary-rgb), 0.2),
         0 0 30px rgba(var(--bento-glow-primary-rgb), 0.2);
+}
+
+/* Enhanced particle container hover for light theme */
+:root .particle-container:hover {
+    box-shadow:
+        0 6px 25px rgba(var(--bento-glow-primary-rgb), 0.4),
+        0 0 40px rgba(var(--bento-glow-primary-rgb), 0.3),
+        0 0 60px rgba(var(--bento-glow-primary-rgb), 0.2);
 }
 
 /* Global spotlight styles */
