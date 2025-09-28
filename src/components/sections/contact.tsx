@@ -392,60 +392,107 @@ export function Contact() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                    style={{ backdropFilter: 'blur(10px)' }}
+                    style={{ backdropFilter: 'blur(16px)' }}
                 >
-                    {/* Backdrop */}
-                    <div className="absolute inset-0 bg-black/20" />
+                    {/* Glass Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="absolute inset-0 bg-black/30 dark:bg-black/50"
+                    />
 
                     {/* Glass Popup */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.8, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        transition={{ type: "spring", duration: 0.5 }}
-                        className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
+                        exit={{ opacity: 0, scale: 0.8, y: 30 }}
+                        transition={{
+                            type: "spring",
+                            duration: 0.6,
+                            bounce: 0.3
+                        }}
+                        className="relative bg-white/20 dark:bg-white/10 backdrop-blur-2xl border border-white/30 dark:border-white/20 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none"
+                        style={{
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                        }}
                     >
                         {/* Success Icon */}
                         <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.2, type: "spring", duration: 0.5 }}
-                            className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30"
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{
+                                delay: 0.2,
+                                type: "spring",
+                                duration: 0.7,
+                                bounce: 0.4
+                            }}
+                            className="w-20 h-20 bg-emerald-500/20 dark:bg-emerald-400/30 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/40 dark:border-emerald-400/50 backdrop-blur-sm shadow-lg shadow-emerald-500/20"
                         >
-                            <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+                            <motion.svg
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
+                                className="w-10 h-10 text-emerald-600 dark:text-emerald-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <motion.path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={3}
+                                    d="M5 13l4 4L19 7"
+                                />
+                            </motion.svg>
                         </motion.div>
 
                         {/* Success Message */}
                         <motion.h3
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-2xl font-bold text-white mb-4"
+                            transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+                            className="text-2xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight"
                         >
                             Message Sent!
                         </motion.h3>
 
                         <motion.p
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                            className="text-white/80 text-lg mb-6"
+                            transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
+                            className="text-gray-700 dark:text-gray-300 text-lg mb-8 leading-relaxed"
                         >
                             Thank you for reaching out! I'll get back to you as soon as possible.
                         </motion.p>
 
-                        {/* Close Button */}
+                        {/* Theme-aware Glass Close Button */}
                         <motion.button
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5 }}
+                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            whileHover={{
+                                scale: 1.05,
+                                transition: { duration: 0.2 }
+                            }}
+                            whileTap={{
+                                scale: 0.95,
+                                transition: { duration: 0.1 }
+                            }}
+                            transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
                             onClick={() => setSubmitted(false)}
-                            className="bg-white/20 hover:bg-white/30 border border-white/30 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 backdrop-blur-sm"
+                            className="group relative bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20 border border-white/30 dark:border-white/20 text-gray-900 dark:text-white px-8 py-3.5 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl overflow-hidden"
                         >
-                            Close
+                            {/* Button gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 dark:from-purple-400/20 dark:to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+
+                            {/* Button text */}
+                            <span className="relative z-10">Done</span>
+
+                            {/* Shimmer effect */}
+                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
                         </motion.button>
                     </motion.div>
                 </motion.div>
