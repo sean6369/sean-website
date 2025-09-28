@@ -127,9 +127,6 @@ export function Contact() {
                 if (confirmationResult.status === 200) {
                     setSubmitted(true)
                     setFormData({ name: '', email: '', subject: '', message: '' })
-
-                    // Reset success message after 5 seconds
-                    setTimeout(() => setSubmitted(false), 5000)
                 } else {
                     throw new Error(`Confirmation email failed with status: ${confirmationResult.status}`)
                 }
@@ -199,17 +196,6 @@ export function Contact() {
                                 Send me a message
                             </h3>
 
-                            {submitted && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
-                                >
-                                    <p className="text-green-600 text-sm font-medium">
-                                        Thank you! Your message has been sent successfully.
-                                    </p>
-                                </motion.div>
-                            )}
 
                             {error && (
                                 <motion.div
@@ -392,6 +378,71 @@ export function Contact() {
                     </motion.div>
                 </div>
             </div>
+
+            {/* Success Popup */}
+            {submitted && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                    style={{ backdropFilter: 'blur(10px)' }}
+                >
+                    {/* Backdrop */}
+                    <div className="absolute inset-0 bg-black/20" />
+                    
+                    {/* Glass Popup */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        transition={{ type: "spring", duration: 0.5 }}
+                        className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
+                    >
+                        {/* Success Icon */}
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2, type: "spring", duration: 0.5 }}
+                            className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30"
+                        >
+                            <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </motion.div>
+
+                        {/* Success Message */}
+                        <motion.h3
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-2xl font-bold text-white mb-4"
+                        >
+                            Message Sent!
+                        </motion.h3>
+
+                        <motion.p
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="text-white/80 text-lg mb-6"
+                        >
+                            Thank you for reaching out! I'll get back to you as soon as possible.
+                        </motion.p>
+
+                        {/* Close Button */}
+                        <motion.button
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            onClick={() => setSubmitted(false)}
+                            className="bg-white/20 hover:bg-white/30 border border-white/30 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 backdrop-blur-sm"
+                        >
+                            Close
+                        </motion.button>
+                    </motion.div>
+                </motion.div>
+            )}
         </section>
     )
 }
