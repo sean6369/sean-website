@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Send, Mail, MapPin, Phone, Github, Linkedin } from 'lucide-react'
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 
 const contactInfo = [
     {
@@ -41,6 +42,7 @@ export function Contact() {
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const [error, setError] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({
@@ -52,16 +54,114 @@ export function Contact() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
+        setError('')
 
-        // Simulate form submission
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        try {
+            // Check if environment variables are available
+            const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+            const templateId = process.env.NEXT_PUBLIC_EMAILJS_NOTIFICATION_TEMPLATE_ID
+            const confirmationTemplateId = process.env.NEXT_PUBLIC_EMAILJS_CONFIRMATION_TEMPLATE_ID
+            const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
-        setSubmitted(true)
-        setIsSubmitting(false)
-        setFormData({ name: '', email: '', subject: '', message: '' })
+            // Debug: Log environment variables (remove this after debugging)
+            console.log('Environment variables check:')
+            console.log('Service ID:', serviceId ? 'Found' : 'Missing')
+            console.log('Template ID:', templateId ? 'Found' : 'Missing')
+            console.log('Confirmation Template ID:', confirmationTemplateId ? 'Found' : 'Missing')
+            console.log('Public Key:', publicKey ? 'Found' : 'Missing')
 
-        // Reset success message after 3 seconds
-        setTimeout(() => setSubmitted(false), 3000)
+            if (!serviceId || !templateId || !confirmationTemplateId || !publicKey) {
+                throw new Error('EmailJS configuration is missing. Please check your environment variables.')
+            }
+
+            // Initialize EmailJS with your public key
+            emailjs.init(publicKey)
+
+            // Prepare template parameters for notification email (to you)
+            const notificationParams = {
+                from_name: formData.name,
+                from_email: formData.email,
+                subject: formData.subject,
+                message: formData.message,
+                to_email: 'seanleesukiat@gmail.com', // Your email
+                current_date: new Date().toLocaleString(),
+                logo_url: `${window.location.origin}/images/sean logo.png`, // Your logo URL
+            }
+
+            // Prepare template parameters for confirmation email (to sender)
+            const confirmationParams = {
+                from_name: formData.name,
+                from_email: formData.email,
+                subject: formData.subject,
+                message: formData.message,
+                to_email: formData.email, // Sender's email
+                current_date: new Date().toLocaleString(),
+                logo_url: `${window.location.origin}/images/sean logo.png`, // Your logo URL
+            }
+
+            console.log('Sending notification email with params:', notificationParams)
+
+            // Send notification email to you first
+            console.log('Attempting to send notification email...')
+            const notificationResult = await emailjs.send(
+                serviceId,
+                templateId, // Notification template
+                notificationParams
+            )
+
+            console.log('Notification email result:', notificationResult)
+
+            if (notificationResult.status === 200) {
+                console.log('Notification email sent successfully, now sending confirmation...')
+                console.log('Sending confirmation email with params:', confirmationParams)
+
+                // Send confirmation email to sender
+                const confirmationResult = await emailjs.send(
+                    serviceId,
+                    confirmationTemplateId, // Confirmation template
+                    confirmationParams
+                )
+
+                console.log('Confirmation email result:', confirmationResult)
+
+                if (confirmationResult.status === 200) {
+                    setSubmitted(true)
+                    setFormData({ name: '', email: '', subject: '', message: '' })
+
+                    // Reset success message after 5 seconds
+                    setTimeout(() => setSubmitted(false), 5000)
+                } else {
+                    throw new Error(`Confirmation email failed with status: ${confirmationResult.status}`)
+                }
+            } else {
+                throw new Error(`Notification email failed with status: ${notificationResult.status}`)
+            }
+        } catch (err) {
+            console.error('EmailJS Error Details:', err)
+            console.error('Error type:', typeof err)
+            console.error('Error message:', err instanceof Error ? err.message : 'Unknown error')
+            console.error('Error stack:', err instanceof Error ? err.stack : 'No stack trace')
+
+            let errorMessage = 'Something went wrong. Please try again.'
+
+            if (err instanceof Error) {
+                if (err.message.includes('Invalid email')) {
+                    errorMessage = 'Please enter a valid email address.'
+                } else if (err.message.includes('Template')) {
+                    errorMessage = 'Email template error. Please check your EmailJS configuration.'
+                } else if (err.message.includes('Service')) {
+                    errorMessage = 'Email service error. Please check your EmailJS service setup.'
+                } else if (err.message.includes('Public key')) {
+                    errorMessage = 'EmailJS authentication error. Please check your public key.'
+                } else {
+                    errorMessage = `Error: ${err.message}`
+                }
+            }
+
+            setError(errorMessage)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -103,10 +203,22 @@ export function Contact() {
                                 <motion.div
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg"
+                                    className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
                                 >
-                                    <p className="text-success text-sm font-medium">
+                                    <p className="text-green-600 text-sm font-medium">
                                         Thank you! Your message has been sent successfully.
+                                    </p>
+                                </motion.div>
+                            )}
+
+                            {error && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+                                >
+                                    <p className="text-red-600 text-sm font-medium">
+                                        {error}
                                     </p>
                                 </motion.div>
                             )}
