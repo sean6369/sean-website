@@ -89,7 +89,7 @@ export function Contact() {
                 message: formData.message,
                 to_email: 'seanleesukiat@gmail.com', // Your email
                 current_date: new Date().toLocaleString(),
-                logo_url: `${window.location.origin}/images/sean logo.png`, // Your logo URL
+                logo_url: `https://sean-website.vercel.app/images/sean logo.png`, // Your logo URL
             }
 
             // Prepare template parameters for confirmation email (to sender)
@@ -100,7 +100,7 @@ export function Contact() {
                 message: formData.message,
                 to_email: formData.email, // Sender's email
                 current_date: new Date().toLocaleString(),
-                logo_url: `${window.location.origin}/images/sean logo.png`, // Your logo URL
+                logo_url: `https://sean-website.vercel.app/images/sean logo.png`, // Your logo URL
             }
 
             console.log('Sending notification email with params:', notificationParams)
@@ -486,7 +486,7 @@ export function Contact() {
                             className="group relative bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20 border border-white/30 dark:border-white/20 text-gray-900 dark:text-white px-8 py-3.5 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl overflow-hidden"
                         >
                             {/* Button gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 dark:from-purple-400/20 dark:to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
                             {/* Button text */}
                             <span className="relative z-10">Done</span>
