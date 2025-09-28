@@ -53,6 +53,7 @@ export function Contact() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        console.log('Form submission started')
         setIsSubmitting(true)
         setError('')
 
@@ -65,10 +66,10 @@ export function Contact() {
 
             // Debug: Log environment variables (remove this after debugging)
             console.log('Environment variables check:')
-            console.log('Service ID:', serviceId ? 'Found' : 'Missing')
-            console.log('Template ID:', templateId ? 'Found' : 'Missing')
-            console.log('Confirmation Template ID:', confirmationTemplateId ? 'Found' : 'Missing')
-            console.log('Public Key:', publicKey ? 'Found' : 'Missing')
+            console.log('Service ID:', serviceId ? 'Found' : 'Missing', serviceId)
+            console.log('Template ID:', templateId ? 'Found' : 'Missing', templateId)
+            console.log('Confirmation Template ID:', confirmationTemplateId ? 'Found' : 'Missing', confirmationTemplateId)
+            console.log('Public Key:', publicKey ? 'Found' : 'Missing', publicKey)
 
             if (!serviceId || !templateId || !confirmationTemplateId || !publicKey) {
                 throw new Error('EmailJS configuration is missing. Please check your environment variables.')
@@ -209,7 +210,10 @@ export function Contact() {
                                 </motion.div>
                             )}
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form onSubmit={(e) => {
+                                console.log('Form onSubmit triggered')
+                                handleSubmit(e)
+                            }} className="space-y-6">
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
                                         <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
@@ -390,7 +394,7 @@ export function Contact() {
                 >
                     {/* Backdrop */}
                     <div className="absolute inset-0 bg-black/20" />
-                    
+
                     {/* Glass Popup */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
