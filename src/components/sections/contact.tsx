@@ -71,6 +71,9 @@ export function Contact() {
             console.log('Confirmation Template ID:', confirmationTemplateId ? 'Found' : 'Missing', confirmationTemplateId)
             console.log('Public Key:', publicKey ? 'Found' : 'Missing', publicKey)
 
+            // Debug: Show all NEXT_PUBLIC_ variables
+            console.log('All NEXT_PUBLIC_ variables:', Object.keys(process.env).filter(key => key.startsWith('NEXT_PUBLIC_')))
+
             if (!serviceId || !templateId || !confirmationTemplateId || !publicKey) {
                 throw new Error('EmailJS configuration is missing. Please check your environment variables.')
             }
