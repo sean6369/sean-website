@@ -1,18 +1,24 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Moon, Sun, ChevronDown } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Moon, Sun } from 'lucide-react'
 import { cn, scrollToSection } from '@/lib/utils'
 import StaggeredMenu from './StaggeredMenu'
 import Stepper from './stepper'
+import {
+    Navbar,
+    NavBody,
+    MobileNav,
+    MobileNavHeader,
+} from './resizable-navbar'
 
 const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'milestones', label: 'Milestones' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'contact', label: 'Contact' },
+    { id: 'home', label: 'Home', name: 'Home', link: '#home' },
+    { id: 'about', label: 'About', name: 'About', link: '#about' },
+    { id: 'milestones', label: 'Milestones', name: 'Milestones', link: '#milestones' },
+    { id: 'projects', label: 'Projects', name: 'Projects', link: '#projects' },
+    { id: 'contact', label: 'Contact', name: 'Contact', link: '#contact' },
 ]
 
 // Convert navItems to StaggeredMenu format
@@ -28,10 +34,8 @@ const socialItems = [
 ]
 
 export function Navigation() {
-    const [isDarkMode, setIsDarkMode] = useState(false) // Default to light mode
+    const [isDarkMode, setIsDarkMode] = useState(false)
     const [activeSection, setActiveSection] = useState('home')
-    const [isScrolled, setIsScrolled] = useState(false)
-    const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false)
 
     useEffect(() => {
         // Initialize theme from localStorage or system preference
@@ -49,8 +53,6 @@ export function Navigation() {
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50)
-
             // Update active section based on scroll position
             const sections = navItems.map(item => item.id)
             for (const section of sections) {
@@ -86,77 +88,38 @@ export function Navigation() {
         scrollToSection(sectionId)
     }
 
-    const handleNodeHover = (index: number, isHovering: boolean) => {
-        // Animate adjacent edges when hovering over a node
-        const edges = document.querySelectorAll('[data-edge]')
-        const leftEdge = edges[index - 1] as SVGLineElement
-        const rightEdge = edges[index] as SVGLineElement
-
-        if (isHovering) {
-            if (leftEdge) {
-                leftEdge.style.strokeWidth = '3'
-                leftEdge.style.filter = 'drop-shadow(0 0 6px var(--primary))'
-            }
-            if (rightEdge) {
-                rightEdge.style.strokeWidth = '3'
-                rightEdge.style.filter = 'drop-shadow(0 0 6px var(--primary))'
-            }
-        } else {
-            if (leftEdge) {
-                leftEdge.style.strokeWidth = '2'
-                leftEdge.style.filter = (activeSection === navItems[index]?.id)
-                    ? 'drop-shadow(0 0 4px var(--primary))'
-                    : 'none'
-            }
-            if (rightEdge) {
-                rightEdge.style.strokeWidth = '2'
-                rightEdge.style.filter = (activeSection === navItems[index + 1]?.id)
-                    ? 'drop-shadow(0 0 4px var(--primary))'
-                    : 'none'
-            }
-        }
-    }
-
     return (
-        <motion.nav
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.5 }}
-            className={cn(
-                'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-                isScrolled
-                    ? 'glass-effect shadow-lg'
-                    : 'bg-transparent'
-            )}
-        >
-            <div className="container-custom">
-                {/* Desktop Layout */}
-                <div className="hidden md:flex items-center justify-center h-20 relative">
-                    {/* Logo - Positioned Absolutely */}
+        <>
+            <Navbar className="fixed top-0">
+                {/* Desktop Navigation */}
+                <NavBody className="px-6">
+                    {/* Logo - Left Side */}
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="absolute left-0 text-2xl font-bold gradient-text cursor-pointer"
+                        className="relative z-30 text-3xl font-bold gradient-text cursor-pointer"
                         onClick={() => handleNavClick('home')}
                     >
                         Sean
                     </motion.div>
 
-                    {/* Desktop Navigation - True Center Stepper */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2">
-                        <Stepper
-                            steps={navItems.map((item, index) => ({
-                                id: item.id,
-                                label: item.label,
-                                step: index + 1
-                            }))}
-                            currentStep={navItems.findIndex(item => item.id === activeSection) + 1}
-                            onStepClick={handleNavClick}
-                        />
+                    {/* Center - Stepper (Desktop only) */}
+                    <div className="absolute inset-0 hidden items-center justify-center lg:flex pointer-events-none">
+                        <div className="pointer-events-auto">
+                            <Stepper
+                                steps={navItems.map((item, index) => ({
+                                    id: item.id,
+                                    label: item.label,
+                                    step: index + 1
+                                }))}
+                                currentStep={navItems.findIndex(item => item.id === activeSection) + 1}
+                                onStepClick={handleNavClick}
+                            />
+                        </div>
                     </div>
 
-                    {/* Dark mode toggle and staggered menu - Positioned Absolutely */}
-                    <div className="absolute right-0 flex items-center space-x-4">
+                    {/* Right Side - Dark mode toggle only (desktop) */}
+                    <div className="relative z-30 flex items-center space-x-4">
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -170,133 +133,80 @@ export function Navigation() {
                                 <Moon className="w-5 h-5 text-foreground" />
                             )}
                         </motion.button>
-
-                        {/* Staggered Menu */}
-                        <StaggeredMenu
-                            position="right"
-                            items={menuItems}
-                            socialItems={socialItems}
-                            displaySocials={true}
-                            displayItemNumbering={true}
-                            menuButtonColor="var(--foreground)"
-                            openMenuButtonColor="var(--foreground)"
-                            changeMenuColorOnOpen={false}
-                            colors={isDarkMode ? ['#1e1e2e', '#313244', '#45475a'] : ['#F0E6DD', '#E6DBD1', '#D4C4B0']}
-                            logoUrl="/src/assets/logos/reactbits-gh-white.svg"
-                            accentColor="var(--primary)"
-                            onMenuOpen={() => console.log('Menu opened')}
-                            onMenuClose={() => console.log('Menu closed')}
-                            onItemClick={(item) => {
-                                const sectionId = item.link.replace('#', '');
-                                scrollToSection(sectionId);
-                            }}
-                        />
                     </div>
-                </div>
+                </NavBody>
 
-                {/* Mobile Layout */}
-                <div className="md:hidden">
-                    {/* Mobile Header with Stepper and Dropdown Arrow */}
-                    <div className="flex items-center justify-center h-16 relative px-4">
-                        {/* Centered Mobile Stepper with Right Padding */}
-                        <div className="flex items-center justify-center pr-16">
-                            <Stepper
-                                steps={navItems.map((item, index) => ({
-                                    id: item.id,
-                                    label: item.label,
-                                    step: index + 1
-                                }))}
-                                currentStep={navItems.findIndex(item => item.id === activeSection) + 1}
-                                onStepClick={handleNavClick}
-                            />
+                {/* Mobile Navigation */}
+                <MobileNav>
+                    <MobileNavHeader className="relative">
+                        {/* Logo - Left Side */}
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="relative z-30 text-2xl font-bold gradient-text cursor-pointer flex-shrink-0 ml-6"
+                            onClick={() => {
+                                handleNavClick('home')
+                            }}
+                        >
+                            Sean
+                        </motion.div>
+
+                        {/* Center - Current Section Indicator (Mobile only) */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <motion.div
+                                key={activeSection}
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className="pointer-events-auto text-lg font-medium text-primary"
+                            >
+                                {navItems.find(item => item.id === activeSection)?.label || 'Home'}
+                            </motion.div>
                         </div>
 
-                        {/* Dropdown Arrow - Positioned Absolutely */}
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
-                            className="absolute right-4 p-2 rounded-lg hover:bg-surface transition-colors duration-200"
-                            aria-label="Toggle options"
-                        >
-                            <motion.div
-                                animate={{ rotate: isMobileDropdownOpen ? 180 : 0 }}
-                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                        {/* Right Side - Menu button and Theme toggle */}
+                        <div className="relative z-30 flex items-center gap-2 flex-shrink-0">
+                            {/* Staggered Menu Button */}
+                            <div className="lg:hidden">
+                                <StaggeredMenu
+                                    position="right"
+                                    items={menuItems}
+                                    socialItems={socialItems}
+                                    displaySocials={true}
+                                    displayItemNumbering={true}
+                                    menuButtonColor="var(--foreground)"
+                                    openMenuButtonColor="var(--foreground)"
+                                    changeMenuColorOnOpen={false}
+                                    colors={isDarkMode ? ['#1e1e2e', '#313244', '#45475a'] : ['#F0E6DD', '#E6DBD1', '#D4C4B0']}
+                                    logoUrl="/src/assets/logos/reactbits-gh-white.svg"
+                                    accentColor="var(--primary)"
+                                    onMenuOpen={() => console.log('Menu opened')}
+                                    onMenuClose={() => console.log('Menu closed')}
+                                    onItemClick={(item) => {
+                                        const sectionId = item.link.replace('#', '');
+                                        scrollToSection(sectionId);
+                                    }}
+                                />
+                            </div>
+
+                            {/* Theme Toggle */}
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={toggleDarkMode}
+                                className="p-2 rounded-lg hover:bg-surface transition-colors duration-200"
+                                aria-label="Toggle dark mode"
                             >
-                                <ChevronDown className="w-5 h-5 text-foreground" />
-                            </motion.div>
-                        </motion.button>
-                    </div>
-
-                    {/* Mobile Dropdown Menu */}
-                    <AnimatePresence>
-                        {isMobileDropdownOpen && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0, y: 0 }}
-                                animate={{ opacity: 1, height: 'auto', y: 0 }}
-                                exit={{ opacity: 0, height: 0, y: 0 }}
-                                transition={{ duration: 0.3, ease: "easeInOut" }}
-                            >
-                                <div className="flex items-center justify-between w-full">
-                                    {/* Title/Logo */}
-                                    <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="text-lg font-bold gradient-text cursor-pointer"
-                                        onClick={() => {
-                                            handleNavClick('home');
-                                            setIsMobileDropdownOpen(false);
-                                        }}
-                                    >
-                                        Sean
-                                    </motion.div>
-
-                                    {/* Theme Toggle and Staggered Menu */}
-                                    <div className="flex items-center space-x-4">
-                                        {/* Theme Toggle */}
-                                        <motion.button
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={toggleDarkMode}
-                                            className="p-1.5 rounded-lg hover:bg-surface transition-colors duration-200"
-                                            aria-label="Toggle dark mode"
-                                        >
-                                            {isDarkMode ? (
-                                                <Sun className="w-4 h-4 text-foreground" />
-                                            ) : (
-                                                <Moon className="w-4 h-4 text-foreground" />
-                                            )}
-                                        </motion.button>
-
-                                        {/* Staggered Menu */}
-                                        <StaggeredMenu
-                                            position="right"
-                                            items={menuItems}
-                                            socialItems={socialItems}
-                                            displaySocials={true}
-                                            displayItemNumbering={true}
-                                            menuButtonColor="var(--foreground)"
-                                            openMenuButtonColor="var(--foreground)"
-                                            changeMenuColorOnOpen={false}
-                                            colors={isDarkMode ? ['#1e1e2e', '#313244', '#45475a'] : ['#F0E6DD', '#E6DBD1', '#D4C4B0']}
-                                            logoUrl="/src/assets/logos/reactbits-gh-white.svg"
-                                            accentColor="var(--primary)"
-                                            onMenuOpen={() => console.log('Menu opened')}
-                                            onMenuClose={() => console.log('Menu closed')}
-                                            onItemClick={(item) => {
-                                                const sectionId = item.link.replace('#', '');
-                                                scrollToSection(sectionId);
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-            </div>
-        </motion.nav>
+                                {isDarkMode ? (
+                                    <Sun className="w-4 h-4 text-foreground" />
+                                ) : (
+                                    <Moon className="w-4 h-4 text-foreground" />
+                                )}
+                            </motion.button>
+                        </div>
+                    </MobileNavHeader>
+                </MobileNav>
+            </Navbar>
+        </>
     )
 }
-

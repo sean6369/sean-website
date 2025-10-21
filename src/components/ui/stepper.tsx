@@ -70,7 +70,7 @@ const StepperItem: React.FC<StepperItemProps> = ({
             {/* Step Indicator Line */}
             <motion.div
                 className={cn(
-                    "relative w-12 sm:w-16 md:w-20 lg:w-24 h-1.5 sm:h-2 md:h-2 lg:h-2 rounded-full transition-all duration-300 mb-1.5 sm:mb-2 md:mb-2 lg:mb-2 overflow-hidden touch-manipulation",
+                    "relative w-12 sm:w-16 md:w-20 lg:w-24 h-1.5 sm:h-2 md:h-2 lg:h-2 rounded-full transition-all duration-300 mb-1 overflow-hidden touch-manipulation",
                     isActive
                         ? "bg-primary shadow-md shadow-primary/20"
                         : isCompleted
@@ -156,7 +156,7 @@ const StepperItem: React.FC<StepperItemProps> = ({
                 />
             </motion.div>
 
-            {/* Step Label */}
+            {/* Step Label - Always visible */}
             <motion.span
                 className={cn(
                     "text-xs sm:text-sm md:text-base lg:text-base font-medium whitespace-nowrap transition-all duration-200 relative px-1 py-0.5 touch-manipulation",
@@ -222,10 +222,10 @@ export const Stepper: React.FC<StepperProps> = ({
     const currentStepIndex = steps.findIndex(step => step.step === currentStep)
 
     return (
-        <div className={cn("w-full", className)}>
+        <div className={cn("w-full pt-2", className)}>
             {/* Stepper Steps Container with horizontal scroll for mobile */}
-            <div className="flex items-start overflow-x-auto scrollbar-hide pb-2 -mb-2">
-                <div className="flex items-start min-w-max px-1 max-w-full">
+            <div className="flex items-start justify-center overflow-x-auto scrollbar-hide pb-2 -mb-2">
+                <div className="flex items-start min-w-max px-1">
                     {steps.map((step, index) => {
                         const isActive = step.step === currentStep
                         const isCompleted = index < currentStepIndex

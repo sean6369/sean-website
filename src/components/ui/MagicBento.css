@@ -174,7 +174,6 @@
 .card__achievement {
     margin: 0 0 0.25em;
     position: relative;
-    group: true;
 }
 
 .card__achievement-scroll {
@@ -385,6 +384,7 @@
         border: 3px solid rgba(var(--bento-glow-primary-rgb), 0.4);
         border-radius: 16px;
         -webkit-border-image: none;
+        border-image: none;
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
         -webkit-backface-visibility: hidden;
