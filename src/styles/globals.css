@@ -102,6 +102,72 @@
         @apply bg-background text-foreground font-new-york;
         background-color: var(--background);
         max-width: 100vw;
+        cursor: none;
+    }
+
+    /* Hide all cursor types globally */
+    *,
+    *::before,
+    *::after {
+        cursor: none !important;
+    }
+
+    /* Force hide cursor on embedded content */
+    iframe,
+    video,
+    embed,
+    object {
+        cursor: none !important;
+    }
+
+    /* Override any embedded video controls */
+    iframe[src*="youtube"],
+    iframe[src*="vimeo"],
+    iframe[src*="player"] {
+        cursor: none !important;
+    }
+
+    /* Hide cursor on video timeline and controls */
+    video::-webkit-media-controls,
+    video::-webkit-media-controls-panel,
+    video::-webkit-media-controls-play-button,
+    video::-webkit-media-controls-timeline,
+    video::-webkit-media-controls-current-time-display,
+    video::-webkit-media-controls-time-remaining-display,
+    video::-webkit-media-controls-volume-slider,
+    video::-webkit-media-controls-mute-button,
+    video::-webkit-media-controls-fullscreen-button,
+    video::-webkit-media-controls-rewind-button,
+    video::-webkit-media-controls-return-to-realtime-button,
+    video::-webkit-media-controls-seek-back-button,
+    video::-webkit-media-controls-seek-forward-button {
+        cursor: none !important;
+    }
+
+    /* Hide cursor on all iframe content including video controls */
+    iframe * {
+        cursor: none !important;
+    }
+
+    /* Target specific video platform controls */
+    iframe[src*="youtube"] *,
+    iframe[src*="vimeo"] *,
+    iframe[src*="player"] *,
+    iframe[src*="embed"] * {
+        cursor: none !important;
+    }
+
+    /* Override any remaining cursor styles */
+    .ytp-chrome-top,
+    .ytp-chrome-bottom,
+    .ytp-progress-bar,
+    .ytp-scrubber-container,
+    .ytp-time-display,
+    .ytp-play-button,
+    .ytp-mute-button,
+    .ytp-volume-panel,
+    .ytp-fullscreen-button {
+        cursor: none !important;
     }
 
     ::selection {
@@ -205,5 +271,58 @@
     /* Apply rounded corners to favicon and metadata images */
     img[src*="sean_logo.png"] {
         border-radius: 12px;
+    }
+
+    /* Custom cursor styles */
+    .custom-cursor {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: difference;
+    }
+
+    .custom-cursor__outer {
+        width: 16px;
+        height: 16px;
+        background-color: white;
+        border-radius: 50%;
+        transition: all 0.2s ease-out;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .custom-cursor__outer--hover {
+        width: 40px;
+        height: 40px;
+        background-color: transparent;
+        border: 2px solid white;
+    }
+
+    .custom-cursor__inner {
+        width: 4px;
+        height: 4px;
+        background-color: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: custom-cursor-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes custom-cursor-pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        50% {
+            opacity: 0.7;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
     }
 }
