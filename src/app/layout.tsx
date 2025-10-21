@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { newYork, menlo } from '@/lib/fonts'
 import '@/styles/globals.css'
 import { cn } from '@/lib/utils'
+import { Toaster } from '@/components/ui/sonner'
 
 export const metadata: Metadata = {
     title: 'Sean | Personal Website',
@@ -77,6 +78,7 @@ export default function RootLayout({
                 }}
             >
                 {children}
+                <Toaster />
             </body>
         </html>
     )

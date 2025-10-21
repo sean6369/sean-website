@@ -2,8 +2,41 @@
 
 import { motion } from 'framer-motion'
 import { Send, Mail, MapPin, Phone, Github, Linkedin } from 'lucide-react'
-import { useState } from 'react'
 import emailjs from '@emailjs/browser'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+import { toast } from 'sonner'
+
+import { Button } from '@/components/ui/button'
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+
+// Zod schema for form validation
+const contactFormSchema = z.object({
+    name: z.string().min(2, {
+        message: 'Name must be at least 2 characters.',
+    }),
+    email: z.string().email({
+        message: 'Please enter a valid email address.',
+    }),
+    subject: z.string().min(3, {
+        message: 'Subject must be at least 3 characters.',
+    }),
+    message: z.string().min(10, {
+        message: 'Message must be at least 10 characters.',
+    }),
+})
+
+type ContactFormValues = z.infer<typeof contactFormSchema>
 
 const contactInfo = [
     {
@@ -34,28 +67,20 @@ const socialLinks = [
 ]
 
 export function Contact() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
+    // Initialize form with react-hook-form and zod validation
+    const form = useForm<ContactFormValues>({
+        resolver: zodResolver(contactFormSchema),
+        defaultValues: {
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+        },
     })
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [submitted, setSubmitted] = useState(false)
-    const [error, setError] = useState('')
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        })
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        console.log('Form submission started')
-        setIsSubmitting(true)
-        setError('')
+    const onSubmit = async (data: ContactFormValues) => {
+        // Show loading toast
+        const loadingToast = toast.loading('Sending your message...')
 
         try {
             // Check if environment variables are available
@@ -63,16 +88,6 @@ export function Contact() {
             const templateId = process.env.NEXT_PUBLIC_EMAILJS_NOTIFICATION_TEMPLATE_ID
             const confirmationTemplateId = process.env.NEXT_PUBLIC_EMAILJS_CONFIRMATION_TEMPLATE_ID
             const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-
-            // Debug: Log environment variables (remove this after debugging)
-            console.log('Environment variables check:')
-            console.log('Service ID:', serviceId ? 'Found' : 'Missing', serviceId)
-            console.log('Template ID:', templateId ? 'Found' : 'Missing', templateId)
-            console.log('Confirmation Template ID:', confirmationTemplateId ? 'Found' : 'Missing', confirmationTemplateId)
-            console.log('Public Key:', publicKey ? 'Found' : 'Missing', publicKey)
-
-            // Debug: Show all NEXT_PUBLIC_ variables
-            console.log('All NEXT_PUBLIC_ variables:', Object.keys(process.env).filter(key => key.startsWith('NEXT_PUBLIC_')))
 
             if (!serviceId || !templateId || !confirmationTemplateId || !publicKey) {
                 throw new Error('EmailJS configuration is missing. Please check your environment variables.')
@@ -83,54 +98,50 @@ export function Contact() {
 
             // Prepare template parameters for notification email (to you)
             const notificationParams = {
-                from_name: formData.name,
-                from_email: formData.email,
-                subject: formData.subject,
-                message: formData.message,
-                to_email: 'seanleesukiat@gmail.com', // Your email
+                from_name: data.name,
+                from_email: data.email,
+                subject: data.subject,
+                message: data.message,
+                to_email: 'seanleesukiat@gmail.com',
                 current_date: new Date().toLocaleString(),
-                logo_url: `https://sean-website.vercel.app/images/sean logo.png`, // Your logo URL
+                logo_url: `https://sean-website.vercel.app/images/sean logo.png`,
             }
 
             // Prepare template parameters for confirmation email (to sender)
             const confirmationParams = {
-                from_name: formData.name,
-                from_email: formData.email,
-                subject: formData.subject,
-                message: formData.message,
-                to_email: formData.email, // Sender's email
+                from_name: data.name,
+                from_email: data.email,
+                subject: data.subject,
+                message: data.message,
+                to_email: data.email,
                 current_date: new Date().toLocaleString(),
-                logo_url: `https://sean-website.vercel.app/images/sean logo.png`, // Your logo URL
+                logo_url: `https://sean-website.vercel.app/images/sean logo.png`,
             }
 
-            console.log('Sending notification email with params:', notificationParams)
-
             // Send notification email to you first
-            console.log('Attempting to send notification email...')
             const notificationResult = await emailjs.send(
                 serviceId,
-                templateId, // Notification template
+                templateId,
                 notificationParams
             )
 
-            console.log('Notification email result:', notificationResult)
-
             if (notificationResult.status === 200) {
-                console.log('Notification email sent successfully, now sending confirmation...')
-                console.log('Sending confirmation email with params:', confirmationParams)
-
                 // Send confirmation email to sender
                 const confirmationResult = await emailjs.send(
                     serviceId,
-                    confirmationTemplateId, // Confirmation template
+                    confirmationTemplateId,
                     confirmationParams
                 )
 
-                console.log('Confirmation email result:', confirmationResult)
-
                 if (confirmationResult.status === 200) {
-                    setSubmitted(true)
-                    setFormData({ name: '', email: '', subject: '', message: '' })
+                    // Dismiss loading toast and show success
+                    toast.dismiss(loadingToast)
+                    toast.success('Message sent successfully!', {
+                        description: "Thank you for reaching out! I'll get back to you as soon as possible.",
+                        duration: 5000,
+                    })
+                    // Reset form
+                    form.reset()
                 } else {
                     throw new Error(`Confirmation email failed with status: ${confirmationResult.status}`)
                 }
@@ -139,9 +150,6 @@ export function Contact() {
             }
         } catch (err) {
             console.error('EmailJS Error Details:', err)
-            console.error('Error type:', typeof err)
-            console.error('Error message:', err instanceof Error ? err.message : 'Unknown error')
-            console.error('Error stack:', err instanceof Error ? err.stack : 'No stack trace')
 
             let errorMessage = 'Something went wrong. Please try again.'
 
@@ -154,14 +162,19 @@ export function Contact() {
                     errorMessage = 'Email service error. Please check your EmailJS service setup.'
                 } else if (err.message.includes('Public key')) {
                     errorMessage = 'EmailJS authentication error. Please check your public key.'
+                } else if (err.message.includes('configuration is missing')) {
+                    errorMessage = err.message
                 } else {
                     errorMessage = `Error: ${err.message}`
                 }
             }
 
-            setError(errorMessage)
-        } finally {
-            setIsSubmitting(false)
+            // Dismiss loading toast and show error
+            toast.dismiss(loadingToast)
+            toast.error('Failed to send message', {
+                description: errorMessage,
+                duration: 5000,
+            })
         }
     }
 
@@ -192,117 +205,223 @@ export function Contact() {
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        transition={{
+                            duration: 0.6,
+                            delay: 0.2,
+                            ease: [0.25, 0.4, 0.25, 1]
+                        }}
                         viewport={{ once: true }}
                     >
                         <div className="glass-effect p-8 rounded-xl">
-                            <h3 className="text-2xl font-bold mb-6 text-foreground">
+                            <motion.h3
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: 0.3,
+                                    ease: [0.25, 0.4, 0.25, 1]
+                                }}
+                                viewport={{ once: true }}
+                                className="text-2xl font-bold mb-6 text-foreground"
+                            >
                                 Send me a message
-                            </h3>
+                            </motion.h3>
 
-
-                            {error && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
-                                >
-                                    <p className="text-red-600 text-sm font-medium">
-                                        {error}
-                                    </p>
-                                </motion.div>
-                            )}
-
-                            <form onSubmit={(e) => {
-                                console.log('Form onSubmit triggered')
-                                handleSubmit(e)
-                            }} className="space-y-6">
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                                            Name *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="name"
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                    <motion.div
+                                        className="grid md:grid-cols-2 gap-4"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.4,
+                                            ease: [0.25, 0.4, 0.25, 1]
+                                        }}
+                                        viewport={{ once: true }}
+                                    >
+                                        <FormField
+                                            control={form.control}
                                             name="name"
-                                            required
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-surface border border-surface-secondary rounded-lg focus:outline-none focus:border-primary transition-colors duration-300 text-foreground placeholder:text-foreground-tertiary"
-                                            placeholder="Your name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="transition-colors duration-200">Name *</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder="Your name"
+                                                            className="bg-surface border-surface-secondary focus:border-primary focus-visible:ring-primary transition-all duration-300 hover:border-primary/50"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{
+                                                            opacity: form.formState.errors.name ? 1 : 0,
+                                                            height: form.formState.errors.name ? 'auto' : 0
+                                                        }}
+                                                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                                                    >
+                                                        <FormMessage />
+                                                    </motion.div>
+                                                </FormItem>
+                                            )}
                                         />
-                                    </div>
 
-                                    <div>
-                                        <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                                            Email *
-                                        </label>
-                                        <input
-                                            type="email"
-                                            id="email"
+                                        <FormField
+                                            control={form.control}
                                             name="email"
-                                            required
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-surface border border-surface-secondary rounded-lg focus:outline-none focus:border-primary transition-colors duration-300 text-foreground placeholder:text-foreground-tertiary"
-                                            placeholder="your.email@example.com"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="transition-colors duration-200">Email *</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="email"
+                                                            placeholder="your.email@example.com"
+                                                            className="bg-surface border-surface-secondary focus:border-primary focus-visible:ring-primary transition-all duration-300 hover:border-primary/50"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{
+                                                            opacity: form.formState.errors.email ? 1 : 0,
+                                                            height: form.formState.errors.email ? 'auto' : 0
+                                                        }}
+                                                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                                                    >
+                                                        <FormMessage />
+                                                    </motion.div>
+                                                </FormItem>
+                                            )}
                                         />
-                                    </div>
-                                </div>
+                                    </motion.div>
 
-                                <div>
-                                    <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
-                                        Subject *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="subject"
-                                        name="subject"
-                                        required
-                                        value={formData.subject}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-surface border border-surface-secondary rounded-lg focus:outline-none focus:border-primary transition-colors duration-300 text-foreground placeholder:text-foreground-tertiary"
-                                        placeholder="What's this about?"
-                                    />
-                                </div>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.5,
+                                            ease: [0.25, 0.4, 0.25, 1]
+                                        }}
+                                        viewport={{ once: true }}
+                                    >
+                                        <FormField
+                                            control={form.control}
+                                            name="subject"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="transition-colors duration-200">Subject *</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder="What's this about?"
+                                                            className="bg-surface border-surface-secondary focus:border-primary focus-visible:ring-primary transition-all duration-300 hover:border-primary/50"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{
+                                                            opacity: form.formState.errors.subject ? 1 : 0,
+                                                            height: form.formState.errors.subject ? 'auto' : 0
+                                                        }}
+                                                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                                                    >
+                                                        <FormMessage />
+                                                    </motion.div>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </motion.div>
 
-                                <div>
-                                    <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
-                                        Message *
-                                    </label>
-                                    <textarea
-                                        id="message"
-                                        name="message"
-                                        required
-                                        rows={5}
-                                        value={formData.message}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-surface border border-surface-secondary rounded-lg focus:outline-none focus:border-primary transition-colors duration-300 text-foreground placeholder:text-foreground-tertiary resize-none"
-                                        placeholder="Tell me about your project or idea..."
-                                    />
-                                </div>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.6,
+                                            ease: [0.25, 0.4, 0.25, 1]
+                                        }}
+                                        viewport={{ once: true }}
+                                    >
+                                        <FormField
+                                            control={form.control}
+                                            name="message"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="transition-colors duration-200">Message *</FormLabel>
+                                                    <FormControl>
+                                                        <Textarea
+                                                            placeholder="Tell me about your project or idea..."
+                                                            rows={5}
+                                                            className="bg-surface border-surface-secondary focus:border-primary focus-visible:ring-primary resize-none transition-all duration-300 hover:border-primary/50"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{
+                                                            opacity: form.formState.errors.message ? 1 : 0,
+                                                            height: form.formState.errors.message ? 'auto' : 0
+                                                        }}
+                                                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                                                    >
+                                                        <FormMessage />
+                                                    </motion.div>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </motion.div>
 
-                                <motion.button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="w-full button-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                                            Sending...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Send className="w-4 h-4" />
-                                            Send Message
-                                        </>
-                                    )}
-                                </motion.button>
-                            </form>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.7,
+                                            ease: [0.25, 0.4, 0.25, 1]
+                                        }}
+                                        viewport={{ once: true }}
+                                    >
+                                        <motion.div
+                                            whileTap={{ scale: 0.98 }}
+                                            transition={{ duration: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
+                                            className="w-full"
+                                        >
+                                            <Button
+                                                type="submit"
+                                                disabled={form.formState.isSubmitting}
+                                                className="w-full button-primary transition-all duration-300 group/modal-btn relative overflow-hidden"
+                                                size="lg"
+                                            >
+                                                {form.formState.isSubmitting ? (
+                                                    <>
+                                                        <motion.div
+                                                            className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full"
+                                                            animate={{ rotate: 360 }}
+                                                            transition={{
+                                                                duration: 1,
+                                                                repeat: Infinity,
+                                                                ease: "linear"
+                                                            }}
+                                                        />
+                                                        Sending...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <span className="group-hover/modal-btn:translate-x-full group-hover/modal-btn:opacity-0 text-center transition-all duration-500">
+                                                            Send Message
+                                                        </span>
+                                                        <div className="absolute inset-0 -translate-x-full group-hover/modal-btn:translate-x-0 flex items-center justify-center transition-all duration-500 z-20">
+                                                            <Send className="w-4 h-4" />
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </motion.div>
+                                    </motion.div>
+                                </form>
+                            </Form>
                         </div>
                     </motion.div>
 
@@ -330,19 +449,31 @@ export function Contact() {
                                     key={info.label}
                                     href={info.href}
                                     initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: index * 0.1,
-                                        ease: "easeOut"
+                                    animate={{ opacity: 1, y: 0 }}
+                                    whileHover={{
+                                        scale: 1.02,
+                                        transition: { duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }
                                     }}
-                                    viewport={{ once: true }}
-                                    whileHover={{ scale: 1.02, y: -2 }}
-                                    className="flex items-center gap-4 p-4 glass-effect rounded-lg hover:border-primary/20 transition-all duration-300 group"
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={{
+                                        duration: 0.5,
+                                        delay: index * 0.1,
+                                        ease: [0.25, 0.4, 0.25, 1]
+                                    }}
+                                    className="flex items-center gap-4 p-4 glass-effect rounded-lg cursor-pointer 
+                                               hover:bg-primary/5 transition-colors duration-300 
+                                               border border-surface-secondary hover:border-primary/20"
                                 >
-                                    <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
+                                    <motion.div
+                                        className="p-3 bg-primary/10 rounded-lg"
+                                        whileHover={{
+                                            scale: 1.1,
+                                            rotate: [0, -5, 5, -5, 0],
+                                            transition: { duration: 0.5 }
+                                        }}
+                                    >
                                         <info.icon className="w-5 h-5 text-primary" />
-                                    </div>
+                                    </motion.div>
                                     <div>
                                         <div className="text-sm text-foreground-secondary">
                                             {info.label}
@@ -368,15 +499,32 @@ export function Contact() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         initial={{ opacity: 0, scale: 0.8 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-                                        viewport={{ once: true }}
-                                        whileHover={{ scale: 1.1, y: -2 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        whileHover={{
+                                            scale: 1.05,
+                                            transition: { duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }
+                                        }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="p-3 bg-surface hover:bg-surface-secondary rounded-lg transition-all duration-300 group relative z-10"
+                                        transition={{
+                                            duration: 0.4,
+                                            delay: 0.5 + index * 0.1,
+                                            ease: [0.25, 0.4, 0.25, 1]
+                                        }}
+                                        className="p-3 bg-surface rounded-lg relative z-10 
+                                                   hover:bg-transparent transition-all duration-300 
+                                                   border border-transparent hover:border-primary/30"
                                         aria-label={link.name}
                                     >
-                                        <link.icon className="w-5 h-5 text-foreground-secondary group-hover:text-primary transition-colors duration-300" />
+                                        <motion.div
+                                            whileHover={{
+                                                scale: 1.15,
+                                                rotate: 5,
+                                                transition: { duration: 0.3 }
+                                            }}
+                                        >
+                                            <link.icon className="w-5 h-5 text-foreground-secondary 
+                                                                  hover:text-primary transition-colors duration-300" />
+                                        </motion.div>
                                     </motion.a>
                                 ))}
                             </div>
@@ -385,118 +533,6 @@ export function Contact() {
                     </motion.div>
                 </div>
             </div>
-
-            {/* Success Popup */}
-            {submitted && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                    style={{ backdropFilter: 'blur(16px)' }}
-                >
-                    {/* Glass Backdrop */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="absolute inset-0 bg-black/30 dark:bg-black/50"
-                    />
-
-                    {/* Glass Popup */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 30 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 30 }}
-                        transition={{
-                            type: "spring",
-                            duration: 0.6,
-                            bounce: 0.3
-                        }}
-                        className="relative bg-white/20 dark:bg-white/10 backdrop-blur-2xl border border-white/30 dark:border-white/20 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none"
-                        style={{
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                        }}
-                    >
-                        {/* Success Icon */}
-                        <motion.div
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            transition={{
-                                delay: 0.2,
-                                type: "spring",
-                                duration: 0.7,
-                                bounce: 0.4
-                            }}
-                            className="w-20 h-20 bg-emerald-500/20 dark:bg-emerald-400/30 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/40 dark:border-emerald-400/50 backdrop-blur-sm shadow-lg shadow-emerald-500/20"
-                        >
-                            <motion.svg
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
-                                className="w-10 h-10 text-emerald-600 dark:text-emerald-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <motion.path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={3}
-                                    d="M5 13l4 4L19 7"
-                                />
-                            </motion.svg>
-                        </motion.div>
-
-                        {/* Success Message */}
-                        <motion.h3
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                            className="text-2xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight"
-                        >
-                            Message Sent!
-                        </motion.h3>
-
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
-                            className="text-gray-700 dark:text-gray-300 text-lg mb-8 leading-relaxed"
-                        >
-                            Thank you for reaching out! I'll get back to you as soon as possible.
-                        </motion.p>
-
-                        {/* Theme-aware Glass Close Button */}
-                        <motion.button
-                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            whileHover={{
-                                scale: 1.05,
-                                transition: { duration: 0.2 }
-                            }}
-                            whileTap={{
-                                scale: 0.95,
-                                transition: { duration: 0.1 }
-                            }}
-                            transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-                            onClick={() => setSubmitted(false)}
-                            className="group relative bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20 border border-white/30 dark:border-white/20 text-gray-900 dark:text-white px-8 py-3.5 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl overflow-hidden"
-                        >
-                            {/* Button gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
-
-                            {/* Button text */}
-                            <span className="relative z-10">Done</span>
-
-                            {/* Shimmer effect */}
-                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
-                        </motion.button>
-                    </motion.div>
-                </motion.div>
-            )}
         </section>
     )
 }
