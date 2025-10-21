@@ -5,6 +5,7 @@ import { Send, Mail, MapPin, Phone, Github, Linkedin } from 'lucide-react'
 import emailjs from '@emailjs/browser'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { contactFormSchema } from '@/lib/validation'
 import * as z from 'zod'
 import { toast } from 'sonner'
 
@@ -21,21 +22,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 // Zod schema for form validation
-const contactFormSchema = z.object({
-    name: z.string().min(2, {
-        message: 'Name must be at least 2 characters.',
-    }),
-    email: z.string().email({
-        message: 'Please enter a valid email address.',
-    }),
-    subject: z.string().min(3, {
-        message: 'Subject must be at least 3 characters.',
-    }),
-    message: z.string().min(10, {
-        message: 'Message must be at least 10 characters.',
-    }),
-})
-
 type ContactFormValues = z.infer<typeof contactFormSchema>
 
 const contactInfo = [

@@ -1,37 +1,12 @@
 'use client';
 
+import { motion } from 'framer-motion'
+import { useIntersectionObserver } from '@/lib/hooks'
 import { scrollToSection } from '@/lib/utils'
-import { useEffect, useRef, useState } from 'react'
 
 export function Footer() {
     const currentYear = new Date().getFullYear()
-    const footerRef = useRef<HTMLElement>(null)
-    const [isVisible, setIsVisible] = useState(false)
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true)
-                }
-            },
-            {
-                threshold: 0.2,
-                rootMargin: '0px 0px -100px 0px'
-            }
-        )
-
-        const currentFooterRef = footerRef.current
-        if (currentFooterRef) {
-            observer.observe(currentFooterRef)
-        }
-
-        return () => {
-            if (currentFooterRef) {
-                observer.unobserve(currentFooterRef)
-            }
-        }
-    }, [])
+    const { ref: footerRef, isVisible } = useIntersectionObserver()
 
     return (
         <footer
@@ -222,37 +197,39 @@ export function Footer() {
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-4'
                 }`}>
-                <button
+                <motion.button
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className="group relative flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-2xl overflow-hidden"
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
+                    className="group relative flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-2xl overflow-hidden button-primary"
                     style={{
                         background: `linear-gradient(to bottom right, var(--primary), var(--secondary))`,
                         color: 'var(--background)'
                     }}
                 >
-                    {/* Animated background overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {/* Text with slide animation */}
+                    <span className="group-hover:translate-x-full group-hover:opacity-0 text-center transition-all duration-500 relative z-10">
+                        Back to top
+                    </span>
 
-                    {/* Bouncing arrow icon */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        className="h-4 w-4 relative z-10 transition-transform duration-300 group-hover:-translate-y-1 group-hover:animate-bounce"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M5 10l7-7m0 0l7 7m-7-7v18"
-                        />
-                    </svg>
-                    <span className="text-base font-medium relative z-10">Back to top</span>
-
-                    {/* Shimmer effect */}
-                    <div className="absolute inset-0 -top-2 -left-2 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-300"></div>
-                </button>
+                    {/* Icon with slide animation */}
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-0 flex items-center justify-center transition-all duration-500 z-20">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            className="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"
+                            />
+                        </svg>
+                    </div>
+                </motion.button>
                 <span>&copy; {currentYear} Sean. All rights reserved.</span>
             </div>
         </footer>

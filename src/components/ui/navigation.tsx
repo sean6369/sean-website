@@ -180,8 +180,8 @@ export function Navigation() {
                                     colors={isDarkMode ? ['#1e1e2e', '#313244', '#45475a'] : ['#F0E6DD', '#E6DBD1', '#D4C4B0']}
                                     logoUrl="/src/assets/logos/reactbits-gh-white.svg"
                                     accentColor="var(--primary)"
-                                    onMenuOpen={() => console.log('Menu opened')}
-                                    onMenuClose={() => console.log('Menu closed')}
+                                    onMenuOpen={() => { }}
+                                    onMenuClose={() => { }}
                                     onItemClick={(item) => {
                                         const sectionId = item.link.replace('#', '');
                                         scrollToSection(sectionId);

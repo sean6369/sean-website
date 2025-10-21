@@ -327,7 +327,6 @@ export default function LiquidEther({
                     this.current.copy(this.mouse.coords);
                     this.lastTime = now;
                     this.activationTime = now;
-                    console.log('Auto demo activated after', idle, 'ms of inactivity');
                 }
                 if (!this.active) return;
                 this.mouse.isAutoActive = true;
@@ -1015,7 +1014,6 @@ export default function LiquidEther({
                 Mouse.takeoverDuration = props.takeoverDuration;
                 Mouse.onInteract = () => {
                     this.lastUserInteraction = performance.now();
-                    console.log('User interaction detected, stopping auto demo');
                     if (this.autoDriver) this.autoDriver.forceStop();
                 };
                 this.autoDriver = new AutoDriver(Mouse, this, {

@@ -1,11 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ExternalLink, Github, ChevronRight, X, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { ExternalLink, Github, ChevronRight, X, ChevronLeft, ChevronRightIcon } from 'lucide-react'
+import { useState, useRef, useEffect, useMemo, memo } from 'react'
+import { useIsMobile } from '@/lib/hooks'
 import MagicBento from '../ui/MagicBento'
 
-const projects = [
+const projectsData = [
     {
         id: 1,
         title: 'SilverSigma',
@@ -168,7 +169,7 @@ function useScrollState() {
 }
 
 // Helper component for video section
-const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0] }): JSX.Element | null => {
+const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsData[0] }): JSX.Element | null => {
     // Check for multiple videos first
     if ('videos' in selectedProject && selectedProject.videos && Array.isArray(selectedProject.videos)) {
         return (
@@ -188,14 +189,10 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0]
                                     webkit-playsinline="true"
                                     title={`${selectedProject.title} - ${video.title}`}
                                     onError={(e) => {
-                                        console.error('Video load error:', e);
-                                        console.error('Video src:', video.url);
                                     }}
                                     onLoadStart={() => {
-                                        console.log('Video loading started:', video.url);
                                     }}
                                     onCanPlay={() => {
-                                        console.log('Video can play:', video.url);
                                     }}
                                 >
                                     <source src={video.url} type="video/mp4" />
@@ -250,14 +247,10 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0]
                         webkit-playsinline="true"
                         title={`${selectedProject.title} Demo Video`}
                         onError={(e) => {
-                            console.error('Video load error:', e);
-                            console.error('Video src:', videoUrl);
                         }}
                         onLoadStart={() => {
-                            console.log('Video loading started:', videoUrl);
                         }}
                         onCanPlay={() => {
-                            console.log('Video can play:', videoUrl);
                         }}
                     >
                         <source src={videoUrl} type="video/mp4" />
@@ -292,20 +285,10 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projects[0]
     );
 };
 
-export function Projects() {
+export const Projects = memo(function Projects() {
+    const projects = useMemo(() => projectsData, []);
     const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
-    const [isMobile, setIsMobile] = useState(false)
-
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 640)
-        }
-
-        checkMobile()
-        window.addEventListener('resize', checkMobile)
-
-        return () => window.removeEventListener('resize', checkMobile)
-    }, [])
+    const isMobile = useIsMobile()
 
 
     return (
@@ -697,4 +680,4 @@ export function Projects() {
             </div>
         </section>
     )
-}
+});

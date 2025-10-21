@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import React, { useRef, useEffect, useCallback, useState, useMemo, memo } from 'react';
 import { gsap } from 'gsap';
 import { Github, ExternalLink } from 'lucide-react';
 import './MagicBento.css';
@@ -376,7 +376,6 @@ const ParticleCard = ({
             className={`${className} particle-container`}
             style={{ ...style, position: 'relative', overflow: 'hidden' }}
             onClick={(e) => {
-                console.log('Card clicked!', e);
                 if (onCardClick) {
                     onCardClick(e);
                 }
@@ -588,7 +587,7 @@ interface MagicBentoProps {
     projects?: Project[];
 }
 
-const MagicBento = ({
+const MagicBento = memo(function MagicBento({
     textAutoHide = true,
     enableStars = true,
     enableSpotlight = true,
@@ -602,7 +601,7 @@ const MagicBento = ({
     enableMagnetism = true,
     onCardClick = null,
     projects = []
-}: MagicBentoProps) => {
+}: MagicBentoProps) {
     const gridRef = useRef<HTMLDivElement>(null);
     const isMobile = useMobileDetection();
     const shouldDisableAnimations = disableAnimations || isMobile;
@@ -873,7 +872,6 @@ const MagicBento = ({
                             key={index}
                             {...cardProps}
                             onClick={(e) => {
-                                console.log('Card clicked!', e);
                                 if (onCardClick) {
                                     onCardClick(e);
                                 }
@@ -1200,6 +1198,6 @@ const MagicBento = ({
             </BentoCardGrid>
         </div>
     );
-};
+});
 
 export default MagicBento;

@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion'
 import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react'
 import { scrollToSection } from '@/lib/utils'
-import LiquidEther from '@/components/ui/LiquidEther'
-import TextType from '@/components/ui/TextType'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
+
+// Lazy load heavy components
+const LiquidEther = lazy(() => import('@/components/ui/LiquidEther'))
+const TextType = lazy(() => import('@/components/ui/TextType'))
 
 const socialLinks = [
     {
@@ -74,25 +76,27 @@ export function Hero() {
         <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
             {/* LiquidEther Background */}
             <div className="absolute inset-0 z-0">
-                <LiquidEther
-                    key={isDarkMode ? 'dark' : 'light'} // Force re-render when theme changes
-                    colors={getLiquidEtherColors()}
-                    backgroundColor={getBackgroundColor()}
-                    mouseForce={25}
-                    cursorSize={120}
-                    isViscous={false}
-                    viscous={30}
-                    iterationsViscous={32}
-                    iterationsPoisson={32}
-                    resolution={0.6}
-                    isBounce={false}
-                    autoDemo={true}
-                    autoSpeed={0.3}
-                    autoIntensity={1.8}
-                    takeoverDuration={0.4}
-                    autoResumeDelay={4000}
-                    autoRampDuration={0.8}
-                />
+                <Suspense fallback={<div className="w-full h-full bg-background" />}>
+                    <LiquidEther
+                        key={isDarkMode ? 'dark' : 'light'} // Force re-render when theme changes
+                        colors={getLiquidEtherColors()}
+                        backgroundColor={getBackgroundColor()}
+                        mouseForce={25}
+                        cursorSize={120}
+                        isViscous={false}
+                        viscous={30}
+                        iterationsViscous={32}
+                        iterationsPoisson={32}
+                        resolution={0.6}
+                        isBounce={false}
+                        autoDemo={true}
+                        autoSpeed={0.3}
+                        autoIntensity={1.8}
+                        takeoverDuration={0.4}
+                        autoResumeDelay={4000}
+                        autoRampDuration={0.8}
+                    />
+                </Suspense>
             </div>
 
             {/* Subtle overlay for better text readability */}
@@ -108,27 +112,29 @@ export function Hero() {
                         className="mb-6"
                     >
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
-                            <TextType
-                                text={[
-                                    "Hello, I'm Sean",
-                                    "Hello, I'm a Developer",
-                                    "Hello, I'm a Creator"
-                                ]}
-                                typingSpeed={80}
-                                pauseDuration={2000}
-                                initialDelay={500}
-                                showCursor={true}
-                                cursorCharacter="|"
-                                cursorBlinkDuration={999999}
-                                loop={false}
-                                className="gradient-text"
-                                onSentenceComplete={(sentence, index) => {
-                                    // Stop after typing the first sentence completely
-                                    if (index === 0) {
-                                        // The animation will automatically stop since loop is false
-                                    }
-                                }}
-                            />
+                            <Suspense fallback={<span className="gradient-text">Hello, I'm Sean</span>}>
+                                <TextType
+                                    text={[
+                                        "Hello, I'm Sean",
+                                        "Hello, I'm a Developer",
+                                        "Hello, I'm a Creator"
+                                    ]}
+                                    typingSpeed={80}
+                                    pauseDuration={2000}
+                                    initialDelay={500}
+                                    showCursor={true}
+                                    cursorCharacter="|"
+                                    cursorBlinkDuration={999999}
+                                    loop={false}
+                                    className="gradient-text"
+                                    onSentenceComplete={(sentence, index) => {
+                                        // Stop after typing the first sentence completely
+                                        if (index === 0) {
+                                            // The animation will automatically stop since loop is false
+                                        }
+                                    }}
+                                />
+                            </Suspense>
                         </h1>
 
                         <motion.div
@@ -137,15 +143,17 @@ export function Hero() {
                             transition={{ duration: 0.5, delay: 0.5 }} // Show immediately but with slight delay
                             className="text-xl md:text-2xl lg:text-3xl text-foreground-secondary mb-2"
                         >
-                            <TextType
-                                text='const role = NUS Computer Engineering Student'
-                                typingSpeed={50}
-                                initialDelay={1200} // Start typing at 1.2s
-                                showCursor={true}
-                                cursorCharacter="_"
-                                loop={false}
-                                className="font-menlo text-accent" // Uses theme-aware accent color
-                            />
+                            <Suspense fallback={<span className="font-menlo text-accent">const role = NUS Computer Engineering Student</span>}>
+                                <TextType
+                                    text='const role = NUS Computer Engineering Student'
+                                    typingSpeed={50}
+                                    initialDelay={1200} // Start typing at 1.2s
+                                    showCursor={true}
+                                    cursorCharacter="_"
+                                    loop={false}
+                                    className="font-menlo text-accent" // Uses theme-aware accent color
+                                />
+                            </Suspense>
                         </motion.div>
                     </motion.div>
 
