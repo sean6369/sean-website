@@ -324,6 +324,48 @@
         }
     }
 
+    /* Mobile cursor restoration */
+    @media (max-width: 768px) {
+        .custom-cursor {
+            display: none !important;
+        }
+
+        /* Restore regular cursor on mobile */
+        body,
+        *,
+        *::before,
+        *::after {
+            cursor: auto !important;
+        }
+
+        /* Ensure clickable elements show pointer cursor on mobile */
+        a,
+        button,
+        input,
+        textarea,
+        select,
+        [role="button"],
+        .cursor-pointer {
+            cursor: pointer !important;
+        }
+
+        /* Text elements should show text cursor */
+        p,
+        span,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        li,
+        td,
+        th {
+            cursor: text !important;
+        }
+    }
+
     /* Custom cursor styles */
     .custom-cursor {
         position: fixed;

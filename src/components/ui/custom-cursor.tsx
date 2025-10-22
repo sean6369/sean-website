@@ -11,6 +11,7 @@ export default function CustomCursor() {
     const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 })
     const [isHovering, setIsHovering] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
+    const [isMobile, setIsMobile] = useState(false)
     const rafRef = useRef<number>()
 
     // Throttled mouse move handler for better performance
@@ -86,7 +87,26 @@ export default function CustomCursor() {
         setIsVisible(false)
     }, [])
 
+    // Mobile detection
     useEffect(() => {
+        const checkMobile = () => {
+            const isMobileDevice = window.innerWidth <= 768 ||
+                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                ('ontouchstart' in window) ||
+                (navigator.maxTouchPoints > 0)
+            setIsMobile(isMobileDevice)
+        }
+
+        checkMobile()
+        window.addEventListener('resize', checkMobile)
+
+        return () => window.removeEventListener('resize', checkMobile)
+    }, [])
+
+    useEffect(() => {
+        // Don't add event listeners on mobile devices
+        if (isMobile) return
+
         // Add event listeners with passive where possible
         document.addEventListener('mousemove', handleMouseMove, { passive: true })
         document.addEventListener('mouseenter', handleMouseEnter, true)
@@ -106,9 +126,10 @@ export default function CustomCursor() {
             document.removeEventListener('scroll', handleScroll)
             document.removeEventListener('mouseleave', handleMouseLeaveDocument)
         }
-    }, [handleMouseMove, handleMouseEnter, handleMouseLeave, handleMouseOut, handleScroll, handleMouseLeaveDocument])
+    }, [handleMouseMove, handleMouseEnter, handleMouseLeave, handleMouseOut, handleScroll, handleMouseLeaveDocument, isMobile])
 
-    if (!isVisible) return null
+    // Don't render on mobile devices
+    if (isMobile || !isVisible) return null
 
     return (
         <div
