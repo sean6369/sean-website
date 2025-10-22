@@ -3,6 +3,7 @@ import { newYork } from '@/lib/fonts'
 import '@/styles/globals.css'
 import { Toaster } from '@/components/ui/sonner'
 import CustomCursor from '@/components/ui/custom-cursor'
+import { ModalProvider } from '@/lib/modal-context'
 
 export const metadata: Metadata = {
     title: 'Sean | Personal Website',
@@ -77,9 +78,11 @@ export default function RootLayout({
                     backgroundColor: 'var(--background)',
                 }}
             >
-                {children}
-                <Toaster />
-                <CustomCursor />
+                <ModalProvider>
+                    {children}
+                    <Toaster />
+                    <CustomCursor />
+                </ModalProvider>
             </body>
         </html>
     )

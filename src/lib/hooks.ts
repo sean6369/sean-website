@@ -58,6 +58,27 @@ export function useIsMobile() {
 }
 
 /**
+ * Custom hook for reduced motion detection
+ */
+export function useReducedMotion() {
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+        setPrefersReducedMotion(mediaQuery.matches)
+
+        const handleChange = (e: MediaQueryListEvent) => {
+            setPrefersReducedMotion(e.matches)
+        }
+
+        mediaQuery.addEventListener('change', handleChange)
+        return () => mediaQuery.removeEventListener('change', handleChange)
+    }, [])
+
+    return prefersReducedMotion
+}
+
+/**
  * Custom hook for theme detection
  */
 export function useTheme() {

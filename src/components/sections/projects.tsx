@@ -1,10 +1,11 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { ExternalLink, Github, ChevronRight, X, ChevronLeft, ChevronRightIcon } from 'lucide-react'
-import { useState, useRef, useEffect, useMemo, memo } from 'react'
-import { useIsMobile } from '@/lib/hooks'
-import MagicBento from '../ui/MagicBento'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ExternalLink, Github, X } from 'lucide-react'
+import { useState, useMemo, memo, useEffect, useRef } from 'react'
+import { useIsMobile, useReducedMotion } from '@/lib/hooks'
+import { useModal } from '@/lib/modal-context'
+import { getAnimationVariants } from '@/lib/animations'
 
 const projectsData = [
     {
@@ -138,35 +139,116 @@ const projectsData = [
 ]
 
 
-// Custom hook for scroll state
-function useScrollState() {
-    const [canScrollLeft, setCanScrollLeft] = useState(false)
-    const [canScrollRight, setCanScrollRight] = useState(false)
-    const scrollRef = useRef<HTMLDivElement>(null)
 
-    const updateScrollState = () => {
-        if (scrollRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-            setCanScrollLeft(scrollLeft > 0)
-            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1)
+// Animated Logo Component
+const AnimatedLogo = () => (
+    <svg
+        width="400"
+        height="400"
+        viewBox="0 0 308 312"
+        className="animate-logo mx-auto"
+    >
+        <path
+            style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 2 }}
+            d="m 106.20947,85.790535 c -4.69221,-4.77311 -13.270327,-1.96479 -19,0.0903 -12.85195,4.609586 -40.57945,19.575555 -39.71682,35.909725 0.68914,13.04915 19.5083,12.36388 28.71682,11.96065 29.96233,-1.31201 58.49706,-10.98776 88,-14.96065 -17.19112,17.96234 -34.57462,35.37209 -54,50.99924 -5.22749,4.20537 -14.036487,14.61305 -20.999997,15.09259 -3.527973,0.24295 -6.664913,-2.89015 -8.985333,-5.13504 -3.42229,-3.3109 -7.76126,-7.87224 -9.55248,-12.38117 -1.23603,-3.11139 0.98301,-6.32251 -0.2446,-9.42747 -2.60271,-6.58298 -12.42692,-1.37325 -16.21759,0.8665 -15.52581,9.17355 -32.28656,24.67116 -40.391206,40.98535 -4.6757418,9.412 -5.6732397,21.80975 7.391206,23.6983 27.31912,3.94913 46.7504,-23.5612 70.000003,-30.76544 7.74197,-2.39895 21.553497,1.06714 29.999997,1.06714 18.60347,0 39.21588,-2.3605 57,-8 v 1 c -45.02641,18.74603 -88.760947,46.0853 -130,71.94983 -15.0765,9.45578 -38.7511828,20.62747 -47.0000017,37.05017 6.622519,-1.84055 12.2877027,-7.8515 18.0000007,-11.66666 12.459601,-8.32162 25.152531,-16.18008 38.000001,-23.88427 51.46222,-30.86011 105.66653,-67.05979 163,-84.95061 18.21078,-5.68265 37.0303,-10.31986 54,-19.27933 7.27249,-3.83966 16.00601,-8.29513 17,-17.21913 -12.67789,-2.092 -26.09674,6.38811 -37,11.97223 -16.85338,8.6315 -34.69496,15.57616 -52,23.24614 -31.97359,14.1714 -69.84882,15.24795 -103.999997,13.78163 14.941687,-13.75259 31.568677,-25.63905 45.999997,-40.00076 9.92841,-9.88053 20.03821,-24.72567 32,-31.99384 8.35254,-5.07513 19.81113,-6.42718 29,-9.69752 19.99689,-7.116952 39.71715,-15.013079 58,-25.912035 14.47336,-8.62801 46.34656,-26.26865 40.56635,-47.395844 -6.11561,-22.353027 -39.39084,-5.927948 -50.56635,1.34491 -21.04211,13.693874 -40.81921,31.154484 -57.81558,49.615734 -8.02355,8.715086 -17.70883,25.121815 -29.18518,28.984575 -25.25904,8.5018 -52.7349,11.71436 -78.99924,15.47531 -8.63395,1.23635 -23.86632,2.99636 -30.5625,-3.97763 -5.39794,-5.62189 2.60691,-13.52678 6.52701,-17.34955 C 75.9837,94.392241 90.298283,91.751101 106.20947,85.790565 m 75,22.999995 c 4.07768,-8.75649 12.8347,-15.721709 19.34799,-22.760035 17.16677,-18.5506 36.78171,-36.84723 58.65201,-49.787785 7.86212,-4.651978 29.17426,-16.525391 35.97223,-4.344147 6.42956,11.521062 -11.58487,26.435652 -18.97223,32.432102 -27.02103,21.93342 -61.83853,35.049553 -95,44.459865 m 90,17 c -5.40353,4.00552 -16.716,17.76646 -23.98457,16.18286 -7.45063,-1.62327 -5.30425,-18.77649 -14.97608,-13.84952 -7.06581,3.59943 -9.4078,13.20021 -12.82408,19.6659 -0.98373,1.86184 -3.12027,6.72764 -5.99074,5.65509 -6.66644,-2.49094 2.54235,-19.16602 1.77547,-23.65433 l -7,7 h -1 c -7.39648,-6.42529 -18.23859,1.37282 -23.82947,7.09335 -5.30543,5.42847 -6.78267,13.077 -11.66975,18.42748 -7.59668,8.31698 -25.61135,11.25514 -34.50078,4.47917 5.30096,-1.97647 10.82773,-3.35281 16,-5.66589 3.51271,-1.57093 6.86534,-3.53757 9.99614,-5.77315 5.08542,-3.6313 13.66118,-17.08164 1.0031,-16.33257 -11.71485,0.69326 -21.87847,11.26912 -28.79167,19.81174 -2.77317,3.42679 -6.48772,8.12521 -4.60032,12.85107 2.4531,6.14229 14.15087,4.32348 19.39275,4.06867 8.32025,-0.40445 15.23744,-4.45081 23,-6.66049 11.75998,-3.34758 24.64328,-2.94954 31,-16.29938 h 1 c 1.96346,6.45514 7.98143,10.17386 13.6713,4.72145 6.05949,-5.80661 9.89813,-16.17201 13.3287,-23.72145 4.84027,3.9351 4.83345,12.05429 11.01543,14.39661 9.0896,3.444 31.09486,-12.80753 27.98457,-22.39661 m -72.01543,13.45294 c 5.93611,-0.866 5.45696,5.00035 3.1574,8.54706 -3.30113,5.09146 -11.46277,13.94189 -18.0324,14.45833 -5.11161,0.40182 -3.03036,-5.88321 -1.70602,-8.45833 3.01752,-5.86743 9.62405,-13.53214 16.58102,-14.54706 m 84.01543,3.54706 c -9.8504,13.65506 -38.79546,22.60687 -55,25 v -1 l 55,-24 m -118,3 c -4.17929,7.96738 -14.59077,12.68236 -23,15 3.4507,-8.02861 13.80438,-17.61557 23,-15 m -100,15 -16,21 15.89583,-8.65433 18.10417,15.65433 v 2 c -14.07418,9.49464 -28.70803,19.25835 -45,24.48996 -4.94646,1.58841 -15.60502,3.79312 -18.972221,-1.71835 -3.33665,-5.46146 1.044931,-13.21833 3.987651,-17.77161 7.10315,-10.99075 16.6516,-20.68279 27.02392,-28.62576 4.40975,-3.37693 9.21906,-7.44841 14.96065,-6.37424 z"
+            className="logo-path"
+        />
+    </svg>
+)
+
+// Reusable Video Player Component
+const VideoPlayer = ({ videoUrl, title, className = "" }: {
+    videoUrl: string;
+    title: string;
+    className?: string;
+}) => (
+    <div className={`relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black ${className}`}>
+        <video
+            src={videoUrl}
+            className="w-full h-full object-contain"
+            controls
+            preload="metadata"
+            playsInline
+            webkit-playsinline="true"
+            title={title}
+        >
+            <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+    </div>
+);
+
+// Helper component for preview (hover state)
+const PreviewSection = ({ project }: { project: typeof projectsData[0] }): JSX.Element | null => {
+    // Check for live website first
+    if ('live' in project && project.live && (project.title === 'Oxley Pawnshop Website' || project.title === 'Goldjewel Website & CMS' || project.title === 'SilverSigma')) {
+        return (
+            <div className="w-full h-full rounded-lg overflow-hidden border border-surface-secondary bg-black">
+                <div
+                    className="w-full h-full"
+                    style={{
+                        transform: 'scale(0.5)',
+                        transformOrigin: 'top left',
+                        width: '200%',
+                        height: '200%'
+                    }}
+                >
+                    <iframe
+                        src={project.live}
+                        className="w-full h-full"
+                        title={`${project.title} Live Preview`}
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                        loading="lazy"
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    // Check for projects with background images (NoFap and Ship Vessel)
+    if (project.title === 'NoFap' || project.title === 'Ship Vessel Risk Detection Model') {
+        const backgroundImage = project.title === 'NoFap'
+            ? "url('/images/Hackomania screen.png')"
+            : "url('/images/Marinetime Hackathon screen.jpeg')";
+
+        return (
+            <div className="w-full h-full rounded-lg overflow-hidden border border-surface-secondary bg-black">
+                <div
+                    className="w-full h-full bg-cover bg-center"
+                    style={{ backgroundImage }}
+                />
+            </div>
+        );
+    }
+
+    // Check for video demo
+    if ('video' in project && project.video) {
+        const videoUrl = project.video as string;
+        if (videoUrl.includes('/videos/') || videoUrl.endsWith('.mp4') || videoUrl.endsWith('.mov') || videoUrl.endsWith('.webm')) {
+            return <VideoPlayer videoUrl={videoUrl} title={`${project.title} Demo Video`} className="w-full h-full" />;
         }
     }
 
-    useEffect(() => {
-        const element = scrollRef.current
-        if (element) {
-            updateScrollState()
-            element.addEventListener('scroll', updateScrollState)
-            window.addEventListener('resize', updateScrollState)
-            return () => {
-                element.removeEventListener('scroll', updateScrollState)
-                window.removeEventListener('resize', updateScrollState)
-            }
-        }
-    }, [])
+    // Check for multiple videos
+    if ('videos' in project && project.videos && Array.isArray(project.videos) && project.videos.length > 0) {
+        return <VideoPlayer videoUrl={project.videos[0].url} title={`${project.title} Demo Video`} className="w-full h-full" />;
+    }
 
-    return { scrollRef, canScrollLeft, canScrollRight, updateScrollState }
-}
+    // Fallback to project image or description
+    return (
+        <div className="w-full h-full rounded-lg border border-surface-secondary bg-surface flex items-center justify-center p-6">
+            <div className="text-center max-w-md">
+                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <ExternalLink className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="text-xl font-semibold text-foreground mb-3">{project.title}</h4>
+                <p className="text-sm text-muted-foreground line-clamp-3">
+                    {project.description}
+                </p>
+            </div>
+        </div>
+    );
+};
 
 // Helper component for video section
 const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsData[0] }): JSX.Element | null => {
@@ -179,26 +261,11 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsDat
                     {selectedProject.videos.map((video, index) => (
                         <div key={index} className="space-y-2">
                             <h5 className="text-base font-medium text-foreground">{video.title}</h5>
-                            <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary bg-black">
-                                <video
-                                    src={video.url}
-                                    className="w-full h-full object-contain"
-                                    controls
-                                    preload="metadata"
-                                    playsInline
-                                    webkit-playsinline="true"
-                                    title={`${selectedProject.title} - ${video.title}`}
-                                    onError={(e) => {
-                                    }}
-                                    onLoadStart={() => {
-                                    }}
-                                    onCanPlay={() => {
-                                    }}
-                                >
-                                    <source src={video.url} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
+                            <VideoPlayer
+                                videoUrl={video.url}
+                                title={`${selectedProject.title} - ${video.title}`}
+                                className="w-full h-64 sm:h-96"
+                            />
                         </div>
                     ))}
                 </div>
@@ -237,26 +304,11 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsDat
                     </div>
                 </div>
             ) : videoUrl.includes('/videos/') || videoUrl.endsWith('.mp4') || videoUrl.endsWith('.mov') || videoUrl.endsWith('.webm') ? (
-                <div className="relative w-full h-64 sm:h-96 rounded-lg overflow-hidden border border-surface-secondary bg-black">
-                    <video
-                        src={videoUrl}
-                        className="w-full h-full object-contain"
-                        controls
-                        preload="metadata"
-                        playsInline
-                        webkit-playsinline="true"
-                        title={`${selectedProject.title} Demo Video`}
-                        onError={(e) => {
-                        }}
-                        onLoadStart={() => {
-                        }}
-                        onCanPlay={() => {
-                        }}
-                    >
-                        <source src={videoUrl} type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
+                <VideoPlayer
+                    videoUrl={videoUrl}
+                    title={`${selectedProject.title} Demo Video`}
+                    className="w-full h-64 sm:h-96"
+                />
             ) : (
                 <div className="w-full h-96 rounded-lg border border-surface-secondary bg-surface-primary flex flex-col items-center justify-center p-6">
                     <div className="text-center">
@@ -287,13 +339,103 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsDat
 
 export const Projects = memo(function Projects() {
     const projects = useMemo(() => projectsData, []);
-    const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
-    const isMobile = useIsMobile()
+    const { setIsModalOpen } = useModal()
 
+
+    // Consolidated state management
+    const [projectState, setProjectState] = useState({
+        selectedProject: null as typeof projects[0] | null,
+        hoveredProject: null as typeof projects[0] | null,
+        hoverTimeout: null as NodeJS.Timeout | null,
+        previewRect: null as DOMRect | null,
+    });
+
+    const previewRef = useRef<HTMLDivElement>(null)
+    const isMobile = useIsMobile()
+    const prefersReducedMotion = useReducedMotion()
+    const animations = getAnimationVariants(prefersReducedMotion) as any
+
+    // Destructure for easier access
+    const { selectedProject, hoveredProject, hoverTimeout, previewRect } = projectState;
+
+    // Project background images mapping
+    const projectBackgrounds: Record<number, string> = {
+        1: '/images/What the Hack screen.png',
+        2: '/images/IDEATE screen.png',
+        3: '/images/Oxley Pawnshop screen.jpeg',
+        4: '/images/Lifehack screen.jpeg',
+        5: '/images/Goldjewel screen.jpg',
+        6: '/images/DSTA Brainhack screen.png',
+        7: '/images/Orbital screen.png',
+        8: '/images/Hackomania screen.png',
+        9: '/images/Marinetime Hackathon screen.jpeg',
+    };
+
+    const activeProjectId = hoveredProject?.id || selectedProject?.id;
+    const backgroundImage = activeProjectId ? projectBackgrounds[activeProjectId] : null;
+
+
+    const handleMouseEnter = (project: typeof projects[0]) => {
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout)
+            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
+        }
+        setProjectState(prev => ({ ...prev, hoveredProject: project }))
+    }
+
+    const handleMouseLeave = () => {
+        const timeout = setTimeout(() => {
+            setProjectState(prev => ({ ...prev, hoveredProject: null }))
+        }, 300) // 300ms delay before hiding
+        setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
+    }
+
+    const handlePreviewMouseEnter = () => {
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout)
+            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
+        }
+    }
+
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout)
+            }
+        }
+    }, [hoverTimeout])
+
+    // Reset preview rect when overlay closes
+    useEffect(() => {
+        if (!selectedProject) {
+            setProjectState(prev => ({ ...prev, previewRect: null }))
+        }
+    }, [selectedProject])
 
     return (
-        <section id="projects" className="section-padding bg-background-secondary">
-            <div className="container-custom">
+        <section id="projects" className="section-padding bg-background-secondary relative">
+            {/* Project Background Effects */}
+            <AnimatePresence>
+                {backgroundImage ? (
+                    <motion.div
+                        key={`background-image-${activeProjectId}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: prefersReducedMotion ? 0.1 : 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="absolute inset-0 z-0"
+                    >
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: `url('${backgroundImage}')` }}
+                        />
+                        <div className="absolute inset-0 bg-black/70" />
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
+
+            <div className="container-custom relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 40, scale: 0.98 }}
                     whileInView={{
@@ -322,7 +464,7 @@ export const Projects = memo(function Projects() {
 
 
 
-                {/* Magic Bento Grid */}
+                {/* New Split Layout */}
                 <motion.div
                     initial={{ opacity: 0, y: 40, scale: 0.98 }}
                     whileInView={{
@@ -339,345 +481,346 @@ export const Projects = memo(function Projects() {
                         }
                     }}
                     viewport={{ once: true, margin: "-80px" }}
-                    className="flex justify-center"
+                    className="grid grid-cols-1 lg:grid-cols-[25%_1fr] gap-6 lg:gap-8"
                 >
-                    <MagicBento
-                        textAutoHide={true}
-                        enableStars={true}
-                        enableSpotlight={true}
-                        enableBorderGlow={true}
-                        enableTilt={true}
-                        enableMagnetism={true}
-                        clickEffect={true}
-                        spotlightRadius={300}
-                        particleCount={12}
-                        projects={projects}
-                        onCardClick={(e) => {
-                            // Find the project index based on the card clicked
-                            const cardElement = e.currentTarget;
-                            if (cardElement.parentNode) {
-                                const cardIndex = Array.from(cardElement.parentNode.children).indexOf(cardElement);
-                                if (projects[cardIndex]) {
-                                    setSelectedProject(projects[cardIndex]);
-                                }
-                            }
-                        }}
-                    />
+                    {/* Pills Section */}
+                    <div className="space-y-3 lg:space-y-3">
+                        {projects.map((project, index) => {
+                            const isSelected = selectedProject?.id === project.id
+                            const isHovered = hoveredProject?.id === project.id
+                            const shouldBlur = (selectedProject && !isSelected) || (hoveredProject && !isHovered && !isSelected)
+
+                            return (
+                                <motion.div
+                                    key={project.id}
+                                    initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+                                    animate={{
+                                        opacity: 1,
+                                        x: 0,
+                                        filter: "blur(0px)",
+                                        transition: {
+                                            duration: 0.7,
+                                            ease: [0.16, 1, 0.3, 1]
+                                        }
+                                    }}
+                                    className={`
+                                        relative rounded-full cursor-pointer transition-all duration-300
+                                        ${shouldBlur ? 'blur-sm' : ''}
+                                    `}
+                                    onMouseEnter={() => handleMouseEnter(project)}
+                                    onMouseLeave={handleMouseLeave}
+                                    onClick={() => {
+                                        // Capture the preview element position for smooth transition
+                                        if (previewRef.current) {
+                                            const rect = previewRef.current.getBoundingClientRect()
+                                            setProjectState(prev => ({ ...prev, previewRect: rect }))
+                                        }
+                                        setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
+                                        setIsModalOpen(true)
+                                    }}
+                                >
+                                    <div className={`
+                                        rounded-full px-4 py-3 lg:px-6 lg:py-4 backdrop-blur-sm transition-all duration-300
+                                        ${isSelected
+                                            ? 'bg-black/15 dark:bg-white/10 border border-black/30 dark:border-white/20 shadow-lg shadow-primary/20'
+                                            : isHovered
+                                                ? 'bg-black/10 dark:bg-white/8 border border-primary dark:border-primary shadow-md shadow-primary/20'
+                                                : 'bg-black/8 dark:bg-white/5 border border-black/15 dark:border-white/10 hover:border-black/25 dark:hover:border-white/20 hover:shadow-lg hover:shadow-black/10 dark:hover:shadow-white/10'
+                                        }
+                                    `}>
+                                        <div className={`flex items-center justify-between transition-opacity duration-300 ${shouldBlur ? 'opacity-40' : 'opacity-100'}`}>
+                                            <h3 className={`font-semibold truncate transition-colors duration-300 ${isHovered ? 'text-[#E6DCD1] dark:text-foreground' : 'text-foreground'}`}>
+                                                {project.title}
+                                            </h3>
+                                            {'achievement' in project && project.achievement && (
+                                                <span className="flex items-center gap-1 text-xs ml-2 flex-shrink-0">
+                                                    🏆
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )
+                        })}
+                    </div>
+
+                    {/* Expanded View - Only Hover Previews */}
+                    <div className="h-[500px] lg:h-[600px]">
+                        <AnimatePresence mode="wait">
+                            {hoveredProject ? (
+                                <motion.div
+                                    key={hoveredProject.id}
+                                    initial={{
+                                        opacity: 0,
+                                        scaleX: 0,
+                                        originX: 1
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        scaleX: 1
+                                    }}
+                                    exit={{
+                                        opacity: 0,
+                                        y: 50,
+                                        transition: { duration: 0.3 }
+                                    }}
+                                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                    className="h-full"
+                                    onMouseEnter={handlePreviewMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                >
+                                    <div className="glass-effect p-6 rounded-xl h-full flex flex-col">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-2xl font-bold text-foreground">
+                                                {hoveredProject.title}
+                                            </h3>
+                                            <span className="text-sm font-semibold text-muted-foreground">{hoveredProject.date}</span>
+                                        </div>
+
+                                        {'achievement' in hoveredProject && hoveredProject.achievement && (
+                                            <div className="mb-3">
+                                                <div className="overflow-hidden">
+                                                    <span className="text-sm font-menlo text-secondary font-semibold line-clamp-2 block">
+                                                        {hoveredProject.achievement}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex-1 min-h-0" ref={previewRef}>
+                                            <PreviewSection project={hoveredProject} />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="empty"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="flex items-center justify-center h-full min-h-[400px] lg:min-h-[600px]"
+                                >
+                                    <div className="text-center flex flex-col items-center justify-center">
+                                        <div className="mb-8 text-primary flex justify-center">
+                                            <AnimatedLogo />
+                                        </div>
+                                        <h3 className="text-xl lg:text-2xl font-semibold mb-3 text-foreground">Select a Project</h3>
+                                        <p className="text-sm lg:text-base text-muted-foreground">
+                                            Choose a project to see a preview, or click for full details
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </motion.div>
 
-                {/* Project Modal */}
-                {selectedProject && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{
-                            opacity: 1,
-                            transition: {
-                                duration: 0.3,
-                                ease: [0.25, 0.46, 0.45, 0.94]
-                            }
-                        }}
-                        exit={{
-                            opacity: 0,
-                            transition: {
-                                duration: 0.2,
-                                ease: [0.25, 0.46, 0.45, 0.94]
-                            }
-                        }}
-                        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
-                        onClick={() => setSelectedProject(null)}
-                    >
+                {/* Full-Screen Project Overlay */}
+                <AnimatePresence>
+                    {selectedProject && (
                         <motion.div
-                            initial={{ scale: 0.85, opacity: 0, y: 20 }}
+                            initial={{ opacity: 0 }}
                             animate={{
-                                scale: 1,
                                 opacity: 1,
-                                y: 0,
                                 transition: {
-                                    duration: 0.4,
-                                    ease: [0.25, 0.46, 0.45, 0.94],
-                                    scale: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
-                                    opacity: { duration: 0.3 },
-                                    y: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }
-                                }
-                            }}
-                            exit={{
-                                scale: 0.85,
-                                opacity: 0,
-                                y: 20,
-                                transition: {
-                                    duration: 0.3,
+                                    duration: 0.5,
+                                    delay: 0.2,
                                     ease: [0.25, 0.46, 0.45, 0.94]
                                 }
                             }}
-                            className="glass-effect p-3 sm:p-6 rounded-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[80vh] overflow-y-auto mx-2 sm:mx-0"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg sm:text-2xl font-bold text-foreground">
-                                    {selectedProject.title}
-                                </h3>
-                                <button
-                                    onClick={() => setSelectedProject(null)}
-                                    className="p-2 hover:bg-surface rounded-lg transition-colors duration-300 touch-manipulation"
-                                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                                >
-                                    <X className="w-5 h-5 text-foreground-secondary" />
-                                </button>
-                            </div>
-
-                            {'achievement' in selectedProject && selectedProject.achievement && (
-                                <div className="mb-4 relative group">
-                                    <div
-                                        className="overflow-x-auto scrollbar-hide"
-                                        ref={(el) => {
-                                            if (el) {
-                                                const checkScrollability = () => {
-                                                    const canScroll = el.scrollWidth > el.clientWidth;
-                                                    const leftBtn = el.parentElement?.querySelector('.achievement-left-btn') as HTMLElement;
-                                                    const rightBtn = el.parentElement?.querySelector('.achievement-right-btn') as HTMLElement;
-
-                                                    if (canScroll) {
-                                                        // Show/hide arrows based on scroll position
-                                                        const isAtStart = el.scrollLeft <= 0;
-                                                        const isAtEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
-
-                                                        if (leftBtn) leftBtn.style.display = isAtStart ? 'none' : 'flex';
-                                                        if (rightBtn) rightBtn.style.display = isAtEnd ? 'none' : 'flex';
-                                                    } else {
-                                                        // Hide both arrows if content fits
-                                                        if (leftBtn) leftBtn.style.display = 'none';
-                                                        if (rightBtn) rightBtn.style.display = 'none';
-                                                    }
-                                                };
-
-                                                checkScrollability();
-                                                el.addEventListener('scroll', checkScrollability);
-                                                window.addEventListener('resize', checkScrollability);
-                                            }
-                                        }}
-                                    >
-                                        <span className="text-base font-menlo text-secondary font-semibold whitespace-nowrap">
-                                            {selectedProject.achievement}
-                                        </span>
-                                    </div>
-                                    <div
-                                        className="achievement-left-btn absolute left-0 -top-2 -bottom-2 w-8 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer z-10"
-                                        style={{
-                                            background: 'linear-gradient(90deg, var(--background) 0%, var(--background) 80%, transparent 100%)'
-                                        }}
-                                        ref={(el) => {
-                                            if (el) {
-                                                const handleClick = (e: Event) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    e.stopImmediatePropagation();
-                                                    const container = el.parentElement?.querySelector('.overflow-x-auto') as HTMLElement;
-                                                    if (container) container.scrollBy({ left: -120, behavior: 'smooth' });
-                                                };
-                                                el.addEventListener('click', handleClick, true);
-                                                el.addEventListener('mousedown', (e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    e.stopImmediatePropagation();
-                                                }, true);
-                                                el.addEventListener('mouseup', (e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    e.stopImmediatePropagation();
-                                                }, true);
-
-                                                // Add hover effects
-                                                const getPrimaryRgb = () => {
-                                                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-                                                    const hexToRgb = (hex: string) => {
-                                                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                                                        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '230, 168, 92';
-                                                    };
-                                                    return hexToRgb(primaryColor);
-                                                };
-
-                                                el.addEventListener('mouseenter', () => {
-                                                    const primaryRgb = getPrimaryRgb();
-                                                    el.style.background = `linear-gradient(90deg, rgba(${primaryRgb}, 0.2) 0%, rgba(${primaryRgb}, 0.1) 80%, transparent 100%)`;
-                                                });
-                                                el.addEventListener('mouseleave', () => {
-                                                    el.style.background = 'linear-gradient(90deg, var(--background) 0%, var(--background) 80%, transparent 100%)';
-                                                });
-                                            }
-                                        }}
-                                    >
-                                        <ChevronLeft className="w-4 h-4 text-primary drop-shadow-sm" />
-                                    </div>
-                                    <div
-                                        className="achievement-right-btn absolute right-0 -top-2 -bottom-2 w-8 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer z-10"
-                                        style={{
-                                            background: 'linear-gradient(270deg, var(--background) 0%, var(--background) 80%, transparent 100%)'
-                                        }}
-                                        ref={(el) => {
-                                            if (el) {
-                                                const handleClick = (e: Event) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    e.stopImmediatePropagation();
-                                                    const container = el.parentElement?.querySelector('.overflow-x-auto') as HTMLElement;
-                                                    if (container) container.scrollBy({ left: 120, behavior: 'smooth' });
-                                                };
-                                                el.addEventListener('click', handleClick, true);
-                                                el.addEventListener('mousedown', (e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    e.stopImmediatePropagation();
-                                                }, true);
-                                                el.addEventListener('mouseup', (e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    e.stopImmediatePropagation();
-                                                }, true);
-
-                                                // Add hover effects
-                                                const getPrimaryRgb = () => {
-                                                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-                                                    const hexToRgb = (hex: string) => {
-                                                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                                                        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '230, 168, 92';
-                                                    };
-                                                    return hexToRgb(primaryColor);
-                                                };
-
-                                                el.addEventListener('mouseenter', () => {
-                                                    const primaryRgb = getPrimaryRgb();
-                                                    el.style.background = `linear-gradient(270deg, rgba(${primaryRgb}, 0.2) 0%, rgba(${primaryRgb}, 0.1) 80%, transparent 100%)`;
-                                                });
-                                                el.addEventListener('mouseleave', () => {
-                                                    el.style.background = 'linear-gradient(270deg, var(--background) 0%, var(--background) 80%, transparent 100%)';
-                                                });
-                                            }
-                                        }}
-                                    >
-                                        <ChevronRightIcon className="w-4 h-4 text-primary drop-shadow-sm" />
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="mb-4 flex justify-between items-center">
-                                <span className="px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full">
-                                    {selectedProject.category}
-                                </span>
-                                {selectedProject.hackathon && (
-                                    <span className="text-xs px-2 py-1 bg-secondary border border-secondary rounded-xl text-background whitespace-nowrap font-semibold">
-                                        {selectedProject.hackathon}
-                                    </span>
-                                )}
-                            </div>
-
-                            <p className="text-foreground-secondary mb-6 leading-relaxed font-medium">
-                                {selectedProject.longDescription}
-                            </p>
-
-                            <div className="mb-6">
-                                <h4 className="text-lg font-semibold mb-3 text-foreground">Technologies Used</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {selectedProject.technologies.map((tech) => (
-                                        <span
-                                            key={tech}
-                                            className="text-xs px-2 py-1 rounded-lg text-background whitespace-nowrap bg-primary border border-primary font-semibold"
-                                        >
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                                {'live' in selectedProject && selectedProject.live && (
-                                    <motion.a
-                                        href={selectedProject.live}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="text-sm px-3 py-2 sm:py-1 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
-                                    >
-                                        <ExternalLink className="w-4 h-4" />
-                                        Live Demo
-                                    </motion.a>
-                                )}
-                                {'github' in selectedProject && selectedProject.github && (
-                                    <motion.a
-                                        href={selectedProject.github}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
-                                    >
-                                        <Github className="w-4 h-4" />
-                                        View Code
-                                    </motion.a>
-                                )}
-                                {'cms' in selectedProject && selectedProject.cms && (
-                                    <motion.a
-                                        href={selectedProject.cms}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="text-sm px-3 py-2 sm:py-1 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
-                                    >
-                                        <ExternalLink className="w-4 h-4" />
-                                        Live Demo (CMS)
-                                    </motion.a>
-                                )}
-                            </div>
-
-                            {/* Live Website Preview */}
-                            {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
-                                <div className="mt-6">
-                                    <h4 className="text-lg font-semibold mb-3 text-foreground">Live Website Preview</h4>
-                                    <div className="relative w-full h-80 sm:h-[500px] rounded-lg overflow-hidden border border-surface-secondary">
-                                        <div
-                                            className="w-full h-full"
-                                            style={{
-                                                transform: isMobile ? 'scale(0.5)' : 'scale(1)',
-                                                transformOrigin: 'top left',
-                                                width: isMobile ? '200%' : '100%',
-                                                height: isMobile ? '200%' : '100%'
-                                            }}
-                                        >
-                                            <iframe
-                                                src={selectedProject.live}
-                                                className="w-full h-full"
-                                                title={`${selectedProject.title} Live Preview`}
-                                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                        <div className="absolute top-2 right-2">
-                                            <a
-                                                href={selectedProject.live}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/60 hover:scale-105 hover:shadow-lg transition-all duration-300"
-                                            >
-                                                Open in New Tab
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Video Demo */}
-                            {(() => {
-                                if (selectedProject) {
-                                    return <VideoSection selectedProject={selectedProject} /> as React.ReactNode;
+                            exit={{
+                                opacity: 0,
+                                transition: {
+                                    duration: 0.2,
+                                    delay: 0.8,
+                                    ease: [0.25, 0.46, 0.45, 0.94]
                                 }
-                                return null;
-                            })()}
+                            }}
+                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 overflow-y-auto p-4 sm:p-6 lg:p-8"
+                            onClick={() => {
+                                setProjectState(prev => ({ ...prev, selectedProject: null }))
+                                setIsModalOpen(false)
+                            }}
+                        >
+                            <motion.div
+                                initial={{
+                                    clipPath: "inset(20% 50% 20% 50%)",
+                                    opacity: 0,
+                                }}
+                                animate={{
+                                    clipPath: "inset(0% 0% 0% 0%)",
+                                    opacity: 1,
+                                    transition: {
+                                        duration: 0.6,
+                                        delay: 0.2,
+                                        ease: [0.4, 0.0, 0.2, 1]
+                                    }
+                                }}
+                                exit={{
+                                    clipPath: "inset(20% 50% 20% 50%)",
+                                    opacity: 1,
+                                    transition: {
+                                        duration: 0.6,
+                                        ease: [0.4, 0.0, 0.2, 1]
+                                    }
+                                }}
+                                className="min-h-full w-full glass-effect rounded-xl p-6 lg:p-8"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                                        {selectedProject.title}
+                                    </h3>
+                                    <button
+                                        onClick={() => {
+                                            setProjectState(prev => ({ ...prev, selectedProject: null }))
+                                            setIsModalOpen(false)
+                                        }}
+                                        className="p-3 hover:bg-surface rounded-lg transition-colors duration-300 touch-manipulation"
+                                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                                    >
+                                        <X className="w-6 h-6 text-foreground-secondary" />
+                                    </button>
+                                </div>
 
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    {/* Left Column - Project Info */}
+                                    <div className="space-y-6">
+                                        {'achievement' in selectedProject && selectedProject.achievement && (
+                                            <div className="relative group">
+                                                <div className="overflow-x-auto scrollbar-hide">
+                                                    <span className="text-lg font-menlo text-secondary font-semibold whitespace-nowrap">
+                                                        {selectedProject.achievement}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex flex-wrap gap-3">
+                                            <span className="px-4 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-full">
+                                                {selectedProject.category}
+                                            </span>
+                                            {selectedProject.hackathon && (
+                                                <span className="text-sm px-3 py-2 bg-secondary border border-secondary rounded-xl text-background whitespace-nowrap font-semibold">
+                                                    {selectedProject.hackathon}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <h4 className="text-xl font-semibold mb-4 text-foreground">About This Project</h4>
+                                            <p className="text-foreground-secondary leading-relaxed font-medium text-base">
+                                                {selectedProject.longDescription}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <h4 className="text-xl font-semibold mb-4 text-foreground">Technologies Used</h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {selectedProject.technologies.map((tech) => (
+                                                    <span
+                                                        key={tech}
+                                                        className="text-sm px-3 py-1 rounded-lg text-background whitespace-nowrap bg-primary border border-primary font-semibold"
+                                                    >
+                                                        {tech}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            {'live' in selectedProject && selectedProject.live && (
+                                                <motion.a
+                                                    href={selectedProject.live}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                >
+                                                    <ExternalLink className="w-4 h-4" />
+                                                    Live Demo
+                                                </motion.a>
+                                            )}
+                                            {'github' in selectedProject && selectedProject.github && (
+                                                <motion.a
+                                                    href={selectedProject.github}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                >
+                                                    <Github className="w-4 h-4" />
+                                                    View Code
+                                                </motion.a>
+                                            )}
+                                            {'cms' in selectedProject && selectedProject.cms && (
+                                                <motion.a
+                                                    href={selectedProject.cms}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                >
+                                                    <ExternalLink className="w-4 h-4" />
+                                                    Live Demo (CMS)
+                                                </motion.a>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Right Column - Media Content */}
+                                    <div className="space-y-6">
+                                        {/* Live Website Preview */}
+                                        {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
+                                            <div>
+                                                <h4 className="text-xl font-semibold mb-4 text-foreground">Live Website Preview</h4>
+                                                <div className="relative w-full h-96 lg:h-[500px] rounded-lg overflow-hidden border border-surface-secondary">
+                                                    <div
+                                                        className="w-full h-full"
+                                                        style={{
+                                                            transform: isMobile ? 'scale(0.5)' : 'scale(1)',
+                                                            transformOrigin: 'top left',
+                                                            width: isMobile ? '200%' : '100%',
+                                                            height: isMobile ? '200%' : '100%'
+                                                        }}
+                                                    >
+                                                        <iframe
+                                                            src={selectedProject.live}
+                                                            className="w-full h-full"
+                                                            title={`${selectedProject.title} Live Preview`}
+                                                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                                                            loading="lazy"
+                                                        />
+                                                    </div>
+                                                    <div className="absolute top-2 right-2">
+                                                        <a
+                                                            href={selectedProject.live}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/60 hover:scale-105 hover:shadow-lg transition-all duration-300"
+                                                        >
+                                                            Open in New Tab
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Video Demo */}
+                                        {selectedProject && <VideoSection selectedProject={selectedProject} />}
+                                    </div>
+                                </div>
+
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
+                    )}
+                </AnimatePresence>
+
             </div>
         </section>
     )
 });
+

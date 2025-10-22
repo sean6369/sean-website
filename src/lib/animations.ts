@@ -2,6 +2,7 @@ import { Variants } from 'framer-motion'
 
 /**
  * Common animation variants for consistent motion across components
+ * All variants respect reduced motion preferences
  */
 export const fadeInUp: Variants = {
     initial: { opacity: 0, y: 30 },
@@ -63,6 +64,42 @@ export const fastTransition = {
 export const slowTransition = {
     duration: 0.6,
     ease: [0.25, 0.4, 0.25, 1]
+}
+
+/**
+ * Reduced motion variants for accessibility
+ */
+export const reducedMotionVariants: Variants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 }
+}
+
+/**
+ * Get animation variants based on reduced motion preference
+ */
+export const getAnimationVariants = (prefersReducedMotion: boolean) => {
+    if (prefersReducedMotion) {
+        return {
+            fadeInUp: reducedMotionVariants,
+            fadeInDown: reducedMotionVariants,
+            fadeInLeft: reducedMotionVariants,
+            fadeInRight: reducedMotionVariants,
+            scaleIn: reducedMotionVariants,
+            staggerContainer: { initial: {}, animate: {} },
+            staggerItem: { initial: { opacity: 0 }, animate: { opacity: 1 } }
+        }
+    }
+
+    return {
+        fadeInUp,
+        fadeInDown,
+        fadeInLeft,
+        fadeInRight,
+        scaleIn,
+        staggerContainer,
+        staggerItem
+    }
 }
 
 /**

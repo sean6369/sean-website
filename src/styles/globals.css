@@ -108,65 +108,13 @@
     /* Hide all cursor types globally */
     *,
     *::before,
-    *::after {
-        cursor: none !important;
-    }
-
-    /* Force hide cursor on embedded content */
+    *::after,
     iframe,
     video,
     embed,
-    object {
-        cursor: none !important;
-    }
-
-    /* Override any embedded video controls */
-    iframe[src*="youtube"],
-    iframe[src*="vimeo"],
-    iframe[src*="player"] {
-        cursor: none !important;
-    }
-
-    /* Hide cursor on video timeline and controls */
-    video::-webkit-media-controls,
-    video::-webkit-media-controls-panel,
-    video::-webkit-media-controls-play-button,
-    video::-webkit-media-controls-timeline,
-    video::-webkit-media-controls-current-time-display,
-    video::-webkit-media-controls-time-remaining-display,
-    video::-webkit-media-controls-volume-slider,
-    video::-webkit-media-controls-mute-button,
-    video::-webkit-media-controls-fullscreen-button,
-    video::-webkit-media-controls-rewind-button,
-    video::-webkit-media-controls-return-to-realtime-button,
-    video::-webkit-media-controls-seek-back-button,
-    video::-webkit-media-controls-seek-forward-button {
-        cursor: none !important;
-    }
-
-    /* Hide cursor on all iframe content including video controls */
-    iframe * {
-        cursor: none !important;
-    }
-
-    /* Target specific video platform controls */
-    iframe[src*="youtube"] *,
-    iframe[src*="vimeo"] *,
-    iframe[src*="player"] *,
-    iframe[src*="embed"] * {
-        cursor: none !important;
-    }
-
-    /* Override any remaining cursor styles */
-    .ytp-chrome-top,
-    .ytp-chrome-bottom,
-    .ytp-progress-bar,
-    .ytp-scrubber-container,
-    .ytp-time-display,
-    .ytp-play-button,
-    .ytp-mute-button,
-    .ytp-volume-panel,
-    .ytp-fullscreen-button {
+    object,
+    iframe *,
+    video * {
         cursor: none !important;
     }
 
@@ -375,8 +323,8 @@
     }
 
     .custom-cursor__outer {
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
         background-color: var(--foreground);
         border-radius: 50%;
         transition: all 0.2s ease-out;
@@ -387,8 +335,8 @@
     }
 
     .custom-cursor__outer--hover {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
         background-color: transparent;
         border: 2px solid var(--foreground);
     }
@@ -416,6 +364,43 @@
         50% {
             opacity: 0.7;
             transform: translate(-50%, -50%) scale(1.2);
+        }
+    }
+
+    /* Animated Logo Path Tracing */
+    .animate-logo {
+        animation: logo-fade-in 1s ease-in-out;
+    }
+
+    .logo-path {
+        stroke-dasharray: 2000;
+        stroke-dashoffset: 2000;
+        animation: logo-trace 3s ease-in-out infinite;
+    }
+
+    @keyframes logo-fade-in {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes logo-trace {
+        0% {
+            stroke-dashoffset: 2000;
+        }
+
+        50% {
+            stroke-dashoffset: 0;
+        }
+
+        100% {
+            stroke-dashoffset: 0;
         }
     }
 }

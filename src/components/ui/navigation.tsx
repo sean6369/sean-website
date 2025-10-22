@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
 import { cn, scrollToSection } from '@/lib/utils'
+import { useModal } from '@/lib/modal-context'
 import StaggeredMenu from './StaggeredMenu'
 import Stepper from './stepper'
 import {
@@ -35,7 +36,9 @@ const socialItems = [
 
 export function Navigation() {
     const [isDarkMode, setIsDarkMode] = useState(false)
+    const { isModalOpen } = useModal()
     const [activeSection, setActiveSection] = useState('home')
+
 
     useEffect(() => {
         // Initialize theme from localStorage or system preference
@@ -89,7 +92,27 @@ export function Navigation() {
     }
 
     return (
-        <>
+        <motion.div
+            animate={{
+                y: isModalOpen ? -120 : 0,
+                opacity: isModalOpen ? 0 : 1
+            }}
+            transition={{
+                duration: 0.5,
+                ease: [0.4, 0.0, 0.2, 1],
+                opacity: { duration: 0.4, ease: [0.4, 0.0, 0.2, 1] },
+                y: { duration: 0.6, ease: [0.4, 0.0, 0.2, 1] }
+            }}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 50,
+                backgroundColor: 'var(--background)',
+                backdropFilter: 'blur(10px)'
+            }}
+        >
             <Navbar className="fixed top-0">
                 {/* Desktop Navigation */}
                 <NavBody className="px-6">
@@ -207,6 +230,6 @@ export function Navigation() {
                     </MobileNavHeader>
                 </MobileNav>
             </Navbar>
-        </>
+        </motion.div>
     )
 }

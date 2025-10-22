@@ -2,7 +2,13 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import Orb from '../ui/Orb'
+import dynamic from 'next/dynamic'
+
+// Lazy load heavy components
+const Orb = dynamic(() => import('../ui/Orb'), {
+    ssr: false,
+    loading: () => <div className="w-full h-full bg-primary/10 rounded-full animate-pulse" />
+})
 
 
 export function About() {
@@ -59,10 +65,12 @@ export function About() {
                                 <Image
                                     src="/images/sean about me.jpg"
                                     alt="Sean - About Me"
-                                    fill
-                                    className="object-cover"
+                                    width={384}
+                                    height={384}
+                                    className="object-cover w-full h-full"
                                     sizes="(max-width: 640px) 256px, (max-width: 768px) 288px, (max-width: 1024px) 320px, 384px"
                                     priority
+                                    quality={85}
                                 />
                             </div>
 

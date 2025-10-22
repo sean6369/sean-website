@@ -110,6 +110,8 @@
     align-items: center;
     justify-content: center;
     will-change: transform;
+    opacity: 1;
+    visibility: visible;
 }
 
 .sm-panel-itemWrap {
@@ -124,10 +126,23 @@
     top: 50%;
     width: 100%;
     height: 2px;
-    background: currentColor;
+    background: var(--sm-foreground, #000);
     border-radius: 2px;
     transform: translate(-50%, -50%);
     will-change: transform;
+    opacity: 1;
+    visibility: visible;
+}
+
+.dark .sm-icon-line {
+    background: var(--sm-foreground, #fff);
+}
+
+/* Ensure icon container is visible */
+.sm-icon {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
 }
 
 .sm-icon-line-v {
@@ -253,29 +268,9 @@
     flex-wrap: wrap;
 }
 
-.sm-socials-list .sm-socials-link {
-    opacity: 1;
-}
-
-.sm-socials-list:hover .sm-socials-link {
-    opacity: 0.35;
-}
-
-.sm-socials-list:hover .sm-socials-link:hover {
-    opacity: 1;
-}
-
 .sm-socials-link:focus-visible {
     outline: 2px solid var(--sm-primary);
     outline-offset: 3px;
-}
-
-.sm-socials-list:focus-within .sm-socials-link {
-    opacity: 0.35;
-}
-
-.sm-socials-list:focus-within .sm-socials-link:focus-visible {
-    opacity: 1;
 }
 
 .sm-socials-link {
