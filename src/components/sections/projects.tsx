@@ -795,13 +795,31 @@ export const Projects = memo(function Projects() {
                                     <motion.div
                                         key="logo"
                                         custom={storyState.swipeDirection}
-                                        initial={{ opacity: 0, x: storyState.swipeDirection === 'left' ? 100 : -100 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: storyState.swipeDirection === 'left' ? -100 : 100 }}
+                                        initial={{ 
+                                            opacity: 0, 
+                                            x: storyState.swipeDirection === 'left' ? 100 : -100,
+                                            scale: 0.95,
+                                            filter: 'blur(4px)'
+                                        }}
+                                        animate={{ 
+                                            opacity: 1, 
+                                            x: 0,
+                                            scale: 1,
+                                            filter: 'blur(0px)'
+                                        }}
+                                        exit={{ 
+                                            opacity: 0, 
+                                            x: storyState.swipeDirection === 'left' ? -100 : 100,
+                                            scale: 0.95,
+                                            filter: 'blur(4px)'
+                                        }}
                                         transition={{ 
-                                            duration: 0.35, 
-                                            ease: [0.25, 0.46, 0.45, 0.94],
-                                            opacity: { duration: 0.25 }
+                                            type: 'spring',
+                                            stiffness: 300,
+                                            damping: 30,
+                                            mass: 0.8,
+                                            opacity: { duration: 0.3 },
+                                            filter: { duration: 0.3 }
                                         }}
                                         className="absolute inset-0 p-4"
                                     >
@@ -811,13 +829,31 @@ export const Projects = memo(function Projects() {
                                     <motion.div
                                         key={projects[storyState.currentCardIndex - 1].id}
                                         custom={storyState.swipeDirection}
-                                        initial={{ opacity: 0, x: storyState.swipeDirection === 'left' ? 100 : -100 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: storyState.swipeDirection === 'left' ? -100 : 100 }}
+                                        initial={{ 
+                                            opacity: 0, 
+                                            x: storyState.swipeDirection === 'left' ? 100 : -100,
+                                            scale: 0.95,
+                                            filter: 'blur(4px)'
+                                        }}
+                                        animate={{ 
+                                            opacity: 1, 
+                                            x: 0,
+                                            scale: 1,
+                                            filter: 'blur(0px)'
+                                        }}
+                                        exit={{ 
+                                            opacity: 0, 
+                                            x: storyState.swipeDirection === 'left' ? -100 : 100,
+                                            scale: 0.95,
+                                            filter: 'blur(4px)'
+                                        }}
                                         transition={{ 
-                                            duration: 0.35, 
-                                            ease: [0.25, 0.46, 0.45, 0.94],
-                                            opacity: { duration: 0.25 }
+                                            type: 'spring',
+                                            stiffness: 300,
+                                            damping: 30,
+                                            mass: 0.8,
+                                            opacity: { duration: 0.3 },
+                                            filter: { duration: 0.3 }
                                         }}
                                         className="absolute inset-0"
                                     >
