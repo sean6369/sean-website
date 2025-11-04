@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { newYork } from '@/lib/fonts'
 import '@/styles/globals.css'
 import { Toaster } from '@/components/ui/sonner'
-import CustomCursor from '@/components/ui/custom-cursor'
 import { ModalProvider } from '@/lib/modal-context'
 
 export const metadata: Metadata = {
@@ -81,7 +80,6 @@ export default function RootLayout({
                 <ModalProvider>
                     {children}
                     <Toaster />
-                    <CustomCursor />
                 </ModalProvider>
             </body>
         </html>

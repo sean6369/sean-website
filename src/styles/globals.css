@@ -102,20 +102,6 @@
         @apply bg-background text-foreground font-new-york;
         background-color: var(--background);
         max-width: 100vw;
-        cursor: none;
-    }
-
-    /* Hide all cursor types globally */
-    *,
-    *::before,
-    *::after,
-    iframe,
-    video,
-    embed,
-    object,
-    iframe *,
-    video * {
-        cursor: none !important;
     }
 
     ::selection {
@@ -265,105 +251,6 @@
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
             scroll-behavior: auto !important;
-        }
-
-        .custom-cursor {
-            display: none !important;
-        }
-    }
-
-    /* Mobile cursor restoration */
-    @media (max-width: 768px) {
-        .custom-cursor {
-            display: none !important;
-        }
-
-        /* Restore regular cursor on mobile */
-        body,
-        *,
-        *::before,
-        *::after {
-            cursor: auto !important;
-        }
-
-        /* Ensure clickable elements show pointer cursor on mobile */
-        a,
-        button,
-        input,
-        textarea,
-        select,
-        [role="button"],
-        .cursor-pointer {
-            cursor: pointer !important;
-        }
-
-        /* Text elements should show text cursor */
-        p,
-        span,
-        div,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        li,
-        td,
-        th {
-            cursor: text !important;
-        }
-    }
-
-    /* Custom cursor styles */
-    .custom-cursor {
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        mix-blend-mode: difference;
-    }
-
-    .custom-cursor__outer {
-        width: 12px;
-        height: 12px;
-        background-color: var(--foreground);
-        border-radius: 50%;
-        transition: all 0.2s ease-out;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .custom-cursor__outer--hover {
-        width: 32px;
-        height: 32px;
-        background-color: transparent;
-        border: 2px solid var(--foreground);
-    }
-
-    .custom-cursor__inner {
-        width: 4px;
-        height: 4px;
-        background-color: var(--foreground);
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        animation: custom-cursor-pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes custom-cursor-pulse {
-
-        0%,
-        100% {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        50% {
-            opacity: 0.7;
-            transform: translate(-50%, -50%) scale(1.2);
         }
     }
 
