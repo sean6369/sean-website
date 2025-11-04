@@ -374,6 +374,7 @@ export const Projects = memo(function Projects() {
         touchStartX: 0,
         touchStartY: 0,
         swipeDirection: 'left' as 'left' | 'right', // Track swipe direction for animation
+        isSwipeDetected: false, // Track if a swipe was detected to prevent tap
     });
 
     const previewRef = useRef<HTMLDivElement>(null)
@@ -502,23 +503,42 @@ export const Projects = memo(function Projects() {
             ...prev,
             touchStartX: touch.clientX,
             touchStartY: touch.clientY,
+            isSwipeDetected: false,
         }))
     }
 
-    const handleTouchEnd = (e: React.TouchEvent) => {
-        const touch = e.changedTouches[0]
+    const handleTouchMove = (e: React.TouchEvent) => {
+        // Detect swipe during movement
+        const touch = e.touches[0]
         const deltaX = touch.clientX - storyState.touchStartX
         const deltaY = touch.clientY - storyState.touchStartY
-        const minSwipeDistance = 50
+        const absDeltaX = Math.abs(deltaX)
+        const absDeltaY = Math.abs(deltaY)
+        const minSwipeDistance = 30
 
+        // If horizontal movement exceeds threshold, mark as swipe
+        if (absDeltaX > absDeltaY && absDeltaX > minSwipeDistance) {
+            setStoryState(prev => ({ ...prev, isSwipeDetected: true }))
+        }
+    }
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
         // Only handle horizontal swipes - don't interfere with taps or interactive elements
         const target = e.target as HTMLElement
         if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe')) {
             return
         }
 
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-            // It's a swipe - prevent default and navigate
+        const touch = e.changedTouches[0]
+        const deltaX = touch.clientX - storyState.touchStartX
+        const deltaY = touch.clientY - storyState.touchStartY
+        const absDeltaX = Math.abs(deltaX)
+        const absDeltaY = Math.abs(deltaY)
+        const minSwipeDistance = 50
+
+        // Only handle horizontal swipes
+        if (absDeltaX > absDeltaY && absDeltaX > minSwipeDistance) {
+            // It's a swipe - prevent default and navigate immediately
             e.preventDefault()
             e.stopPropagation()
             if (deltaX > 0) {
@@ -527,6 +547,7 @@ export const Projects = memo(function Projects() {
                     ...prev,
                     currentCardIndex: Math.max(0, prev.currentCardIndex - 1),
                     swipeDirection: 'right',
+                    isSwipeDetected: false,
                 }))
             } else {
                 // Swipe left - go to next card
@@ -534,10 +555,13 @@ export const Projects = memo(function Projects() {
                     ...prev,
                     currentCardIndex: Math.min(totalCards - 1, prev.currentCardIndex + 1),
                     swipeDirection: 'left',
+                    isSwipeDetected: false,
                 }))
             }
+            return // Swipe handled, don't let tap fire
         }
-        // If it's a tap (small movement), don't prevent default - let the card's click handler fire
+        // If it's a tap (small movement), reset swipe flag and let the card's tap handler fire
+        setStoryState(prev => ({ ...prev, isSwipeDetected: false }))
     }
 
     const handleStoryCardClick = () => {
@@ -595,13 +619,14 @@ export const Projects = memo(function Projects() {
             if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
                 return
             }
-            // Track touch for tap detection, but don't stop propagation
+            // Track touch for tap detection
             const touch = e.touches[0]
             cardTouchStartRef.current = {
                 x: touch.clientX,
                 y: touch.clientY,
                 time: Date.now()
             }
+            // Don't stop propagation - let container track too
         }
 
         const handleCardTouchEnd = (e: React.TouchEvent) => {
@@ -611,23 +636,31 @@ export const Projects = memo(function Projects() {
                 return
             }
 
-            // Use container's touch coordinates for consistent swipe detection
-            const touch = e.changedTouches[0]
-            const deltaX = Math.abs(touch.clientX - storyState.touchStartX)
-            const deltaY = Math.abs(touch.clientY - storyState.touchStartY)
-            const deltaTime = Date.now() - cardTouchStartRef.current.time
+            // If a swipe was detected, don't handle tap
+            if (storyState.isSwipeDetected) {
+                return
+            }
 
-            // If it's a swipe (large horizontal movement), let container handle it
-            if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 50) {
+            const touch = e.changedTouches[0]
+            const deltaX = touch.clientX - cardTouchStartRef.current.x
+            const deltaY = touch.clientY - cardTouchStartRef.current.y
+            const deltaTime = Date.now() - cardTouchStartRef.current.time
+            const absDeltaX = Math.abs(deltaX)
+            const absDeltaY = Math.abs(deltaY)
+
+            // If it's a swipe (large horizontal movement), don't handle - let container handle it
+            // Use same threshold as container (50px)
+            if (absDeltaX > absDeltaY && absDeltaX > 50) {
                 return // Let event bubble to container for swipe handling
             }
 
             // If it's a vertical swipe or long press, don't treat as tap
-            if (deltaY > 15 || deltaTime > 300) {
+            if (absDeltaY > 20 || deltaTime > 400) {
                 return
             }
 
-            // It's a tap - open modal
+            // Small movement (< 50px horizontal, < 20px vertical) and short time (< 400ms) = tap
+            // Handle tap - open modal immediately
             e.preventDefault()
             e.stopPropagation()
             handleStoryCardClick()
@@ -713,11 +746,14 @@ export const Projects = memo(function Projects() {
                             swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
                         }))
                     }}
-                    className={`rounded-full transition-all touch-manipulation ${index === storyState.currentCardIndex
-                            ? 'bg-white w-6 h-1.5'
-                            : 'bg-white/40 hover:bg-white/60 w-1.5 h-1.5'
+                    className={`rounded-full touch-manipulation ${index === storyState.currentCardIndex
+                            ? 'bg-white'
+                            : 'bg-white/40 hover:bg-white/60'
                         }`}
-                    style={index === storyState.currentCardIndex ? { minWidth: '24px', minHeight: '6px' } : { width: '6px', height: '6px' }}
+                    style={index === storyState.currentCardIndex 
+                        ? { width: '24px', height: '6px', transition: 'width 0.3s ease-out, height 0.3s ease-out' }
+                        : { width: '6px', height: '6px', transition: 'width 0.3s ease-out, height 0.3s ease-out' }
+                    }
                     aria-label={`Go to card ${index + 1}`}
                 />
             ))}
@@ -781,14 +817,18 @@ export const Projects = memo(function Projects() {
                             ref={storyContainerRef}
                             className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
                             onTouchStart={(e) => {
-                                // Don't track touch if it's on interactive elements (buttons, videos, links)
+                                // Always track touch start for swipe detection (except on interactive elements)
                                 const target = e.target as HTMLElement
                                 if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe')) {
                                     return
                                 }
                                 handleTouchStart(e)
                             }}
-                            onTouchEnd={handleTouchEnd}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={(e) => {
+                                // Handle swipe on container level
+                                handleTouchEnd(e)
+                            }}
                             style={{ touchAction: 'pan-x pan-y' }}
                         >
                             <ProgressBar />
