@@ -6,6 +6,7 @@ import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
 import { useModal } from '@/lib/modal-context'
 import { getAnimationVariants } from '@/lib/animations'
+import { useSwipeable } from 'react-swipeable'
 
 const projectsData = [
     {
@@ -371,15 +372,11 @@ export const Projects = memo(function Projects() {
     const [storyState, setStoryState] = useState({
         currentCardIndex: 0, // 0 = logo, 1+ = projects
         isStoryMode: false,
-        touchStartX: 0,
-        touchStartY: 0,
         swipeDirection: 'left' as 'left' | 'right', // Track swipe direction for animation
-        isSwipeDetected: false, // Track if a swipe was detected to prevent tap
     });
 
     const previewRef = useRef<HTMLDivElement>(null)
     const storyContainerRef = useRef<HTMLDivElement>(null)
-    const touchStartRef = useRef({ x: 0, y: 0 })
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
     const animations = getAnimationVariants(prefersReducedMotion) as any
@@ -498,78 +495,39 @@ export const Projects = memo(function Projects() {
     // Story cards handlers
     const totalCards = 1 + projects.length // Logo + projects
 
-    const handleTouchStart = (e: React.TouchEvent) => {
-        const touch = e.touches[0]
-        // Store in ref for immediate access in move/end handlers
-        touchStartRef.current = {
-            x: touch.clientX,
-            y: touch.clientY,
-        }
-        setStoryState(prev => ({
-            ...prev,
-            touchStartX: touch.clientX,
-            touchStartY: touch.clientY,
-            isSwipeDetected: false,
-        }))
-    }
-
-    const handleTouchMove = (e: React.TouchEvent) => {
-        // Detect swipe during movement using ref for reliable access
-        const touch = e.touches[0]
-        const deltaX = touch.clientX - touchStartRef.current.x
-        const deltaY = touch.clientY - touchStartRef.current.y
-        const absDeltaX = Math.abs(deltaX)
-        const absDeltaY = Math.abs(deltaY)
-        const minSwipeDistance = 30
-
-        // If horizontal movement exceeds threshold, mark as swipe
-        if (absDeltaX > absDeltaY && absDeltaX > minSwipeDistance) {
-            setStoryState(prev => ({ ...prev, isSwipeDetected: true }))
-        }
-    }
-
-    const handleTouchEnd = (e: React.TouchEvent) => {
-        // Only handle horizontal swipes - don't interfere with taps or interactive elements
-        const target = e.target as HTMLElement
-        if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe')) {
-            return
-        }
-
-        const touch = e.changedTouches[0]
-        // Use ref for reliable touch position tracking
-        const deltaX = touch.clientX - touchStartRef.current.x
-        const deltaY = touch.clientY - touchStartRef.current.y
-        const absDeltaX = Math.abs(deltaX)
-        const absDeltaY = Math.abs(deltaY)
-        const minSwipeDistance = 45 // Reduced slightly for better responsiveness
-
-        // Only handle horizontal swipes
-        if (absDeltaX > absDeltaY && absDeltaX > minSwipeDistance) {
-            // It's a swipe - prevent default and navigate immediately
-            e.preventDefault()
-            e.stopPropagation()
-            if (deltaX > 0) {
-                // Swipe right - go to previous card
-                setStoryState(prev => ({
-                    ...prev,
-                    currentCardIndex: Math.max(0, prev.currentCardIndex - 1),
-                    swipeDirection: 'right',
-                    isSwipeDetected: false,
-                }))
-            } else {
-                // Swipe left - go to next card
-                setStoryState(prev => ({
-                    ...prev,
-                    currentCardIndex: Math.min(totalCards - 1, prev.currentCardIndex + 1),
-                    swipeDirection: 'left',
-                    isSwipeDetected: false,
-                }))
+    // Configure react-swipeable for story container
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: (eventData) => {
+            // Swipe left - go to next card
+            // Prevent swipe if interacting with buttons, videos, links, or iframes
+            const target = eventData.event?.target as HTMLElement
+            if (target?.closest('button') || target?.closest('video') || target?.closest('a') || target?.closest('iframe')) {
+                return
             }
-            return // Swipe handled, don't let tap fire
-        }
-        // If it's a tap (small movement), reset swipe flag and let the card's tap handler fire
-        setStoryState(prev => ({ ...prev, isSwipeDetected: false }))
-    }
+            setStoryState(prev => ({
+                ...prev,
+                currentCardIndex: Math.min(totalCards - 1, prev.currentCardIndex + 1),
+                swipeDirection: 'left',
+            }))
+        },
+        onSwipedRight: (eventData) => {
+            // Swipe right - go to previous card
+            // Prevent swipe if interacting with buttons, videos, links, or iframes
+            const target = eventData.event?.target as HTMLElement
+            if (target?.closest('button') || target?.closest('video') || target?.closest('a') || target?.closest('iframe')) {
+                return
+            }
+            setStoryState(prev => ({
+                ...prev,
+                currentCardIndex: Math.max(0, prev.currentCardIndex - 1),
+                swipeDirection: 'right',
+            }))
+        },
+        preventDefaultTouchmoveEvent: true,
+        trackTouch: true,
+        trackMouse: false, // Only track touch, not mouse
+        delta: 10, // Minimum distance for swipe
+    })
 
     const handleStoryCardClick = () => {
         // Only open modal if it's a project card (not logo)
@@ -643,11 +601,6 @@ export const Projects = memo(function Projects() {
                 return
             }
 
-            // If a swipe was detected by container, don't handle tap
-            if (storyState.isSwipeDetected) {
-                return
-            }
-
             const touch = e.changedTouches[0]
             const deltaX = touch.clientX - cardTouchStartRef.current.x
             const deltaY = touch.clientY - cardTouchStartRef.current.y
@@ -656,9 +609,9 @@ export const Projects = memo(function Projects() {
             const absDeltaY = Math.abs(deltaY)
 
             // If it's a significant movement or long press, don't treat as tap
-            // Container handles all swipe detection, so we just check for small movements here
+            // react-swipeable handles swipe detection, so we just check for small movements here
             if (absDeltaX > 30 || absDeltaY > 30 || deltaTime > 400) {
-                return // Let event bubble to container for swipe handling if needed
+                return // Let event bubble - swipe was likely detected by react-swipeable
             }
 
             // Small movement and short time = tap - open modal
@@ -673,7 +626,6 @@ export const Projects = memo(function Projects() {
                 onClick={handleCardClick}
                 onTouchStart={handleCardTouchStart}
                 onTouchEnd={handleCardTouchEnd}
-                style={{ touchAction: 'pan-x pan-y' }}
             >
                 {/* Header - matches desktop */}
                 <div className="flex items-center justify-between mb-3">
@@ -815,22 +767,14 @@ export const Projects = memo(function Projects() {
 
                         {/* Story Cards Container */}
                         <div
-                            ref={storyContainerRef}
-                            className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
-                            onTouchStart={(e) => {
-                                // Always track touch start for swipe detection (except on interactive elements)
-                                const target = e.target as HTMLElement
-                                if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe')) {
-                                    return
+                            ref={(node) => {
+                                storyContainerRef.current = node
+                                if (swipeHandlers.ref) {
+                                    swipeHandlers.ref(node)
                                 }
-                                handleTouchStart(e)
                             }}
-                            onTouchMove={handleTouchMove}
-                            onTouchEnd={(e) => {
-                                // Handle swipe on container level
-                                handleTouchEnd(e)
-                            }}
-                            style={{ touchAction: 'pan-x pan-y' }}
+                            className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
+                            {...swipeHandlers}
                         >
                             <ProgressBar />
                             <ProgressIndicators />
