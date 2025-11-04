@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Github, X } from 'lucide-react'
+import { ExternalLink, Github, X, FileCode, Smartphone, Brain, Trophy, Folder, Globe } from 'lucide-react'
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
 import { useModal } from '@/lib/modal-context'
@@ -60,7 +60,7 @@ const projectsData = [
     {
         id: 4,
         title: 'SigmaHealth',
-        achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award • Best team for Theme 1 (Health and Wellbeing)',
+        achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award',
         description: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform.',
         longDescription: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform. Features include AI health assistant (SigmaBoy), real-time dengue/PSI/COVID data integration, interactive health mapping, gamified health quizzes, community reporting system, and multilingual support for Singapore\'s diverse population.',
         image: '/projects/sigmahealth.jpg',
@@ -183,7 +183,7 @@ const PreviewSection = ({ project }: { project: typeof projectsData[0] }): JSX.E
     // Check for live website first
     if ('live' in project && project.live && (project.title === 'Oxley Pawnshop Website' || project.title === 'Goldjewel Website & CMS' || project.title === 'SilverSigma')) {
         return (
-            <div className="w-full h-full rounded-lg overflow-hidden border border-surface-secondary bg-black">
+            <div className="relative w-full h-full rounded-lg overflow-hidden border border-surface-secondary bg-black">
                 <div
                     className="w-full h-full"
                     style={{
@@ -200,6 +200,19 @@ const PreviewSection = ({ project }: { project: typeof projectsData[0] }): JSX.E
                         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
                         loading="lazy"
                     />
+                </div>
+                {/* Open in New Tab Button */}
+                <div className="absolute top-2 right-2 z-10">
+                    <a
+                        href={project.live}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 shadow-lg backdrop-blur-sm"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Open in New Tab
+                    </a>
                 </div>
             </div>
         );
@@ -380,13 +393,62 @@ export const Projects = memo(function Projects() {
             clearTimeout(hoverTimeout)
             setProjectState(prev => ({ ...prev, hoverTimeout: null }))
         }
+        // Immediately set hover state for fast cursor movement
         setProjectState(prev => ({ ...prev, hoveredProject: project }))
     }
 
     const handleMouseLeave = () => {
+        // Reduced delay for faster response, especially for file explorer items
         const timeout = setTimeout(() => {
             setProjectState(prev => ({ ...prev, hoveredProject: null }))
-        }, 300) // 300ms delay before hiding
+        }, 50) // Reduced from 150ms to 50ms for faster response
+        setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
+    }
+
+    const handleFileItemMouseEnter = (project: typeof projects[0]) => {
+        // Immediate hover for file explorer items - no delay
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout)
+            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
+        }
+        // Immediately set hover state to show preview
+        setProjectState(prev => ({ ...prev, hoveredProject: project }))
+    }
+
+    const handleFileItemMouseLeave = (e: React.MouseEvent) => {
+        // Check if mouse is moving to another file item (relatedTarget check)
+        const relatedTarget = e.relatedTarget as HTMLElement
+        const isMovingToAnotherItem = relatedTarget?.closest('[data-file-item]')
+
+        // Only set timeout if not moving to another item
+        if (!isMovingToAnotherItem) {
+            // Longer delay to allow for fast cursor movement - preview will persist longer
+            const timeout = setTimeout(() => {
+                setProjectState(prev => ({ ...prev, hoveredProject: null }))
+            }, 200) // Increased delay to keep preview visible when stopping
+            setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
+        } else {
+            // Clear any pending timeout when moving to another item
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout)
+                setProjectState(prev => ({ ...prev, hoverTimeout: null }))
+            }
+        }
+    }
+
+    const handleFileExplorerMouseEnter = () => {
+        // Clear timeout when entering the file explorer container
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout)
+            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
+        }
+    }
+
+    const handleFileExplorerMouseLeave = () => {
+        // Only clear hover when leaving the entire explorer area
+        const timeout = setTimeout(() => {
+            setProjectState(prev => ({ ...prev, hoveredProject: null }))
+        }, 200) // Delay to allow re-entry if cursor bounces
         setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
     }
 
@@ -423,14 +485,14 @@ export const Projects = memo(function Projects() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: prefersReducedMotion ? 0.1 : 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        transition={{ duration: prefersReducedMotion ? 0.1 : 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
                         className="absolute inset-0 z-0"
                     >
                         <div
-                            className="absolute inset-0 bg-cover bg-center"
+                            className="absolute inset-0 bg-cover bg-center blur-sm"
                             style={{ backgroundImage: `url('${backgroundImage}')` }}
                         />
-                        <div className="absolute inset-0 bg-black/70" />
+                        <div className="absolute inset-0 bg-black/40" />
                     </motion.div>
                 ) : null}
             </AnimatePresence>
@@ -483,65 +545,166 @@ export const Projects = memo(function Projects() {
                     viewport={{ once: true, margin: "-80px" }}
                     className="grid grid-cols-1 lg:grid-cols-[25%_1fr] gap-6 lg:gap-8"
                 >
-                    {/* Pills Section */}
-                    <div className="space-y-3 lg:space-y-3">
-                        {projects.map((project, index) => {
-                            const isSelected = selectedProject?.id === project.id
-                            const isHovered = hoveredProject?.id === project.id
-                            const shouldBlur = (selectedProject && !isSelected) || (hoveredProject && !isHovered && !isSelected)
+                    {/* Left Column - File Explorer & Legend */}
+                    <div className="flex flex-col">
+                        {/* VS Code Style File Explorer */}
+                        <div
+                            className="flex flex-col h-[500px] lg:h-[600px] border border-surface-secondary/50 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm"
+                            onMouseEnter={handleFileExplorerMouseEnter}
+                            onMouseLeave={handleFileExplorerMouseLeave}
+                        >
+                            {/* Explorer Header */}
+                            <div className="flex items-center gap-2 px-3 py-2 border-b border-surface-secondary/50 bg-surface/30">
+                                <Folder className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                                    Explorer
+                                </span>
+                            </div>
 
-                            return (
-                                <motion.div
-                                    key={project.id}
-                                    initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                                    animate={{
-                                        opacity: 1,
-                                        x: 0,
-                                        filter: "blur(0px)",
-                                        transition: {
-                                            duration: 0.7,
-                                            ease: [0.16, 1, 0.3, 1]
+                            {/* File List */}
+                            <div className="flex-1 overflow-y-auto space-y-0.5 p-1">
+                                {projects.map((project, index) => {
+                                    const isSelected = selectedProject?.id === project.id
+                                    const isHovered = hoveredProject?.id === project.id
+                                    const shouldBlur = (selectedProject && !isSelected) || (hoveredProject && !isHovered && !isSelected)
+
+                                    // Get icon based on category
+                                    const getCategoryIcon = () => {
+                                        switch (project.category) {
+                                            case 'Web App':
+                                                return Globe
+                                            case 'Mobile App':
+                                                return Smartphone
+                                            case 'AI/ML':
+                                                return Brain
+                                            default:
+                                                return Globe
                                         }
-                                    }}
-                                    className={`
-                                        relative rounded-full cursor-pointer transition-all duration-300
-                                        ${shouldBlur ? 'blur-sm' : ''}
+                                    }
+                                    const IconComponent = getCategoryIcon()
+
+                                    return (
+                                        <motion.div
+                                            key={project.id}
+                                            data-file-item
+                                            initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+                                            animate={{
+                                                opacity: 1,
+                                                x: 0,
+                                                filter: "blur(0px)",
+                                                transition: {
+                                                    duration: 0.7,
+                                                    ease: [0.16, 1, 0.3, 1]
+                                                }
+                                            }}
+                                            className={`
+                                        relative cursor-pointer transition-all duration-200
+                                        ${shouldBlur ? 'opacity-40' : 'opacity-100'}
                                     `}
-                                    onMouseEnter={() => handleMouseEnter(project)}
-                                    onMouseLeave={handleMouseLeave}
-                                    onClick={() => {
-                                        // Capture the preview element position for smooth transition
-                                        if (previewRef.current) {
-                                            const rect = previewRef.current.getBoundingClientRect()
-                                            setProjectState(prev => ({ ...prev, previewRect: rect }))
-                                        }
-                                        setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
-                                        setIsModalOpen(true)
-                                    }}
-                                >
-                                    <div className={`
-                                        rounded-full px-4 py-3 lg:px-6 lg:py-4 backdrop-blur-sm transition-all duration-300
-                                        ${isSelected
-                                            ? 'bg-black/15 dark:bg-white/10 border border-black/30 dark:border-white/20 shadow-lg shadow-primary/20'
-                                            : isHovered
-                                                ? 'bg-black/10 dark:bg-white/8 border border-primary dark:border-primary shadow-md shadow-primary/20'
-                                                : 'bg-black/8 dark:bg-white/5 border border-black/15 dark:border-white/10 hover:border-black/25 dark:hover:border-white/20 hover:shadow-lg hover:shadow-black/10 dark:hover:shadow-white/10'
-                                        }
-                                    `}>
-                                        <div className={`flex items-center justify-between transition-opacity duration-300 ${shouldBlur ? 'opacity-40' : 'opacity-100'}`}>
-                                            <h3 className={`font-semibold truncate transition-colors duration-300 ${isHovered ? 'text-[#E6DCD1] dark:text-foreground' : 'text-foreground'}`}>
-                                                {project.title}
-                                            </h3>
-                                            {'achievement' in project && project.achievement && (
-                                                <span className="flex items-center gap-1 text-xs ml-2 flex-shrink-0">
-                                                    🏆
-                                                </span>
+                                            onMouseEnter={() => handleFileItemMouseEnter(project)}
+                                            onMouseLeave={(e) => handleFileItemMouseLeave(e)}
+                                            onClick={() => {
+                                                // Capture the preview element position for smooth transition
+                                                if (previewRef.current) {
+                                                    const rect = previewRef.current.getBoundingClientRect()
+                                                    setProjectState(prev => ({ ...prev, previewRect: rect }))
+                                                }
+                                                setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
+                                                setIsModalOpen(true)
+                                            }}
+                                        >
+                                            {/* Hover/Selected Indicator Bar */}
+                                            {(isSelected || isHovered) && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scaleX: 0 }}
+                                                    animate={{ opacity: 1, scaleX: 1 }}
+                                                    exit={{ opacity: 0, scaleX: 0 }}
+                                                    transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                                    className={`
+                                                    absolute left-0 top-0 bottom-0 w-0.5 rounded-r
+                                                    ${isSelected ? 'bg-primary' : 'bg-primary/60'}
+                                                `}
+                                                />
                                             )}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )
-                        })}
+
+                                            <div className={`
+                                            flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-100 relative
+                                            ${isSelected
+                                                    ? 'bg-primary/20 dark:bg-primary/10'
+                                                    : isHovered
+                                                        ? 'bg-surface-secondary dark:bg-surface-secondary/40'
+                                                        : ''
+                                                }
+                                            hover:bg-surface-secondary dark:hover:bg-surface-secondary/40
+                                        `}>
+                                                {/* File Icon */}
+                                                <IconComponent
+                                                    className={`
+                                                    w-4 h-4 flex-shrink-0 transition-colors duration-150
+                                                    ${isSelected
+                                                            ? 'text-primary'
+                                                            : isHovered
+                                                                ? 'text-foreground-secondary'
+                                                                : 'text-muted-foreground'
+                                                        }
+                                                `}
+                                                />
+
+                                                {/* Project Title */}
+                                                <span className={`
+                                                text-sm truncate flex-1 transition-colors duration-150
+                                                ${isSelected
+                                                        ? 'text-foreground font-medium'
+                                                        : isHovered
+                                                            ? 'text-foreground'
+                                                            : 'text-foreground-secondary'
+                                                    }
+                                            `}>
+                                                    {project.title}
+                                                </span>
+
+                                                {/* Achievement Indicator */}
+                                                {'achievement' in project && project.achievement && (
+                                                    <Trophy
+                                                        className={`
+                                                        w-3.5 h-3.5 flex-shrink-0 transition-colors duration-150
+                                                        ${isSelected
+                                                                ? 'text-primary'
+                                                                : isHovered
+                                                                    ? 'text-foreground-secondary'
+                                                                    : 'text-muted-foreground'
+                                                            }
+                                                    `}
+                                                    />
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Icon Legend */}
+                        <div className="mt-3 px-3 py-2 rounded-lg border border-surface-secondary/50 bg-surface/30 backdrop-blur-sm">
+                            <div className="flex flex-wrap gap-3 text-xs">
+                                <div className="flex items-center gap-1.5">
+                                    <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                                    <span className="text-foreground-secondary">Web App</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
+                                    <span className="text-foreground-secondary">Mobile App</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <Brain className="w-3.5 h-3.5 text-muted-foreground" />
+                                    <span className="text-foreground-secondary">AI/ML</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <Trophy className="w-3.5 h-3.5 text-muted-foreground" />
+                                    <span className="text-foreground-secondary">Award Winner</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Expanded View - Only Hover Previews */}
@@ -552,24 +715,26 @@ export const Projects = memo(function Projects() {
                                     key={hoveredProject.id}
                                     initial={{
                                         opacity: 0,
-                                        scaleX: 0,
-                                        originX: 1
+                                        y: 10,
+                                        scale: 0.98
                                     }}
                                     animate={{
                                         opacity: 1,
-                                        scaleX: 1
+                                        y: 0,
+                                        scale: 1
                                     }}
                                     exit={{
                                         opacity: 0,
-                                        y: 50,
-                                        transition: { duration: 0.3 }
+                                        y: 10,
+                                        scale: 0.98,
+                                        transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }
                                     }}
-                                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                    transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                                     className="h-full"
                                     onMouseEnter={handlePreviewMouseEnter}
                                     onMouseLeave={handleMouseLeave}
                                 >
-                                    <div className="glass-effect p-6 rounded-xl h-full flex flex-col">
+                                    <div className="backdrop-blur-md border border-surface/50 bg-background p-6 rounded-xl h-full flex flex-col">
                                         <div className="flex items-center justify-between mb-3">
                                             <h3 className="text-2xl font-bold text-foreground">
                                                 {hoveredProject.title}
@@ -598,6 +763,7 @@ export const Projects = memo(function Projects() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                                     className="flex items-center justify-center h-full min-h-[400px] lg:min-h-[600px]"
                                 >
                                     <div className="text-center flex flex-col items-center justify-center">
@@ -734,12 +900,10 @@ export const Projects = memo(function Projects() {
                                                     href={selectedProject.live}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    whileHover={{ scale: 1.05 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                    className="text-sm px-6 py-3 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary rounded-lg whitespace-nowrap font-medium flex items-center justify-center gap-2 transition-all duration-200 touch-manipulation shadow-lg backdrop-blur-sm"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
-                                                    Live Demo
+                                                    Open in New Tab
                                                 </motion.a>
                                             )}
                                             {'github' in selectedProject && selectedProject.github && (
@@ -760,12 +924,10 @@ export const Projects = memo(function Projects() {
                                                     href={selectedProject.cms}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    whileHover={{ scale: 1.05 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                    className="text-sm px-6 py-3 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary rounded-lg whitespace-nowrap font-medium flex items-center justify-center gap-2 transition-all duration-200 touch-manipulation shadow-lg backdrop-blur-sm"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
-                                                    Live Demo (CMS)
+                                                    Open in New Tab (CMS)
                                                 </motion.a>
                                             )}
                                         </div>
@@ -795,13 +957,14 @@ export const Projects = memo(function Projects() {
                                                             loading="lazy"
                                                         />
                                                     </div>
-                                                    <div className="absolute top-2 right-2">
+                                                    <div className="absolute top-2 right-2 z-10">
                                                         <a
                                                             href={selectedProject.live}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium hover:bg-primary/60 hover:scale-105 hover:shadow-lg transition-all duration-300"
+                                                            className="inline-flex items-center gap-1.5 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 shadow-lg backdrop-blur-sm"
                                                         >
+                                                            <ExternalLink className="w-3.5 h-3.5" />
                                                             Open in New Tab
                                                         </a>
                                                     </div>
