@@ -163,7 +163,7 @@ const VideoPlayer = ({ videoUrl, title, className = "" }: {
     title: string;
     className?: string;
 }) => (
-    <div className={`relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black ${className}`}>
+    <div className={`relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black ${className}`} onClick={(e) => e.stopPropagation()}>
         <video
             src={videoUrl}
             className="w-full h-full object-contain"
@@ -172,6 +172,9 @@ const VideoPlayer = ({ videoUrl, title, className = "" }: {
             playsInline
             webkit-playsinline="true"
             title={title}
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
         >
             <source src={videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
@@ -396,8 +399,8 @@ export const Projects = memo(function Projects() {
     };
 
     // Get active project ID - include story card project for mobile
-    const currentStoryProject = isMobile && storyState.currentCardIndex > 0 
-        ? projects[storyState.currentCardIndex - 1] 
+    const currentStoryProject = isMobile && storyState.currentCardIndex > 0
+        ? projects[storyState.currentCardIndex - 1]
         : null;
     const activeProjectId = hoveredProject?.id || selectedProject?.id || currentStoryProject?.id;
     const backgroundImage = activeProjectId ? projectBackgrounds[activeProjectId] : null;
@@ -508,7 +511,12 @@ export const Projects = memo(function Projects() {
         const deltaY = touch.clientY - storyState.touchStartY
         const minSwipeDistance = 50
 
-        // Only handle horizontal swipes - don't interfere with taps
+        // Only handle horizontal swipes - don't interfere with taps or interactive elements
+        const target = e.target as HTMLElement
+        if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe')) {
+            return
+        }
+
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
             // It's a swipe - prevent default and navigate
             e.preventDefault()
@@ -569,49 +577,64 @@ export const Projects = memo(function Projects() {
     // Story card component for projects - matches desktop hover preview exactly
     const ProjectStoryCard = ({ project }: { project: typeof projects[0] }) => {
         const cardTouchStartRef = useRef({ x: 0, y: 0, time: 0 })
-        const isTapRef = useRef(false)
 
         const handleCardClick = (e: React.MouseEvent) => {
-            // For mouse clicks (desktop), always open modal
-            // For touch, we handle it in touchEnd
+            // Don't handle click if it's on interactive elements
+            const target = e.target as HTMLElement
+            if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
+                return
+            }
+            // For mouse clicks (desktop), open modal
             e.stopPropagation()
-            e.preventDefault()
             handleStoryCardClick()
         }
 
         const handleCardTouchStart = (e: React.TouchEvent) => {
+            // Don't track if it's on interactive elements
+            const target = e.target as HTMLElement
+            if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
+                return
+            }
+            // Track touch for tap detection, but don't stop propagation
             const touch = e.touches[0]
             cardTouchStartRef.current = {
                 x: touch.clientX,
                 y: touch.clientY,
                 time: Date.now()
             }
-            isTapRef.current = true
-            e.stopPropagation()
         }
 
         const handleCardTouchEnd = (e: React.TouchEvent) => {
-            const touch = e.changedTouches[0]
-            const deltaX = Math.abs(touch.clientX - cardTouchStartRef.current.x)
-            const deltaY = Math.abs(touch.clientY - cardTouchStartRef.current.y)
-            const deltaTime = Date.now() - cardTouchStartRef.current.time
-            
-            // If it's a swipe (large movement), don't treat it as a tap
-            if (deltaX > 15 || deltaY > 15 || deltaTime > 300) {
-                isTapRef.current = false
-                e.stopPropagation()
+            // Don't handle if it's on interactive elements
+            const target = e.target as HTMLElement
+            if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
                 return
             }
-            
-            // It's a tap - open modal directly
+
+            // Use container's touch coordinates for consistent swipe detection
+            const touch = e.changedTouches[0]
+            const deltaX = Math.abs(touch.clientX - storyState.touchStartX)
+            const deltaY = Math.abs(touch.clientY - storyState.touchStartY)
+            const deltaTime = Date.now() - cardTouchStartRef.current.time
+
+            // If it's a swipe (large horizontal movement), let container handle it
+            if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 50) {
+                return // Let event bubble to container for swipe handling
+            }
+
+            // If it's a vertical swipe or long press, don't treat as tap
+            if (deltaY > 15 || deltaTime > 300) {
+                return
+            }
+
+            // It's a tap - open modal
             e.preventDefault()
             e.stopPropagation()
             handleStoryCardClick()
-            isTapRef.current = false
         }
 
         return (
-            <div 
+            <div
                 className="story-card-content backdrop-blur-md border border-surface/50 bg-background pt-14 sm:pt-16 px-4 sm:px-6 pb-4 sm:pb-6 rounded-xl h-full flex flex-col relative cursor-pointer"
                 onClick={handleCardClick}
                 onTouchStart={handleCardTouchStart}
@@ -641,7 +664,7 @@ export const Projects = memo(function Projects() {
                 <div className="flex-1 min-h-0" ref={previewRef}>
                     <PreviewSection project={project} />
                 </div>
-                
+
                 {/* Tap hint at bottom */}
                 <div className="mt-3 text-center">
                     <span className="text-xs text-muted-foreground">Tap to view full details</span>
@@ -653,7 +676,7 @@ export const Projects = memo(function Projects() {
     // Progress bar component
     const ProgressBar = () => {
         const progress = ((storyState.currentCardIndex + 1) / totalCards) * 100
-        
+
         return (
             <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-40">
                 <motion.div
@@ -668,20 +691,33 @@ export const Projects = memo(function Projects() {
 
     // Progress indicators (dots)
     const ProgressIndicators = () => (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-40 flex gap-1.5">
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 flex gap-1.5 pointer-events-auto">
             {Array.from({ length: totalCards }).map((_, index) => (
                 <button
                     key={index}
-                    onClick={() => setStoryState(prev => ({ 
-                        ...prev, 
-                        currentCardIndex: index,
-                        swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
-                    }))}
-                    className={`w-1.5 h-1.5 rounded-full transition-all ${
-                        index === storyState.currentCardIndex
-                            ? 'bg-white w-6'
-                            : 'bg-white/40 hover:bg-white/60'
-                    }`}
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        setStoryState(prev => ({
+                            ...prev,
+                            currentCardIndex: index,
+                            swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
+                        }))
+                    }}
+                    onTouchEnd={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        setStoryState(prev => ({
+                            ...prev,
+                            currentCardIndex: index,
+                            swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
+                        }))
+                    }}
+                    className={`rounded-full transition-all touch-manipulation ${index === storyState.currentCardIndex
+                            ? 'bg-white w-6 h-1.5'
+                            : 'bg-white/40 hover:bg-white/60 w-1.5 h-1.5'
+                        }`}
+                    style={index === storyState.currentCardIndex ? { minWidth: '24px', minHeight: '6px' } : { width: '6px', height: '6px' }}
                     aria-label={`Go to card ${index + 1}`}
                 />
             ))}
@@ -745,24 +781,19 @@ export const Projects = memo(function Projects() {
                             ref={storyContainerRef}
                             className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
                             onTouchStart={(e) => {
-                                // Only track touch start if it's on the container background, not on card content
+                                // Don't track touch if it's on interactive elements (buttons, videos, links)
                                 const target = e.target as HTMLElement
-                                if (!target.closest('.story-card-content')) {
-                                    handleTouchStart(e)
+                                if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe')) {
+                                    return
                                 }
+                                handleTouchStart(e)
                             }}
-                            onTouchEnd={(e) => {
-                                // Only handle swipe if it's on the container itself, not on child elements
-                                const target = e.target as HTMLElement
-                                if (!target.closest('.story-card-content')) {
-                                    handleTouchEnd(e)
-                                }
-                            }}
+                            onTouchEnd={handleTouchEnd}
                             style={{ touchAction: 'pan-x pan-y' }}
                         >
                             <ProgressBar />
                             <ProgressIndicators />
-                            
+
                             {/* Close Button */}
                             <button
                                 onClick={(e) => {
@@ -840,259 +871,259 @@ export const Projects = memo(function Projects() {
                         </motion.div>
 
                         {/* Desktop Split Layout */}
-                <motion.div
-                    initial={{ opacity: 0, y: 40, scale: 0.98 }}
-                    whileInView={{
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        transition: {
-                            duration: 1.0,
-                            delay: 0.3,
-                            ease: [0.25, 0.46, 0.45, 0.94],
-                            opacity: { duration: 0.8, delay: 0.3 },
-                            y: { duration: 1.0, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
-                            scale: { duration: 0.7, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }
-                        }
-                    }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    className="grid grid-cols-1 lg:grid-cols-[25%_1fr] gap-6 lg:gap-8"
-                >
-                    {/* Left Column - File Explorer & Legend */}
-                    <div className="flex flex-col">
-                        {/* VS Code Style File Explorer */}
-                        <div
-                            className="flex flex-col h-[500px] lg:h-[600px] border border-surface-secondary/50 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm"
-                            onMouseEnter={handleFileExplorerMouseEnter}
-                            onMouseLeave={handleFileExplorerMouseLeave}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                            whileInView={{
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                transition: {
+                                    duration: 1.0,
+                                    delay: 0.3,
+                                    ease: [0.25, 0.46, 0.45, 0.94],
+                                    opacity: { duration: 0.8, delay: 0.3 },
+                                    y: { duration: 1.0, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+                                    scale: { duration: 0.7, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }
+                                }
+                            }}
+                            viewport={{ once: true, margin: "-80px" }}
+                            className="grid grid-cols-1 lg:grid-cols-[25%_1fr] gap-6 lg:gap-8"
                         >
-                            {/* Explorer Header */}
-                            <div className="flex items-center gap-2 px-3 py-2 border-b border-surface-secondary/50 bg-surface/30">
-                                <Folder className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
-                                    Explorer
-                                </span>
-                            </div>
+                            {/* Left Column - File Explorer & Legend */}
+                            <div className="flex flex-col">
+                                {/* VS Code Style File Explorer */}
+                                <div
+                                    className="flex flex-col h-[500px] lg:h-[600px] border border-surface-secondary/50 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm"
+                                    onMouseEnter={handleFileExplorerMouseEnter}
+                                    onMouseLeave={handleFileExplorerMouseLeave}
+                                >
+                                    {/* Explorer Header */}
+                                    <div className="flex items-center gap-2 px-3 py-2 border-b border-surface-secondary/50 bg-surface/30">
+                                        <Folder className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                                            Explorer
+                                        </span>
+                                    </div>
 
-                            {/* File List */}
-                            <div className="flex-1 overflow-y-auto space-y-0.5 p-1">
-                                {projects.map((project, index) => {
-                                    const isSelected = selectedProject?.id === project.id
-                                    const isHovered = hoveredProject?.id === project.id
-                                    const shouldBlur = (selectedProject && !isSelected) || (hoveredProject && !isHovered && !isSelected)
+                                    {/* File List */}
+                                    <div className="flex-1 overflow-y-auto space-y-0.5 p-1">
+                                        {projects.map((project, index) => {
+                                            const isSelected = selectedProject?.id === project.id
+                                            const isHovered = hoveredProject?.id === project.id
+                                            const shouldBlur = (selectedProject && !isSelected) || (hoveredProject && !isHovered && !isSelected)
 
-                                    // Get icon based on category
-                                    const getCategoryIcon = () => {
-                                        switch (project.category) {
-                                            case 'Web App':
-                                                return Globe
-                                            case 'Mobile App':
-                                                return Smartphone
-                                            case 'AI/ML':
-                                                return Brain
-                                            default:
-                                                return Globe
-                                        }
-                                    }
-                                    const IconComponent = getCategoryIcon()
-
-                                    return (
-                                        <motion.div
-                                            key={project.id}
-                                            data-file-item
-                                            initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                                            animate={{
-                                                opacity: 1,
-                                                x: 0,
-                                                filter: "blur(0px)",
-                                                transition: {
-                                                    duration: 0.7,
-                                                    ease: [0.16, 1, 0.3, 1]
+                                            // Get icon based on category
+                                            const getCategoryIcon = () => {
+                                                switch (project.category) {
+                                                    case 'Web App':
+                                                        return Globe
+                                                    case 'Mobile App':
+                                                        return Smartphone
+                                                    case 'AI/ML':
+                                                        return Brain
+                                                    default:
+                                                        return Globe
                                                 }
-                                            }}
-                                            className={`
+                                            }
+                                            const IconComponent = getCategoryIcon()
+
+                                            return (
+                                                <motion.div
+                                                    key={project.id}
+                                                    data-file-item
+                                                    initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        x: 0,
+                                                        filter: "blur(0px)",
+                                                        transition: {
+                                                            duration: 0.7,
+                                                            ease: [0.16, 1, 0.3, 1]
+                                                        }
+                                                    }}
+                                                    className={`
                                         relative cursor-pointer transition-all duration-200
                                         ${shouldBlur ? 'opacity-40' : 'opacity-100'}
                                     `}
-                                            onMouseEnter={() => handleFileItemMouseEnter(project)}
-                                            onMouseLeave={(e) => handleFileItemMouseLeave(e)}
-                                            onClick={() => {
-                                                // Capture the preview element position for smooth transition
-                                                if (previewRef.current) {
-                                                    const rect = previewRef.current.getBoundingClientRect()
-                                                    setProjectState(prev => ({ ...prev, previewRect: rect }))
-                                                }
-                                                setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
-                                                setIsModalOpen(true)
-                                            }}
-                                        >
-                                            {/* Hover/Selected Indicator Bar */}
-                                            {(isSelected || isHovered) && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, scaleX: 0 }}
-                                                    animate={{ opacity: 1, scaleX: 1 }}
-                                                    exit={{ opacity: 0, scaleX: 0 }}
-                                                    transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                                    className={`
+                                                    onMouseEnter={() => handleFileItemMouseEnter(project)}
+                                                    onMouseLeave={(e) => handleFileItemMouseLeave(e)}
+                                                    onClick={() => {
+                                                        // Capture the preview element position for smooth transition
+                                                        if (previewRef.current) {
+                                                            const rect = previewRef.current.getBoundingClientRect()
+                                                            setProjectState(prev => ({ ...prev, previewRect: rect }))
+                                                        }
+                                                        setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
+                                                        setIsModalOpen(true)
+                                                    }}
+                                                >
+                                                    {/* Hover/Selected Indicator Bar */}
+                                                    {(isSelected || isHovered) && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, scaleX: 0 }}
+                                                            animate={{ opacity: 1, scaleX: 1 }}
+                                                            exit={{ opacity: 0, scaleX: 0 }}
+                                                            transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                                            className={`
                                                     absolute left-0 top-0 bottom-0 w-0.5 rounded-r
                                                     ${isSelected ? 'bg-primary' : 'bg-primary/60'}
                                                 `}
-                                                />
-                                            )}
+                                                        />
+                                                    )}
 
-                                            <div className={`
+                                                    <div className={`
                                             flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-100 relative
                                             ${isSelected
-                                                    ? 'bg-primary/20 dark:bg-primary/10'
-                                                    : isHovered
-                                                        ? 'bg-surface-secondary dark:bg-surface-secondary/40'
-                                                        : ''
-                                                }
+                                                            ? 'bg-primary/20 dark:bg-primary/10'
+                                                            : isHovered
+                                                                ? 'bg-surface-secondary dark:bg-surface-secondary/40'
+                                                                : ''
+                                                        }
                                             hover:bg-surface-secondary dark:hover:bg-surface-secondary/40
                                         `}>
-                                                {/* File Icon */}
-                                                <IconComponent
-                                                    className={`
+                                                        {/* File Icon */}
+                                                        <IconComponent
+                                                            className={`
                                                     w-4 h-4 flex-shrink-0 transition-colors duration-150
                                                     ${isSelected
-                                                            ? 'text-primary'
-                                                            : isHovered
-                                                                ? 'text-foreground-secondary'
-                                                                : 'text-muted-foreground'
-                                                        }
+                                                                    ? 'text-primary'
+                                                                    : isHovered
+                                                                        ? 'text-foreground-secondary'
+                                                                        : 'text-muted-foreground'
+                                                                }
                                                 `}
-                                                />
+                                                        />
 
-                                                {/* Project Title */}
-                                                <span className={`
+                                                        {/* Project Title */}
+                                                        <span className={`
                                                 text-sm truncate flex-1 transition-colors duration-150
                                                 ${isSelected
-                                                        ? 'text-foreground font-medium'
-                                                        : isHovered
-                                                            ? 'text-foreground'
-                                                            : 'text-foreground-secondary'
-                                                    }
+                                                                ? 'text-foreground font-medium'
+                                                                : isHovered
+                                                                    ? 'text-foreground'
+                                                                    : 'text-foreground-secondary'
+                                                            }
                                             `}>
-                                                    {project.title}
-                                                </span>
+                                                            {project.title}
+                                                        </span>
 
-                                                {/* Achievement Indicator */}
-                                                {'achievement' in project && project.achievement && (
-                                                    <Trophy
-                                                        className={`
+                                                        {/* Achievement Indicator */}
+                                                        {'achievement' in project && project.achievement && (
+                                                            <Trophy
+                                                                className={`
                                                         w-3.5 h-3.5 flex-shrink-0 transition-colors duration-150
                                                         ${isSelected
-                                                                ? 'text-primary'
-                                                                : isHovered
-                                                                    ? 'text-foreground-secondary'
-                                                                    : 'text-muted-foreground'
-                                                            }
+                                                                        ? 'text-primary'
+                                                                        : isHovered
+                                                                            ? 'text-foreground-secondary'
+                                                                            : 'text-muted-foreground'
+                                                                    }
                                                     `}
-                                                    />
-                                                )}
-                                            </div>
-                                        </motion.div>
-                                    )
-                                })}
-                            </div>
-                        </div>
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </motion.div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
 
-                        {/* Icon Legend */}
-                        <div className="mt-3 px-3 py-2 rounded-lg border border-surface-secondary/50 bg-surface/30 backdrop-blur-sm">
-                            <div className="flex flex-wrap gap-3 text-xs">
-                                <div className="flex items-center gap-1.5">
-                                    <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <span className="text-foreground-secondary">Web App</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <span className="text-foreground-secondary">Mobile App</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <Brain className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <span className="text-foreground-secondary">AI/ML</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <Trophy className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <span className="text-foreground-secondary">Award Winner</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Expanded View - Only Hover Previews */}
-                    <div className="h-[500px] lg:h-[600px]">
-                        <AnimatePresence mode="wait">
-                            {hoveredProject ? (
-                                <motion.div
-                                    key={hoveredProject.id}
-                                    initial={{
-                                        opacity: 0,
-                                        y: 10,
-                                        scale: 0.98
-                                    }}
-                                    animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        scale: 1
-                                    }}
-                                    exit={{
-                                        opacity: 0,
-                                        y: 10,
-                                        scale: 0.98,
-                                        transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }
-                                    }}
-                                    transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                    className="h-full"
-                                    onMouseEnter={handlePreviewMouseEnter}
-                                    onMouseLeave={handleMouseLeave}
-                                >
-                                    <div className="backdrop-blur-md border border-surface/50 bg-background p-6 rounded-xl h-full flex flex-col">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <h3 className="text-2xl font-bold text-foreground">
-                                                {hoveredProject.title}
-                                            </h3>
-                                            <span className="text-sm font-semibold text-muted-foreground">{hoveredProject.date}</span>
+                                {/* Icon Legend */}
+                                <div className="mt-3 px-3 py-2 rounded-lg border border-surface-secondary/50 bg-surface/30 backdrop-blur-sm">
+                                    <div className="flex flex-wrap gap-3 text-xs">
+                                        <div className="flex items-center gap-1.5">
+                                            <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <span className="text-foreground-secondary">Web App</span>
                                         </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <span className="text-foreground-secondary">Mobile App</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <Brain className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <span className="text-foreground-secondary">AI/ML</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <Trophy className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <span className="text-foreground-secondary">Award Winner</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                        {'achievement' in hoveredProject && hoveredProject.achievement && (
-                                            <div className="mb-3">
-                                                <div className="overflow-hidden">
-                                                    <span className="text-sm font-menlo text-secondary font-semibold line-clamp-2 block">
-                                                        {hoveredProject.achievement}
-                                                    </span>
+                            {/* Expanded View - Only Hover Previews */}
+                            <div className="h-[500px] lg:h-[600px]">
+                                <AnimatePresence mode="wait">
+                                    {hoveredProject ? (
+                                        <motion.div
+                                            key={hoveredProject.id}
+                                            initial={{
+                                                opacity: 0,
+                                                y: 10,
+                                                scale: 0.98
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                y: 0,
+                                                scale: 1
+                                            }}
+                                            exit={{
+                                                opacity: 0,
+                                                y: 10,
+                                                scale: 0.98,
+                                                transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }
+                                            }}
+                                            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                            className="h-full"
+                                            onMouseEnter={handlePreviewMouseEnter}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            <div className="backdrop-blur-md border border-surface/50 bg-background p-6 rounded-xl h-full flex flex-col">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h3 className="text-2xl font-bold text-foreground">
+                                                        {hoveredProject.title}
+                                                    </h3>
+                                                    <span className="text-sm font-semibold text-muted-foreground">{hoveredProject.date}</span>
+                                                </div>
+
+                                                {'achievement' in hoveredProject && hoveredProject.achievement && (
+                                                    <div className="mb-3">
+                                                        <div className="overflow-hidden">
+                                                            <span className="text-sm font-menlo text-secondary font-semibold line-clamp-2 block">
+                                                                {hoveredProject.achievement}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex-1 min-h-0" ref={previewRef}>
+                                                    <PreviewSection project={hoveredProject} />
                                                 </div>
                                             </div>
-                                        )}
-
-                                        <div className="flex-1 min-h-0" ref={previewRef}>
-                                            <PreviewSection project={hoveredProject} />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="empty"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                    className="flex items-center justify-center h-full min-h-[400px] lg:min-h-[600px]"
-                                >
-                                    <div className="text-center flex flex-col items-center justify-center">
-                                        <div className="mb-8 text-primary flex justify-center">
-                                            <AnimatedLogo />
-                                        </div>
-                                        <h3 className="text-xl lg:text-2xl font-semibold mb-3 text-foreground">Select a Project</h3>
-                                        <p className="text-sm lg:text-base text-muted-foreground">
-                                            Choose a project to see a preview, or click for full details
-                                        </p>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </motion.div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="empty"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                            className="flex items-center justify-center h-full min-h-[400px] lg:min-h-[600px]"
+                                        >
+                                            <div className="text-center flex flex-col items-center justify-center">
+                                                <div className="mb-8 text-primary flex justify-center">
+                                                    <AnimatedLogo />
+                                                </div>
+                                                <h3 className="text-xl lg:text-2xl font-semibold mb-3 text-foreground">Select a Project</h3>
+                                                <p className="text-sm lg:text-base text-muted-foreground">
+                                                    Choose a project to see a preview, or click for full details
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </motion.div>
                     </>
                 )}
 
