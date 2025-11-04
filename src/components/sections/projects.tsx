@@ -376,7 +376,6 @@ export const Projects = memo(function Projects() {
     });
 
     const previewRef = useRef<HTMLDivElement>(null)
-    const storyContainerRef = useRef<HTMLDivElement>(null)
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
     const animations = getAnimationVariants(prefersReducedMotion) as any
@@ -523,7 +522,7 @@ export const Projects = memo(function Projects() {
                 swipeDirection: 'right',
             }))
         },
-        preventDefaultTouchmoveEvent: true,
+        preventScrollOnSwipe: true,
         trackTouch: true,
         trackMouse: false, // Only track touch, not mouse
         delta: 10, // Minimum distance for swipe
@@ -767,14 +766,8 @@ export const Projects = memo(function Projects() {
 
                         {/* Story Cards Container */}
                         <div
-                            ref={(node) => {
-                                storyContainerRef.current = node
-                                if (swipeHandlers.ref) {
-                                    swipeHandlers.ref(node)
-                                }
-                            }}
+                            ref={swipeHandlers.ref}
                             className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
-                            {...swipeHandlers}
                         >
                             <ProgressBar />
                             <ProgressIndicators />
