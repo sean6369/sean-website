@@ -379,6 +379,7 @@ export const Projects = memo(function Projects() {
 
     const previewRef = useRef<HTMLDivElement>(null)
     const storyContainerRef = useRef<HTMLDivElement>(null)
+    const touchStartRef = useRef({ x: 0, y: 0 })
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
     const animations = getAnimationVariants(prefersReducedMotion) as any
@@ -499,6 +500,11 @@ export const Projects = memo(function Projects() {
 
     const handleTouchStart = (e: React.TouchEvent) => {
         const touch = e.touches[0]
+        // Store in ref for immediate access in move/end handlers
+        touchStartRef.current = {
+            x: touch.clientX,
+            y: touch.clientY,
+        }
         setStoryState(prev => ({
             ...prev,
             touchStartX: touch.clientX,
@@ -508,10 +514,10 @@ export const Projects = memo(function Projects() {
     }
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        // Detect swipe during movement
+        // Detect swipe during movement using ref for reliable access
         const touch = e.touches[0]
-        const deltaX = touch.clientX - storyState.touchStartX
-        const deltaY = touch.clientY - storyState.touchStartY
+        const deltaX = touch.clientX - touchStartRef.current.x
+        const deltaY = touch.clientY - touchStartRef.current.y
         const absDeltaX = Math.abs(deltaX)
         const absDeltaY = Math.abs(deltaY)
         const minSwipeDistance = 30
@@ -530,11 +536,12 @@ export const Projects = memo(function Projects() {
         }
 
         const touch = e.changedTouches[0]
-        const deltaX = touch.clientX - storyState.touchStartX
-        const deltaY = touch.clientY - storyState.touchStartY
+        // Use ref for reliable touch position tracking
+        const deltaX = touch.clientX - touchStartRef.current.x
+        const deltaY = touch.clientY - touchStartRef.current.y
         const absDeltaX = Math.abs(deltaX)
         const absDeltaY = Math.abs(deltaY)
-        const minSwipeDistance = 50
+        const minSwipeDistance = 45 // Reduced slightly for better responsiveness
 
         // Only handle horizontal swipes
         if (absDeltaX > absDeltaY && absDeltaX > minSwipeDistance) {
@@ -636,7 +643,7 @@ export const Projects = memo(function Projects() {
                 return
             }
 
-            // If a swipe was detected, don't handle tap
+            // If a swipe was detected by container, don't handle tap
             if (storyState.isSwipeDetected) {
                 return
             }
@@ -648,19 +655,13 @@ export const Projects = memo(function Projects() {
             const absDeltaX = Math.abs(deltaX)
             const absDeltaY = Math.abs(deltaY)
 
-            // If it's a swipe (large horizontal movement), don't handle - let container handle it
-            // Use same threshold as container (50px)
-            if (absDeltaX > absDeltaY && absDeltaX > 50) {
-                return // Let event bubble to container for swipe handling
+            // If it's a significant movement or long press, don't treat as tap
+            // Container handles all swipe detection, so we just check for small movements here
+            if (absDeltaX > 30 || absDeltaY > 30 || deltaTime > 400) {
+                return // Let event bubble to container for swipe handling if needed
             }
 
-            // If it's a vertical swipe or long press, don't treat as tap
-            if (absDeltaY > 20 || deltaTime > 400) {
-                return
-            }
-
-            // Small movement (< 50px horizontal, < 20px vertical) and short time (< 400ms) = tap
-            // Handle tap - open modal immediately
+            // Small movement and short time = tap - open modal
             e.preventDefault()
             e.stopPropagation()
             handleStoryCardClick()
@@ -672,7 +673,7 @@ export const Projects = memo(function Projects() {
                 onClick={handleCardClick}
                 onTouchStart={handleCardTouchStart}
                 onTouchEnd={handleCardTouchEnd}
-                style={{ touchAction: 'pan-y' }}
+                style={{ touchAction: 'pan-x pan-y' }}
             >
                 {/* Header - matches desktop */}
                 <div className="flex items-center justify-between mb-3">
@@ -716,7 +717,7 @@ export const Projects = memo(function Projects() {
                     className="h-full bg-white"
                     initial={false}
                     animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
                 />
             </div>
         )
@@ -751,8 +752,8 @@ export const Projects = memo(function Projects() {
                             : 'bg-white/40 hover:bg-white/60'
                         }`}
                     style={index === storyState.currentCardIndex 
-                        ? { width: '24px', height: '6px', transition: 'width 0.3s ease-out, height 0.3s ease-out' }
-                        : { width: '6px', height: '6px', transition: 'width 0.3s ease-out, height 0.3s ease-out' }
+                        ? { width: '24px', height: '6px', transition: 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }
+                        : { width: '6px', height: '6px', transition: 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }
                     }
                     aria-label={`Go to card ${index + 1}`}
                 />
@@ -860,7 +861,11 @@ export const Projects = memo(function Projects() {
                                         initial={{ opacity: 0, x: storyState.swipeDirection === 'left' ? 100 : -100 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: storyState.swipeDirection === 'left' ? -100 : 100 }}
-                                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                        transition={{ 
+                                            duration: 0.35, 
+                                            ease: [0.25, 0.46, 0.45, 0.94],
+                                            opacity: { duration: 0.25 }
+                                        }}
                                         className="absolute inset-0 p-4"
                                     >
                                         <LogoStoryCard />
@@ -872,7 +877,11 @@ export const Projects = memo(function Projects() {
                                         initial={{ opacity: 0, x: storyState.swipeDirection === 'left' ? 100 : -100 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: storyState.swipeDirection === 'left' ? -100 : 100 }}
-                                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                        transition={{ 
+                                            duration: 0.35, 
+                                            ease: [0.25, 0.46, 0.45, 0.94],
+                                            opacity: { duration: 0.25 }
+                                        }}
                                         className="absolute inset-0"
                                     >
                                         <ProjectStoryCard project={projects[storyState.currentCardIndex - 1]} />
