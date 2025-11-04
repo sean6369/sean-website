@@ -143,10 +143,11 @@ const projectsData = [
 // Animated Logo Component
 const AnimatedLogo = () => (
     <svg
-        width="400"
-        height="400"
+        width="100%"
+        height="100%"
         viewBox="0 0 308 312"
         className="animate-logo mx-auto"
+        preserveAspectRatio="xMidYMid meet"
     >
         <path
             style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 2 }}
@@ -363,7 +364,17 @@ export const Projects = memo(function Projects() {
         previewRect: null as DOMRect | null,
     });
 
+    // Story cards state for mobile
+    const [storyState, setStoryState] = useState({
+        currentCardIndex: 0, // 0 = logo, 1+ = projects
+        isStoryMode: false,
+        touchStartX: 0,
+        touchStartY: 0,
+        swipeDirection: 'left' as 'left' | 'right', // Track swipe direction for animation
+    });
+
     const previewRef = useRef<HTMLDivElement>(null)
+    const storyContainerRef = useRef<HTMLDivElement>(null)
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
     const animations = getAnimationVariants(prefersReducedMotion) as any
@@ -384,7 +395,11 @@ export const Projects = memo(function Projects() {
         9: '/images/Marinetime Hackathon screen.jpeg',
     };
 
-    const activeProjectId = hoveredProject?.id || selectedProject?.id;
+    // Get active project ID - include story card project for mobile
+    const currentStoryProject = isMobile && storyState.currentCardIndex > 0 
+        ? projects[storyState.currentCardIndex - 1] 
+        : null;
+    const activeProjectId = hoveredProject?.id || selectedProject?.id || currentStoryProject?.id;
     const backgroundImage = activeProjectId ? projectBackgrounds[activeProjectId] : null;
 
 
@@ -475,6 +490,204 @@ export const Projects = memo(function Projects() {
         }
     }, [selectedProject])
 
+    // Story cards handlers
+    const totalCards = 1 + projects.length // Logo + projects
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        const touch = e.touches[0]
+        setStoryState(prev => ({
+            ...prev,
+            touchStartX: touch.clientX,
+            touchStartY: touch.clientY,
+        }))
+    }
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        const touch = e.changedTouches[0]
+        const deltaX = touch.clientX - storyState.touchStartX
+        const deltaY = touch.clientY - storyState.touchStartY
+        const minSwipeDistance = 50
+
+        // Only handle horizontal swipes - don't interfere with taps
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+            // It's a swipe - prevent default and navigate
+            e.preventDefault()
+            e.stopPropagation()
+            if (deltaX > 0) {
+                // Swipe right - go to previous card
+                setStoryState(prev => ({
+                    ...prev,
+                    currentCardIndex: Math.max(0, prev.currentCardIndex - 1),
+                    swipeDirection: 'right',
+                }))
+            } else {
+                // Swipe left - go to next card
+                setStoryState(prev => ({
+                    ...prev,
+                    currentCardIndex: Math.min(totalCards - 1, prev.currentCardIndex + 1),
+                    swipeDirection: 'left',
+                }))
+            }
+        }
+        // If it's a tap (small movement), don't prevent default - let the card's click handler fire
+    }
+
+    const handleStoryCardClick = () => {
+        // Only open modal if it's a project card (not logo)
+        if (storyState.currentCardIndex > 0) {
+            const project = projects[storyState.currentCardIndex - 1]
+            if (previewRef.current) {
+                const rect = previewRef.current.getBoundingClientRect()
+                setProjectState(prev => ({ ...prev, previewRect: rect }))
+            }
+            setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
+            setIsModalOpen(true)
+        }
+    }
+
+    const handleExitStoryMode = () => {
+        setStoryState(prev => ({ ...prev, isStoryMode: false, currentCardIndex: 0 }))
+    }
+
+    // Story card component for logo
+    const LogoStoryCard = () => (
+        <div className="flex items-center justify-center h-full min-h-[400px]">
+            <div className="text-center flex flex-col items-center justify-center px-4">
+                <div className="mb-6 sm:mb-8 text-primary flex justify-center">
+                    <div className="w-48 h-48 sm:w-64 sm:h-64 lg:w-96 lg:h-96">
+                        <AnimatedLogo />
+                    </div>
+                </div>
+                <h3 className="text-xl lg:text-2xl font-semibold mb-3 text-foreground">Select a Project</h3>
+                <p className="text-sm lg:text-base text-muted-foreground">
+                    Swipe to browse projects
+                </p>
+            </div>
+        </div>
+    )
+
+    // Story card component for projects - matches desktop hover preview exactly
+    const ProjectStoryCard = ({ project }: { project: typeof projects[0] }) => {
+        const cardTouchStartRef = useRef({ x: 0, y: 0, time: 0 })
+        const isTapRef = useRef(false)
+
+        const handleCardClick = (e: React.MouseEvent) => {
+            // For mouse clicks (desktop), always open modal
+            // For touch, we handle it in touchEnd
+            e.stopPropagation()
+            e.preventDefault()
+            handleStoryCardClick()
+        }
+
+        const handleCardTouchStart = (e: React.TouchEvent) => {
+            const touch = e.touches[0]
+            cardTouchStartRef.current = {
+                x: touch.clientX,
+                y: touch.clientY,
+                time: Date.now()
+            }
+            isTapRef.current = true
+            e.stopPropagation()
+        }
+
+        const handleCardTouchEnd = (e: React.TouchEvent) => {
+            const touch = e.changedTouches[0]
+            const deltaX = Math.abs(touch.clientX - cardTouchStartRef.current.x)
+            const deltaY = Math.abs(touch.clientY - cardTouchStartRef.current.y)
+            const deltaTime = Date.now() - cardTouchStartRef.current.time
+            
+            // If it's a swipe (large movement), don't treat it as a tap
+            if (deltaX > 15 || deltaY > 15 || deltaTime > 300) {
+                isTapRef.current = false
+                e.stopPropagation()
+                return
+            }
+            
+            // It's a tap - open modal directly
+            e.preventDefault()
+            e.stopPropagation()
+            handleStoryCardClick()
+            isTapRef.current = false
+        }
+
+        return (
+            <div 
+                className="story-card-content backdrop-blur-md border border-surface/50 bg-background pt-14 sm:pt-16 px-4 sm:px-6 pb-4 sm:pb-6 rounded-xl h-full flex flex-col relative cursor-pointer"
+                onClick={handleCardClick}
+                onTouchStart={handleCardTouchStart}
+                onTouchEnd={handleCardTouchEnd}
+                style={{ touchAction: 'pan-y' }}
+            >
+                {/* Header - matches desktop */}
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground pr-2">
+                        {project.title}
+                    </h3>
+                    <span className="text-xs sm:text-sm font-semibold text-muted-foreground flex-shrink-0">{project.date}</span>
+                </div>
+
+                {/* Achievement - matches desktop */}
+                {'achievement' in project && project.achievement && (
+                    <div className="mb-3">
+                        <div className="overflow-hidden">
+                            <span className="text-xs sm:text-sm font-menlo text-secondary font-semibold line-clamp-2 block">
+                                {project.achievement}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Preview Content - matches desktop */}
+                <div className="flex-1 min-h-0" ref={previewRef}>
+                    <PreviewSection project={project} />
+                </div>
+                
+                {/* Tap hint at bottom */}
+                <div className="mt-3 text-center">
+                    <span className="text-xs text-muted-foreground">Tap to view full details</span>
+                </div>
+            </div>
+        )
+    }
+
+    // Progress bar component
+    const ProgressBar = () => {
+        const progress = ((storyState.currentCardIndex + 1) / totalCards) * 100
+        
+        return (
+            <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-40">
+                <motion.div
+                    className="h-full bg-white"
+                    initial={false}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+            </div>
+        )
+    }
+
+    // Progress indicators (dots)
+    const ProgressIndicators = () => (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-40 flex gap-1.5">
+            {Array.from({ length: totalCards }).map((_, index) => (
+                <button
+                    key={index}
+                    onClick={() => setStoryState(prev => ({ 
+                        ...prev, 
+                        currentCardIndex: index,
+                        swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
+                    }))}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                        index === storyState.currentCardIndex
+                            ? 'bg-white w-6'
+                            : 'bg-white/40 hover:bg-white/60'
+                    }`}
+                    aria-label={`Go to card ${index + 1}`}
+                />
+            ))}
+        </div>
+    )
+
     return (
         <section id="projects" className="section-padding bg-background-secondary relative">
             {/* Project Background Effects */}
@@ -498,35 +711,135 @@ export const Projects = memo(function Projects() {
             </AnimatePresence>
 
             <div className="container-custom relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 40, scale: 0.98 }}
-                    whileInView={{
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        transition: {
-                            duration: 0.9,
-                            ease: [0.25, 0.46, 0.45, 0.94],
-                            opacity: { duration: 0.7 },
-                            y: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
-                            scale: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
-                        }
-                    }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                        Featured <span className="gradient-text">Projects</span>
-                    </h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-6" />
-                    <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
-                        A showcase of my recent work and personal projects that demonstrate my skills and passion for development
-                    </p>
-                </motion.div>
+                {/* Mobile Story Cards */}
+                {isMobile ? (
+                    <div className="lg:hidden">
+                        <motion.div
+                            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                            whileInView={{
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                transition: {
+                                    duration: 0.9,
+                                    ease: [0.25, 0.46, 0.45, 0.94],
+                                    opacity: { duration: 0.7 },
+                                    y: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
+                                    scale: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
+                                }
+                            }}
+                            viewport={{ once: true, margin: "-100px" }}
+                            className="text-center mb-8"
+                        >
+                            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                                Featured <span className="gradient-text">Projects</span>
+                            </h2>
+                            <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-4" />
+                            <p className="text-sm text-foreground-secondary max-w-xl mx-auto">
+                                A showcase of my recent work and personal projects
+                            </p>
+                        </motion.div>
 
+                        {/* Story Cards Container */}
+                        <div
+                            ref={storyContainerRef}
+                            className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
+                            onTouchStart={(e) => {
+                                // Only track touch start if it's on the container background, not on card content
+                                const target = e.target as HTMLElement
+                                if (!target.closest('.story-card-content')) {
+                                    handleTouchStart(e)
+                                }
+                            }}
+                            onTouchEnd={(e) => {
+                                // Only handle swipe if it's on the container itself, not on child elements
+                                const target = e.target as HTMLElement
+                                if (!target.closest('.story-card-content')) {
+                                    handleTouchEnd(e)
+                                }
+                            }}
+                            style={{ touchAction: 'pan-x pan-y' }}
+                        >
+                            <ProgressBar />
+                            <ProgressIndicators />
+                            
+                            {/* Close Button */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleExitStoryMode()
+                                }}
+                                className="absolute top-4 right-4 z-40 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
+                                aria-label="Close story mode"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
 
+                            {/* Card Counter */}
+                            <div className="absolute top-4 left-4 z-40 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-semibold">
+                                {storyState.currentCardIndex + 1} / {totalCards}
+                            </div>
 
-                {/* New Split Layout */}
+                            {/* Story Cards */}
+                            <AnimatePresence mode="wait" custom={storyState.swipeDirection}>
+                                {storyState.currentCardIndex === 0 ? (
+                                    <motion.div
+                                        key="logo"
+                                        custom={storyState.swipeDirection}
+                                        initial={{ opacity: 0, x: storyState.swipeDirection === 'left' ? 100 : -100 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: storyState.swipeDirection === 'left' ? -100 : 100 }}
+                                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                        className="absolute inset-0 p-4"
+                                    >
+                                        <LogoStoryCard />
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key={projects[storyState.currentCardIndex - 1].id}
+                                        custom={storyState.swipeDirection}
+                                        initial={{ opacity: 0, x: storyState.swipeDirection === 'left' ? 100 : -100 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: storyState.swipeDirection === 'left' ? -100 : 100 }}
+                                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                        className="absolute inset-0"
+                                    >
+                                        <ProjectStoryCard project={projects[storyState.currentCardIndex - 1]} />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        {/* Desktop Layout */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                            whileInView={{
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                transition: {
+                                    duration: 0.9,
+                                    ease: [0.25, 0.46, 0.45, 0.94],
+                                    opacity: { duration: 0.7 },
+                                    y: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
+                                    scale: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
+                                }
+                            }}
+                            viewport={{ once: true, margin: "-100px" }}
+                            className="text-center mb-16"
+                        >
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                                Featured <span className="gradient-text">Projects</span>
+                            </h2>
+                            <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-6" />
+                            <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
+                                A showcase of my recent work and personal projects that demonstrate my skills and passion for development
+                            </p>
+                        </motion.div>
+
+                        {/* Desktop Split Layout */}
                 <motion.div
                     initial={{ opacity: 0, y: 40, scale: 0.98 }}
                     whileInView={{
@@ -780,8 +1093,10 @@ export const Projects = memo(function Projects() {
                         </AnimatePresence>
                     </div>
                 </motion.div>
+                    </>
+                )}
 
-                {/* Full-Screen Project Overlay */}
+                {/* Full-Screen Project Overlay - Works for both mobile and desktop */}
                 <AnimatePresence>
                     {selectedProject && (
                         <motion.div
@@ -802,7 +1117,7 @@ export const Projects = memo(function Projects() {
                                     ease: [0.25, 0.46, 0.45, 0.94]
                                 }
                             }}
-                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 overflow-y-auto p-4 sm:p-6 lg:p-8"
+                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] overflow-y-auto p-4 sm:p-6 lg:p-8"
                             onClick={() => {
                                 setProjectState(prev => ({ ...prev, selectedProject: null }))
                                 setIsModalOpen(false)
