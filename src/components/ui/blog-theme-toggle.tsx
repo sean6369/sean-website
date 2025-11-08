@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 export function BlogThemeToggle() {
-    const { theme, setTheme, resolvedTheme } = useTheme()
+    const { setTheme, resolvedTheme } = useTheme()
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
@@ -18,21 +18,20 @@ export function BlogThemeToggle() {
         )
     }
 
-    // Use resolvedTheme as the source of truth for the current theme
-    const currentTheme = resolvedTheme || theme
+    const isDark = resolvedTheme === 'dark'
 
     return (
         <button
-            onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
             className="relative w-12 h-6 bg-gray-300 dark:bg-gray-700 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             aria-label="Toggle theme"
         >
             <div
                 className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-900 rounded-full shadow-md transform transition-transform duration-200 flex items-center justify-center ${
-                    currentTheme === 'dark' ? 'translate-x-6' : 'translate-x-0'
+                    isDark ? 'translate-x-6' : 'translate-x-0'
                 }`}
             >
-                {currentTheme === 'dark' ? (
+                {isDark ? (
                     <Moon className="h-3 w-3 text-gray-400" />
                 ) : (
                     <Sun className="h-3 w-3 text-purple-800" />
