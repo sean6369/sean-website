@@ -111,7 +111,7 @@ export function Hero() {
                                         "Hello, I'm a Developer",
                                         "Hello, I'm a Creator"
                                     ]}
-                                    typingSpeed={80}
+                                    typingSpeed={40}
                                     pauseDuration={2000}
                                     initialDelay={500}
                                     showCursor={true}
@@ -129,31 +129,23 @@ export function Hero() {
                             </Suspense>
                         </h1>
 
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.5 }} // Show immediately but with slight delay
-                            className="text-xl md:text-2xl lg:text-3xl text-foreground-secondary mb-2"
-                        >
-                            <Suspense fallback={<span className="font-menlo text-accent">const role = NUS Computer Engineering Student</span>}>
-                                <TextType
-                                    text='const role = NUS Computer Engineering Student'
-                                    typingSpeed={50}
-                                    initialDelay={1200} // Start typing at 1.2s
-                                    showCursor={true}
-                                    cursorCharacter="_"
-                                    loop={false}
-                                    className="font-menlo text-accent" // Uses theme-aware accent color
-                                />
-                            </Suspense>
-                        </motion.div>
+                        <div className="text-xl md:text-2xl lg:text-3xl text-foreground-secondary mb-2 flex justify-center">
+                            <motion.div
+                                initial={{ clipPath: "inset(0 100% 0 0)" }}
+                                animate={{ clipPath: "inset(0 0% 0 0)" }}
+                                transition={{ duration: 1.5, delay: 1.8, ease: "easeInOut" }}
+                                className="font-menlo text-accent"
+                            >
+                                const role = NUS Computer Engineering Student
+                            </motion.div>
+                        </div>
                     </motion.div>
 
                     {/* Description */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.5, delay: 5.0 }}
+                        transition={{ duration: 1.5, delay: 3.3 }}
                         className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto mb-8 leading-relaxed text-center font-medium"
                     >
                         I am dedicated to building practical, impactful, and user-friendly products that bridge the gap between ideas and execution. Passionate about creating solutions that combine functionality with beautiful design.
@@ -164,22 +156,14 @@ export function Hero() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 6.0 }} // Delayed to appear at 6s
+                        transition={{ duration: 0.8, delay: 3.8 }}
                         className="flex justify-center items-center gap-3 mb-16 pointer-events-auto"
                     >
-                        <motion.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 1.0 }}
-                            className="text-lg font-semibold text-foreground"
-                        >
+                        <span className="text-lg font-semibold text-foreground">
                             Read my thoughts here:
-                        </motion.span>
+                        </span>
                         <Link href="/blog">
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: 1.0 }}
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="p-3 rounded-full bg-surface hover:bg-surface-secondary transition-all duration-300 group"
@@ -196,7 +180,7 @@ export function Hero() {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 7.0 }} // Delayed to appear at 7s
+                transition={{ duration: 1, delay: 4.5 }}
                 className="absolute bottom-20 md:bottom-8 left-1/2 transform -translate-x-1/2"
             >
                 <motion.button
