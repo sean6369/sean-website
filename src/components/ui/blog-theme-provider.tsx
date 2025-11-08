@@ -20,6 +20,7 @@ export function BlogThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
             setIsThemeReady(true)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Don't render until theme is set correctly
