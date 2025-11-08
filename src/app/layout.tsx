@@ -3,6 +3,7 @@ import { newYork } from '@/lib/fonts'
 import '@/styles/globals.css'
 import { Toaster } from '@/components/ui/sonner'
 import { ModalProvider } from '@/lib/modal-context'
+import { ThemeProvider } from 'next-themes'
 
 export const metadata: Metadata = {
     title: 'Sean | Personal Website',
@@ -69,7 +70,7 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body
                 className="min-h-screen antialiased bg-background text-foreground"
                 style={{
@@ -77,10 +78,12 @@ export default function RootLayout({
                     backgroundColor: 'var(--background)',
                 }}
             >
-                <ModalProvider>
-                    {children}
-                    <Toaster />
-                </ModalProvider>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    <ModalProvider>
+                        {children}
+                        <Toaster />
+                    </ModalProvider>
+                </ThemeProvider>
             </body>
         </html>
     )

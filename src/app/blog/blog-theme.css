@@ -1,0 +1,12 @@
+/* Blog-specific purple theme for light mode only */
+.blog-page {
+    --primary: #6b46c1;
+    --secondary: #7c3aed;
+}
+
+/* Dark mode keeps the original purple from globals.css */
+.dark .blog-page {
+    --primary: #cba6f7;
+    --secondary: #f5c2e7;
+}
+

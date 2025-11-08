@@ -1,9 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react'
+import { ChevronDown, Github, Linkedin, Mail, BookOpen } from 'lucide-react'
 import { scrollToSection } from '@/lib/utils'
 import { useEffect, useState, lazy, Suspense } from 'react'
+import Link from 'next/link'
 
 // Lazy load heavy components
 const LiquidEther = lazy(() => import('@/components/ui/LiquidEther'))
@@ -11,19 +12,10 @@ const TextType = lazy(() => import('@/components/ui/TextType'))
 
 const socialLinks = [
     {
-        name: 'GitHub',
-        href: 'https://github.com/sean6369',
-        icon: Github,
-    },
-    {
-        name: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/lee-su-kiat-sean-19211a33b',
-        icon: Linkedin,
-    },
-    {
-        name: 'Email',
-        href: 'mailto:seanleesukiat@gmail.com',
-        icon: Mail,
+        name: 'Blog',
+        href: '/blog',
+        icon: BookOpen,
+        external: false,
     },
 ]
 
@@ -168,30 +160,34 @@ export function Hero() {
                     </motion.div>
 
 
-                    {/* Social Links */}
+                    {/* Blog Button */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 6.0 }} // Delayed to appear at 6s
-                        className="flex justify-center gap-6 mb-16 pointer-events-auto"
+                        className="flex justify-center items-center gap-3 mb-16 pointer-events-auto"
                     >
-                        {socialLinks.map((link, index) => (
-                            <motion.a
-                                key={link.name}
-                                href={link.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                        <motion.span
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 1.0 }}
+                            className="text-lg font-semibold text-foreground"
+                        >
+                            Read my thoughts here:
+                        </motion.span>
+                        <Link href="/blog">
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: 1.0 + index * 0.1 }}
+                                transition={{ duration: 0.5, delay: 1.0 }}
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="p-3 rounded-full bg-surface hover:bg-surface-secondary transition-all duration-300 group"
-                                aria-label={link.name}
+                                aria-label="Blog"
                             >
-                                <link.icon className="w-5 h-5 text-foreground-secondary group-hover:text-primary transition-colors duration-300" />
-                            </motion.a>
-                        ))}
+                                <BookOpen className="w-5 h-5 text-foreground-secondary group-hover:text-primary transition-colors duration-300" />
+                            </motion.div>
+                        </Link>
                     </motion.div>
                 </div>
             </div>

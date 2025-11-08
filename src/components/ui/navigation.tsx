@@ -25,13 +25,14 @@ const navItems = [
 // Convert navItems to StaggeredMenu format
 const menuItems = navItems.map(item => ({
     label: item.label,
-    ariaLabel: `Go to ${item.label.toLowerCase()} section`,
-    link: `#${item.id}`
+    ariaLabel: `Go to ${item.label.toLowerCase()} ${item.link.startsWith('/') ? 'page' : 'section'}`,
+    link: item.link
 }))
 
 const socialItems = [
     { label: 'GitHub', link: 'https://github.com/sean6369' },
-    { label: 'LinkedIn', link: 'https://www.linkedin.com/in/lee-su-kiat-sean-19211a33b' }
+    { label: 'LinkedIn', link: 'https://www.linkedin.com/in/lee-su-kiat-sean-19211a33b' },
+    { label: 'Blog', link: '/blog' }
 ]
 
 export function Navigation() {
@@ -88,7 +89,15 @@ export function Navigation() {
     }
 
     const handleNavClick = (sectionId: string) => {
-        scrollToSection(sectionId)
+        // Check if this is an external link (like /blog)
+        const navItem = navItems.find(item => item.id === sectionId)
+        if (navItem && navItem.link.startsWith('/')) {
+            // Navigate to the page
+            window.location.href = navItem.link
+        } else {
+            // Scroll to section
+            scrollToSection(sectionId)
+        }
     }
 
     return (
@@ -206,8 +215,12 @@ export function Navigation() {
                                     onMenuOpen={() => { }}
                                     onMenuClose={() => { }}
                                     onItemClick={(item) => {
-                                        const sectionId = item.link.replace('#', '');
-                                        scrollToSection(sectionId);
+                                        if (item.link.startsWith('/')) {
+                                            window.location.href = item.link;
+                                        } else {
+                                            const sectionId = item.link.replace('#', '');
+                                            scrollToSection(sectionId);
+                                        }
                                     }}
                                 />
                             </div>

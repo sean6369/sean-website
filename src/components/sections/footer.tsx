@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useIntersectionObserver } from '@/lib/hooks'
 import { scrollToSection } from '@/lib/utils'
+import Link from 'next/link'
 
 export function Footer() {
     const currentYear = new Date().getFullYear()
@@ -164,30 +165,14 @@ export function Footer() {
                                     <div className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></div>
                                 </button>
                             </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <div className="mb-3 text-sm font-semibold tracking-widest uppercase" style={{ color: `var(--primary)` }}>
-                            Contact
-                        </div>
-                        <ul className="space-y-2">
                             <li className="group">
-                                <a href="mailto:seanleesukiat@gmail.com" className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105">
-                                    <span className="relative z-10">Email</span>
+                                <Link
+                                    href="/blog"
+                                    className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105"
+                                >
+                                    <span className="relative z-10">Blog</span>
                                     <div className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></div>
-                                </a>
-                            </li>
-                            <li className="group">
-                                <a href="https://www.linkedin.com/in/lee-su-kiat-sean-19211a33b" className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105">
-                                    <span className="relative z-10">LinkedIn</span>
-                                    <div className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></div>
-                                </a>
-                            </li>
-                            <li className="group">
-                                <a href="https://github.com/sean6369" className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105">
-                                    <span className="relative z-10">GitHub</span>
-                                    <div className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></div>
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
