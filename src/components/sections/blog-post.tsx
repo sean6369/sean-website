@@ -17,19 +17,19 @@ export function BlogPost({ post }: BlogPostProps) {
         <article className="w-full text-black dark:text-white">
             {/* Post header */}
             <header className="mb-4 -mt-2">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-1 text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                     {post.title}
                 </h1>
                 
                 {post.readTime && (
-                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-1 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
-                        <Clock className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-sm lg:text-base text-gray-500 dark:text-gray-400 mb-1 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                        <Clock className="h-4 w-4 lg:h-5 lg:w-5" />
                         <span className="font-semibold">{post.readTime} min read</span>
                     </div>
                 )}
                 
                 {post.excerpt && (
-                    <p className="text-xl text-muted-foreground mb-0 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                    <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-0 font-medium transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                         {post.excerpt}
                     </p>
                 )}
@@ -53,16 +53,16 @@ export function BlogPost({ post }: BlogPostProps) {
                     remarkPlugins={[remarkGfm]}
                     components={{
                         h1: ({ children }) => (
-                            <h2 className="text-4xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h2>
+                            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h2>
                         ),
                         h2: ({ children }) => (
-                            <h3 className="text-3xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h3>
+                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h3>
                         ),
                         h3: ({ children }) => (
-                            <h4 className="text-2xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h4>
+                            <h4 className="text-base md:text-lg lg:text-xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h4>
                         ),
                         p: ({ children }) => (
-                            <p className="mb-4 leading-relaxed text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
+                            <p className="mb-4 leading-relaxed text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
                         ),
                         ul: ({ children }) => (
                             <ul className="list-disc list-inside mb-4 space-y-2 transition-[margin,padding] duration-300 ease-in-out">{children}</ul>
@@ -71,7 +71,7 @@ export function BlogPost({ post }: BlogPostProps) {
                             <ol className="list-decimal list-inside mb-4 space-y-2 transition-[margin,padding] duration-300 ease-in-out">{children}</ol>
                         ),
                         li: ({ children }) => (
-                            <li className="text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</li>
+                            <li className="text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</li>
                         ),
                         blockquote: ({ children }) => (
                             <blockquote className="border-l-4 border-primary pl-4 italic my-4 text-muted-foreground transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">

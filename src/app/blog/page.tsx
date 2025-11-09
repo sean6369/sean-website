@@ -43,7 +43,7 @@ export default async function BlogPage() {
                     {/* Main Content */}
                     <div className="flex-1 max-w-3xl transition-[max-width,padding,margin] duration-300 ease-in-out">
                         <div className="mb-12">
-                            <h2 className="text-xl font-bold text-gray-500 dark:text-gray-400 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                            <h2 className="text-base md:text-lg lg:text-xl font-bold text-gray-500 dark:text-gray-400 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                                 Recent posts
                             </h2>
                             <div className="border-b border-gray-300 dark:border-gray-700 mb-3"></div>
@@ -59,7 +59,7 @@ export default async function BlogPage() {
                                     {posts.map((post) => (
                                         <article key={post.id} className="group">
                                             <Link href={`/blog/${post.slug}`}>
-                                                <h2 className="text-2xl font-bold text-primary hover:text-primary/80 transition-[colors,font-size,line-height,margin,padding] duration-300 ease-in-out mb-0.5 group-hover:underline">
+                                                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary hover:text-primary/80 leading-tight transition-[colors,font-size,line-height,margin,padding] duration-300 ease-in-out mb-0.5 group-hover:underline">
                                                     {post.title}
                                                 </h2>
                                             </Link>
@@ -71,7 +71,7 @@ export default async function BlogPage() {
                                                 </div>
                                             )}
 
-                                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                                            <p className="text-sm lg:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                                                 {post.excerpt}
                                             </p>
                                         </article>
