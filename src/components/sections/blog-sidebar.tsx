@@ -74,8 +74,8 @@ export function BlogSidebar() {
                             <h2 className="text-lg font-bold text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                                 Sean Lee
                             </h2>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-1 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
-                                Sometimes I say things
+                            <p className="text-gray-600 dark:text-gray-400 text-sm transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                                Computer Engineering student building AI-powered solutions.
                             </p>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ export function BlogSidebar() {
                             Sean Lee
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
-                            Sometimes I say things
+                            Computer Engineering student building AI-powered solutions.
                         </p>
                     </div>
 
