@@ -53,13 +53,13 @@ export function BlogPost({ post }: BlogPostProps) {
                     remarkPlugins={[remarkGfm]}
                     components={{
                         h1: ({ children }) => (
-                            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h2>
+                            <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h2>
                         ),
                         h2: ({ children }) => (
-                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h3>
+                            <h3 className="text-lg md:text-xl lg:text-2xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h3>
                         ),
                         h3: ({ children }) => (
-                            <h4 className="text-base md:text-lg lg:text-xl font-bold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h4>
+                            <h4 className="text-base md:text-lg lg:text-xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h4>
                         ),
                         p: ({ children }) => (
                             <p className="mb-4 leading-relaxed text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
@@ -120,7 +120,7 @@ export function BlogPost({ post }: BlogPostProps) {
             <Separator className="my-12" />
 
             {/* Back to blog link and date */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-8">
                 <Link 
                     href="/blog"
                     className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm"
