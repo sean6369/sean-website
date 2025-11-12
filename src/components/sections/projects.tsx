@@ -376,6 +376,9 @@ export const Projects = memo(function Projects() {
     });
 
     const previewRef = useRef<HTMLDivElement>(null)
+    const iframeContainerRef = useRef<HTMLDivElement>(null)
+    const [iframeScale, setIframeScale] = useState(1)
+    const [iframeDimensions, setIframeDimensions] = useState({ width: 1280, height: 720 })
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
     const animations = getAnimationVariants(prefersReducedMotion) as any
@@ -490,6 +493,42 @@ export const Projects = memo(function Projects() {
             setProjectState(prev => ({ ...prev, previewRect: null }))
         }
     }, [selectedProject])
+
+    // Calculate iframe scale to maintain desktop or mobile viewport
+    useEffect(() => {
+        // Set dimensions based on device type
+        const viewportWidth = isMobile ? 375 : 1280
+        const viewportHeight = isMobile ? 667 : 720
+        setIframeDimensions({ width: viewportWidth, height: viewportHeight })
+
+        const calculateScale = () => {
+            if (iframeContainerRef.current) {
+                const containerWidth = iframeContainerRef.current.offsetWidth
+                const containerHeight = iframeContainerRef.current.offsetHeight
+                
+                // Calculate scale to fit container while maintaining aspect ratio
+                const scaleX = containerWidth / viewportWidth
+                const scaleY = containerHeight / viewportHeight
+                const scale = Math.min(scaleX, scaleY, 1) // Don't scale up beyond 100%
+                
+                setIframeScale(scale)
+            }
+        }
+
+        calculateScale()
+        
+        const resizeObserver = new ResizeObserver(calculateScale)
+        if (iframeContainerRef.current) {
+            resizeObserver.observe(iframeContainerRef.current)
+        }
+
+        window.addEventListener('resize', calculateScale)
+
+        return () => {
+            resizeObserver.disconnect()
+            window.removeEventListener('resize', calculateScale)
+        }
+    }, [selectedProject, isMobile])
 
     // Story cards handlers
     const totalCards = 1 + projects.length // Logo + projects
@@ -1202,9 +1241,14 @@ export const Projects = memo(function Projects() {
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-                                        {selectedProject.title}
-                                    </h3>
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                                            {selectedProject.title}
+                                        </h3>
+                                        <span className="text-sm px-3 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary whitespace-nowrap font-semibold">
+                                            {selectedProject.category}
+                                        </span>
+                                    </div>
                                     <button
                                         onClick={() => {
                                             setProjectState(prev => ({ ...prev, selectedProject: null }))
@@ -1230,16 +1274,13 @@ export const Projects = memo(function Projects() {
                                             </div>
                                         )}
 
-                                        <div className="flex flex-wrap gap-3">
-                                            <span className="px-4 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-full">
-                                                {selectedProject.category}
-                                            </span>
-                                            {selectedProject.hackathon && (
+                                        {selectedProject.hackathon && (
+                                            <div className="flex flex-wrap gap-3">
                                                 <span className="text-sm px-3 py-2 bg-secondary border border-secondary rounded-xl text-background whitespace-nowrap font-semibold">
                                                     {selectedProject.hackathon}
                                                 </span>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
 
                                         <div>
                                             <h4 className="text-xl font-semibold mb-4 text-foreground">About This Project</h4>
@@ -1248,27 +1289,15 @@ export const Projects = memo(function Projects() {
                                             </p>
                                         </div>
 
-                                        <div>
-                                            <h4 className="text-xl font-semibold mb-4 text-foreground">Technologies Used</h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedProject.technologies.map((tech) => (
-                                                    <span
-                                                        key={tech}
-                                                        className="text-sm px-3 py-1 rounded-lg text-background whitespace-nowrap bg-primary border border-primary font-semibold"
-                                                    >
-                                                        {tech}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-
                                         <div className="flex flex-col sm:flex-row gap-4">
                                             {'live' in selectedProject && selectedProject.live && (
                                                 <motion.a
                                                     href={selectedProject.live}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm px-6 py-3 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary rounded-lg whitespace-nowrap font-medium flex items-center justify-center gap-2 transition-all duration-200 touch-manipulation shadow-lg backdrop-blur-sm"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
                                                     Open in New Tab
@@ -1292,7 +1321,9 @@ export const Projects = memo(function Projects() {
                                                     href={selectedProject.cms}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm px-6 py-3 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary rounded-lg whitespace-nowrap font-medium flex items-center justify-center gap-2 transition-all duration-200 touch-manipulation shadow-lg backdrop-blur-sm"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
                                                     Open in New Tab (CMS)
@@ -1307,23 +1338,36 @@ export const Projects = memo(function Projects() {
                                         {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
                                             <div>
                                                 <h4 className="text-xl font-semibold mb-4 text-foreground">Live Website Preview</h4>
-                                                <div className="relative w-full h-96 lg:h-[500px] rounded-lg overflow-hidden border border-surface-secondary">
-                                                    <div
-                                                        className="w-full h-full"
-                                                        style={{
-                                                            transform: isMobile ? 'scale(0.5)' : 'scale(1)',
-                                                            transformOrigin: 'top left',
-                                                            width: isMobile ? '200%' : '100%',
-                                                            height: isMobile ? '200%' : '100%'
-                                                        }}
-                                                    >
-                                                        <iframe
-                                                            src={selectedProject.live}
-                                                            className="w-full h-full"
-                                                            title={`${selectedProject.title} Live Preview`}
-                                                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                                                            loading="lazy"
-                                                        />
+                                                <div 
+                                                    ref={iframeContainerRef}
+                                                    className="relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black" 
+                                                    style={{ 
+                                                        aspectRatio: isMobile ? `${iframeDimensions.width} / ${iframeDimensions.height}` : '16 / 9', 
+                                                        minHeight: isMobile ? '300px' : '400px' 
+                                                    }}
+                                                >
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div
+                                                            style={{
+                                                                width: `${iframeDimensions.width}px`,
+                                                                height: `${iframeDimensions.height}px`,
+                                                                transform: `scale(${iframeScale})`,
+                                                                transformOrigin: 'center center'
+                                                            }}
+                                                        >
+                                                            <iframe
+                                                                src={selectedProject.live}
+                                                                title={`${selectedProject.title} Live Preview`}
+                                                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                                                                loading="lazy"
+                                                                style={{ 
+                                                                    width: `${iframeDimensions.width}px`, 
+                                                                    height: `${iframeDimensions.height}px`, 
+                                                                    border: 'none', 
+                                                                    display: 'block' 
+                                                                }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                     <div className="absolute top-2 right-2 z-10">
                                                         <a
@@ -1342,6 +1386,27 @@ export const Projects = memo(function Projects() {
 
                                         {/* Video Demo */}
                                         {selectedProject && <VideoSection selectedProject={selectedProject} />}
+
+                                        {/* Background Image Fallback for NoFap and Ship Vessel */}
+                                        {selectedProject && 
+                                         !('live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma')) &&
+                                         !('video' in selectedProject && selectedProject.video) &&
+                                         !('videos' in selectedProject && selectedProject.videos && Array.isArray(selectedProject.videos) && selectedProject.videos.length > 0) &&
+                                         (selectedProject.title === 'NoFap' || selectedProject.title === 'Ship Vessel Risk Detection Model') && (
+                                            <div>
+                                                <h4 className="text-xl font-semibold mb-4 text-foreground">Project Screenshot</h4>
+                                                <div className="relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black" style={{ aspectRatio: '16/9', minHeight: '400px' }}>
+                                                    <div
+                                                        className="w-full h-full bg-cover bg-center"
+                                                        style={{ 
+                                                            backgroundImage: selectedProject.title === 'NoFap'
+                                                                ? "url('/images/Hackomania screen.png')"
+                                                                : "url('/images/Marinetime Hackathon screen.jpeg')"
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
