@@ -7,15 +7,6 @@ import { Button } from '@/components/ui/button'
 
 const milestones = [
     {
-        company: 'Oxley Pawnshop',
-        role: 'Software Engineer',
-        period: 'Jul 2025 – Aug 2025',
-        location: 'Singapore',
-        description: 'Designed and launched a modern pawnshop website as solo developer, featuring interactive animations, integrated contact forms, real-time gold price updates, and complete email system setup.',
-        icon: Briefcase,
-        color: 'from-secondary to-secondary/60'
-    },
-    {
         company: 'Goldjewel Pte. Ltd.',
         role: 'Software Engineer',
         period: 'Jun 2025 - Aug 2025',
@@ -25,11 +16,20 @@ const milestones = [
         color: 'from-primary to-primary/60'
     },
     {
+        company: 'Oxley Pawnshop',
+        role: 'Software Engineer',
+        period: 'May 2025 - Jun 2025',
+        location: 'Singapore',
+        description: 'Designed and launched a modern pawnshop website as solo developer, featuring interactive animations, integrated contact forms, real-time gold price updates, and complete email system setup.',
+        icon: Briefcase,
+        color: 'from-secondary to-secondary/60'
+    },
+    {
         company: 'Yoga Movement',
-        role: 'Front Desk & Data Systems Administrator',
+        role: 'Front Desk and Data Analyst',
         period: 'Dec 2023 - Present',
         location: 'Singapore',
-        description: 'Managed database systems for attendance tracking, analyzed participation trends for data-driven decisions, and provided customer service in a supportive environment.',
+        description: 'Analysed participation trends to improve class scheduling and engagement, and provided customer support while fostering a positive and welcoming environment.',
         icon: Award,
         color: 'from-accent to-accent/60'
     },
