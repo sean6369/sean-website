@@ -49,17 +49,6 @@ const projectsData = [
     },
     {
         id: 3,
-        title: 'Oxley Pawnshop Website',
-        description: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern.',
-        longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
-        image: '/projects/oxleypawnshop.jpg',
-        technologies: ['Frontend Development', 'Backend Integration', 'API Integration', 'Email Services', 'Real-time Data'],
-        live: 'https://www.oxleypawnshop.com/',
-        category: 'Web App',
-        date: 'Jul 2025 - Aug 2025',
-    },
-    {
-        id: 4,
         title: 'SigmaHealth',
         achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award',
         description: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform.',
@@ -73,7 +62,7 @@ const projectsData = [
         date: 'Jul 2025',
     },
     {
-        id: 5,
+        id: 4,
         title: 'Goldjewel Website & CMS',
         description: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS).',
         longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
@@ -85,7 +74,7 @@ const projectsData = [
         date: 'Jun 2025 - Aug 2025',
     },
     {
-        id: 6,
+        id: 5,
         title: 'SigmaShield',
         achievement: '🏆 Finalist (top 20 of 80+ teams)',
         description: 'An AI-powered mobile app that helps users detect, understand, and prevent online scams. It offers real-time URL analysis, educational content, scam analytics, and a community forum for sharing experiences and insights.',
@@ -97,6 +86,17 @@ const projectsData = [
         video: '/videos/SigmaShield demo video.mp4',
         category: 'Mobile App',
         date: 'Jun 2025 - Jul 2025',
+    },
+    {
+        id: 6,
+        title: 'Oxley Pawnshop Website',
+        description: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern.',
+        longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
+        image: '/projects/oxleypawnshop.jpg',
+        technologies: ['Frontend Development', 'Backend Integration', 'API Integration', 'Email Services', 'Real-time Data'],
+        live: 'https://www.oxleypawnshop.com/',
+        category: 'Web App',
+        date: 'May 2025 - Jun 2025',
     },
     {
         id: 7,
@@ -387,10 +387,10 @@ export const Projects = memo(function Projects() {
     const projectBackgrounds: Record<number, string> = {
         1: '/images/What the Hack screen.png',
         2: '/images/IDEATE screen.png',
-        3: '/images/Oxley Pawnshop screen.jpeg',
-        4: '/images/Lifehack screen.jpeg',
-        5: '/images/Goldjewel screen.jpg',
-        6: '/images/DSTA Brainhack screen.png',
+        3: '/images/Lifehack screen.jpeg',
+        4: '/images/Goldjewel screen.jpg',
+        5: '/images/DSTA Brainhack screen.png',
+        6: '/images/Oxley Pawnshop screen.jpeg',
         7: '/images/Orbital screen.png',
         8: '/images/Hackomania screen.png',
         9: '/images/Marinetime Hackathon screen.jpeg',
@@ -699,10 +699,10 @@ export const Projects = memo(function Projects() {
                         }))
                     }}
                     className={`rounded-full touch-manipulation ${index === storyState.currentCardIndex
-                            ? 'bg-white'
-                            : 'bg-white/40 hover:bg-white/60'
+                        ? 'bg-white'
+                        : 'bg-white/40 hover:bg-white/60'
                         }`}
-                    style={index === storyState.currentCardIndex 
+                    style={index === storyState.currentCardIndex
                         ? { width: '24px', height: '6px', transition: 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }
                         : { width: '6px', height: '6px', transition: 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }
                     }
@@ -795,25 +795,25 @@ export const Projects = memo(function Projects() {
                                     <motion.div
                                         key="logo"
                                         custom={storyState.swipeDirection}
-                                        initial={{ 
-                                            opacity: 0, 
+                                        initial={{
+                                            opacity: 0,
                                             x: storyState.swipeDirection === 'left' ? 100 : -100,
                                             scale: 0.95,
                                             filter: 'blur(4px)'
                                         }}
-                                        animate={{ 
-                                            opacity: 1, 
+                                        animate={{
+                                            opacity: 1,
                                             x: 0,
                                             scale: 1,
                                             filter: 'blur(0px)'
                                         }}
-                                        exit={{ 
-                                            opacity: 0, 
+                                        exit={{
+                                            opacity: 0,
                                             x: storyState.swipeDirection === 'left' ? -100 : 100,
                                             scale: 0.95,
                                             filter: 'blur(4px)'
                                         }}
-                                        transition={{ 
+                                        transition={{
                                             type: 'spring',
                                             stiffness: 300,
                                             damping: 30,
@@ -829,25 +829,25 @@ export const Projects = memo(function Projects() {
                                     <motion.div
                                         key={projects[storyState.currentCardIndex - 1].id}
                                         custom={storyState.swipeDirection}
-                                        initial={{ 
-                                            opacity: 0, 
+                                        initial={{
+                                            opacity: 0,
                                             x: storyState.swipeDirection === 'left' ? 100 : -100,
                                             scale: 0.95,
                                             filter: 'blur(4px)'
                                         }}
-                                        animate={{ 
-                                            opacity: 1, 
+                                        animate={{
+                                            opacity: 1,
                                             x: 0,
                                             scale: 1,
                                             filter: 'blur(0px)'
                                         }}
-                                        exit={{ 
-                                            opacity: 0, 
+                                        exit={{
+                                            opacity: 0,
                                             x: storyState.swipeDirection === 'left' ? -100 : 100,
                                             scale: 0.95,
                                             filter: 'blur(4px)'
                                         }}
-                                        transition={{ 
+                                        transition={{
                                             type: 'spring',
                                             stiffness: 300,
                                             damping: 30,
@@ -922,7 +922,7 @@ export const Projects = memo(function Projects() {
                                     {/* Explorer Header */}
                                     <div className="flex items-center gap-2 px-3 py-2 border-b border-surface-secondary/50 bg-surface/30">
                                         <Folder className="w-4 h-4 text-muted-foreground" />
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                                        <span className="text-sm font-semibold uppercase tracking-wider text-foreground-secondary">
                                             Explorer
                                         </span>
                                     </div>
@@ -1018,7 +1018,7 @@ export const Projects = memo(function Projects() {
 
                                                         {/* Project Title */}
                                                         <span className={`
-                                                text-sm truncate flex-1 transition-colors duration-150
+                                                text-base truncate flex-1 transition-colors duration-150
                                                 ${isSelected
                                                                 ? 'text-foreground font-medium'
                                                                 : isHovered
