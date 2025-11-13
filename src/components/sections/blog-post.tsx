@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 
@@ -51,6 +52,7 @@ export function BlogPost({ post }: BlogPostProps) {
             <div className="max-w-none">
                 <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                     components={{
                         h1: ({ children }) => (
                             <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h2>
@@ -93,22 +95,69 @@ export function BlogPost({ post }: BlogPostProps) {
                                 {children}
                             </pre>
                         ),
-                        a: ({ href, children }) => (
-                            <a
-                                href={href}
-                                className="text-primary hover:underline transition-colors"
-                                target={href?.startsWith('http') ? '_blank' : undefined}
-                                rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-                            >
-                                {children}
-                            </a>
-                        ),
+                        a: ({ href, children }) => {
+                            // Use Next.js Link for internal links (relative URLs)
+                            if (href && !href.startsWith('http') && !href.startsWith('mailto:')) {
+                                return (
+                                    <Link
+                                        href={href}
+                                        className="text-primary hover:underline transition-colors"
+                                    >
+                                        {children}
+                                    </Link>
+                                )
+                            }
+                            // Use regular anchor for external links
+                            return (
+                                <a
+                                    href={href}
+                                    className="text-primary hover:underline transition-colors"
+                                    target={href?.startsWith('http') ? '_blank' : undefined}
+                                    rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                >
+                                    {children}
+                                </a>
+                            )
+                        },
                         img: ({ src, alt }) => (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                                 src={src}
                                 alt={alt || ''}
                                 className="rounded-lg my-6 w-full transition-[width,height] duration-300 ease-in-out"
+                            />
+                        ),
+                        div: ({ className, children, ...props }) => {
+                            // Handle YouTube embeds
+                            if (className === 'youtube-embed') {
+                                return (
+                                    <div className="relative w-full my-6 rounded-lg overflow-hidden border border-surface-secondary bg-black" style={{ paddingBottom: '56.25%', height: 0 }}>
+                                        <div className="absolute top-0 left-0 w-full h-full">
+                                            {children}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            // Handle other embeds
+                            if (className === 'embed-container') {
+                                return (
+                                    <div className="relative w-full my-6 rounded-lg overflow-hidden border border-surface-secondary" style={{ paddingBottom: '56.25%', height: 0 }}>
+                                        <div className="absolute top-0 left-0 w-full h-full">
+                                            {children}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            // Default div rendering
+                            return <div className={className} {...props}>{children}</div>
+                        },
+                        iframe: ({ src, ...props }) => (
+                            <iframe
+                                src={src}
+                                className="w-full h-full absolute top-0 left-0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                {...props}
                             />
                         ),
                     }}
