@@ -102,6 +102,17 @@
         @apply bg-background text-foreground font-new-york;
         background-color: var(--background);
         max-width: 100vw;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Normalize serif font rendering across all fallbacks */
+    .font-new-york {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        font-feature-settings: "kern" 1, "liga" 1;
     }
 
     ::selection {
@@ -305,6 +316,10 @@
         margin-top: 2em;
         margin-bottom: 1em;
         line-height: 1.3;
+        font-weight: 800;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        letter-spacing: -0.01em;
     }
 
     .prose h1 {

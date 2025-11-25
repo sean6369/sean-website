@@ -251,7 +251,9 @@ async function blocksToMarkdown(blockId: string): Promise<string> {
     const blocks = await notionFetch(`/blocks/${blockId}/children`)
     let markdown = ''
     
-    for (const block of blocks.results) {
+    for (let i = 0; i < blocks.results.length; i++) {
+        const block = blocks.results[i]
+        const nextBlock = blocks.results[i + 1]
         const type = block.type
         const content = block[type]
         
@@ -275,7 +277,25 @@ async function blocksToMarkdown(blockId: string): Promise<string> {
                 markdown += `1. ${await richTextToMarkdown(content.rich_text)}\n`
                 break
             case 'quote':
-                markdown += `> ${await richTextToMarkdown(content.rich_text)}\n\n`
+                // Add quote line with two spaces at end for line break
+                markdown += `> ${await richTextToMarkdown(content.rich_text)}  \n`
+                
+                // Check if this quote block has children (nested content)
+                if (block.has_children) {
+                    const childContent = await blocksToMarkdown(block.id)
+                    // Add child content as additional quote lines
+                    const childLines = childContent.trim().split('\n')
+                    for (const line of childLines) {
+                        if (line.trim()) {
+                            markdown += `> ${line.trim()}  \n`
+                        }
+                    }
+                }
+                
+                // Only add double newline if next block is NOT a quote
+                if (!nextBlock || nextBlock.type !== 'quote') {
+                    markdown += '\n'
+                }
                 break
             case 'code':
                 const code = await richTextToMarkdown(content.rich_text)

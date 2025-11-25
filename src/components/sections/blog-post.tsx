@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
 import rehypeRaw from 'rehype-raw'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
@@ -51,29 +52,29 @@ export function BlogPost({ post }: BlogPostProps) {
             {/* Post content */}
             <div className="max-w-none">
                 <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeRaw]}
                     components={{
                         h1: ({ children }) => (
-                            <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h2>
+                            <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ fontWeight: 800, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h2>
                         ),
                         h2: ({ children }) => (
-                            <h3 className="text-lg md:text-xl lg:text-2xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h3>
+                            <h3 className="text-lg md:text-xl lg:text-2xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ fontWeight: 800, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h3>
                         ),
                         h3: ({ children }) => (
-                            <h4 className="text-base md:text-lg lg:text-xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</h4>
+                            <h4 className="text-base md:text-lg lg:text-xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ fontWeight: 800, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h4>
                         ),
                         p: ({ children }) => (
                             <p className="mb-4 leading-relaxed text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
                         ),
                         ul: ({ children }) => (
-                            <ul className="list-disc list-inside mb-4 space-y-2 transition-[margin,padding] duration-300 ease-in-out">{children}</ul>
+                            <ul className="list-disc list-outside mb-4 space-y-2 pl-6 transition-[margin,padding] duration-300 ease-in-out">{children}</ul>
                         ),
                         ol: ({ children }) => (
-                            <ol className="list-decimal list-inside mb-4 space-y-2 transition-[margin,padding] duration-300 ease-in-out">{children}</ol>
+                            <ol className="list-decimal list-outside mb-4 space-y-2 pl-6 transition-[margin,padding] duration-300 ease-in-out">{children}</ol>
                         ),
                         li: ({ children }) => (
-                            <li className="text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</li>
+                            <li className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</li>
                         ),
                         blockquote: ({ children }) => (
                             <blockquote className="border-l-4 border-primary pl-4 italic my-4 text-muted-foreground transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
