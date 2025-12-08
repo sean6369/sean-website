@@ -22,20 +22,20 @@ export function BlogPost({ post }: BlogPostProps) {
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                     {post.title}
                 </h1>
-                
+
                 {post.readTime && (
                     <div className="flex items-center gap-2 text-sm lg:text-base text-gray-500 dark:text-gray-400 mb-1 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                         <Clock className="h-4 w-4 lg:h-5 lg:w-5" />
                         <span className="font-semibold">{post.readTime} min read</span>
                     </div>
                 )}
-                
+
                 {post.excerpt && (
                     <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-0 font-medium transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                         {post.excerpt}
                     </p>
                 )}
-                
+
                 {post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                         {post.tags.map((tag) => (
@@ -56,13 +56,13 @@ export function BlogPost({ post }: BlogPostProps) {
                     rehypePlugins={[rehypeRaw]}
                     components={{
                         h1: ({ children }) => (
-                            <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ fontWeight: 800, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h2>
+                            <h2 className="text-2xl md:text-2xl lg:text-3xl font-bold md:font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-8 mb-4 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h2>
                         ),
                         h2: ({ children }) => (
-                            <h3 className="text-lg md:text-xl lg:text-2xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ fontWeight: 800, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h3>
+                            <h3 className="text-xl md:text-xl lg:text-2xl font-bold md:font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-6 mb-3 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h3>
                         ),
                         h3: ({ children }) => (
-                            <h4 className="text-base md:text-lg lg:text-xl font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ fontWeight: 800, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h4>
+                            <h4 className="text-lg md:text-lg lg:text-xl font-bold md:font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h4>
                         ),
                         p: ({ children }) => (
                             <p className="mb-4 leading-relaxed text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
@@ -171,7 +171,7 @@ export function BlogPost({ post }: BlogPostProps) {
 
             {/* Back to blog link and date */}
             <div className="flex items-center justify-between mb-8">
-                <Link 
+                <Link
                     href="/blog"
                     className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm"
                 >

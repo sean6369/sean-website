@@ -505,18 +505,18 @@ export const Projects = memo(function Projects() {
             if (iframeContainerRef.current) {
                 const containerWidth = iframeContainerRef.current.offsetWidth
                 const containerHeight = iframeContainerRef.current.offsetHeight
-                
+
                 // Calculate scale to fit container while maintaining aspect ratio
                 const scaleX = containerWidth / viewportWidth
                 const scaleY = containerHeight / viewportHeight
                 const scale = Math.min(scaleX, scaleY, 1) // Don't scale up beyond 100%
-                
+
                 setIframeScale(scale)
             }
         }
 
         calculateScale()
-        
+
         const resizeObserver = new ResizeObserver(calculateScale)
         if (iframeContainerRef.current) {
             resizeObserver.observe(iframeContainerRef.current)
@@ -1338,12 +1338,12 @@ export const Projects = memo(function Projects() {
                                         {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
                                             <div>
                                                 <h4 className="text-xl font-semibold mb-4 text-foreground">Live Website Preview</h4>
-                                                <div 
+                                                <div
                                                     ref={iframeContainerRef}
-                                                    className="relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black" 
-                                                    style={{ 
-                                                        aspectRatio: isMobile ? `${iframeDimensions.width} / ${iframeDimensions.height}` : '16 / 9', 
-                                                        minHeight: isMobile ? '300px' : '400px' 
+                                                    className="relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black"
+                                                    style={{
+                                                        aspectRatio: isMobile ? `${iframeDimensions.width} / ${iframeDimensions.height}` : '16 / 9',
+                                                        minHeight: isMobile ? '300px' : '400px'
                                                     }}
                                                 >
                                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -1360,11 +1360,11 @@ export const Projects = memo(function Projects() {
                                                                 title={`${selectedProject.title} Live Preview`}
                                                                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
                                                                 loading="lazy"
-                                                                style={{ 
-                                                                    width: `${iframeDimensions.width}px`, 
-                                                                    height: `${iframeDimensions.height}px`, 
-                                                                    border: 'none', 
-                                                                    display: 'block' 
+                                                                style={{
+                                                                    width: `${iframeDimensions.width}px`,
+                                                                    height: `${iframeDimensions.height}px`,
+                                                                    border: 'none',
+                                                                    display: 'block'
                                                                 }}
                                                             />
                                                         </div>
@@ -1388,25 +1388,25 @@ export const Projects = memo(function Projects() {
                                         {selectedProject && <VideoSection selectedProject={selectedProject} />}
 
                                         {/* Background Image Fallback for NoFap and Ship Vessel */}
-                                        {selectedProject && 
-                                         !('live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma')) &&
-                                         !('video' in selectedProject && selectedProject.video) &&
-                                         !('videos' in selectedProject && selectedProject.videos && Array.isArray(selectedProject.videos) && selectedProject.videos.length > 0) &&
-                                         (selectedProject.title === 'NoFap' || selectedProject.title === 'Ship Vessel Risk Detection Model') && (
-                                            <div>
-                                                <h4 className="text-xl font-semibold mb-4 text-foreground">Project Screenshot</h4>
-                                                <div className="relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black" style={{ aspectRatio: '16/9', minHeight: '400px' }}>
-                                                    <div
-                                                        className="w-full h-full bg-cover bg-center"
-                                                        style={{ 
-                                                            backgroundImage: selectedProject.title === 'NoFap'
-                                                                ? "url('/images/Hackomania screen.png')"
-                                                                : "url('/images/Marinetime Hackathon screen.jpeg')"
-                                                        }}
-                                                    />
+                                        {selectedProject &&
+                                            !('live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma')) &&
+                                            !('video' in selectedProject && selectedProject.video) &&
+                                            !('videos' in selectedProject && selectedProject.videos && Array.isArray(selectedProject.videos) && selectedProject.videos.length > 0) &&
+                                            (selectedProject.title === 'NoFap' || selectedProject.title === 'Ship Vessel Risk Detection Model') && (
+                                                <div>
+                                                    <h4 className="text-xl font-semibold mb-4 text-foreground">Project Screenshot</h4>
+                                                    <div className="relative w-full rounded-lg overflow-hidden border border-surface-secondary bg-black" style={{ aspectRatio: '16/9', minHeight: '400px' }}>
+                                                        <div
+                                                            className="w-full h-full bg-cover bg-center"
+                                                            style={{
+                                                                backgroundImage: selectedProject.title === 'NoFap'
+                                                                    ? "url('/images/Hackomania screen.png')"
+                                                                    : "url('/images/Marinetime Hackathon screen.jpeg')"
+                                                            }}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        )}
+                                            )}
                                     </div>
                                 </div>
 
