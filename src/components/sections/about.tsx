@@ -39,7 +39,7 @@ export function About() {
                     >
                         <div className="prose prose-lg max-w-none space-y-8">
                             <p className="text-foreground-secondary leading-relaxed font-medium text-base sm:text-lg">
-                                I am a Computer Engineering student at NUS, passionate about building AI-powered solutions that blend functionality with beautiful design. With experience in software development and data analysis, I enjoy exploring how technology can drive meaningful impact. I believe great products balance functionality with design, and I strive to bring both into every project I take on. From developing mobile applications to analyzing complex datasets, I am driven by curiosity about how things work and motivated to transform ideas into practical, user-centered solutions.
+                                I am a Computer Engineering student at NUS, passionate about building AI-powered solutions that blend functionality with beautiful design. With experience in software development and data analysis, I enjoy exploring how technology can drive meaningful impact. I believe great products balance functionality with design, and I strive to bring both into every project I take on.
                             </p>
 
                             <p className="text-foreground-secondary leading-relaxed font-medium text-base sm:text-lg">
@@ -75,10 +75,10 @@ export function About() {
                             </div>
 
                             {/* Orb Effect Front */}
-                            <div className="absolute -inset-8 rounded-full overflow-hidden z-20 flex items-center justify-center">
+                            <div className="absolute -inset-8 rounded-full overflow-visible z-20 flex items-center justify-center">
                                 <div className="w-full h-full">
                                     <Orb
-                                        hoverIntensity={1}
+                                        hoverIntensity={1.5}
                                         rotateOnHover={true}
                                         hue={0}
                                         forceHoverState={false}

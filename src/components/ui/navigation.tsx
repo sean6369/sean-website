@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Moon, Sun } from 'lucide-react'
 import { cn, scrollToSection } from '@/lib/utils'
 import { useModal } from '@/lib/modal-context'
+import { useLenis } from '@/components/providers/LenisProvider'
 import StaggeredMenu from './StaggeredMenu'
 import Stepper from './stepper'
 import {
@@ -39,7 +41,7 @@ export function Navigation() {
     const [isDarkMode, setIsDarkMode] = useState(false)
     const { isModalOpen } = useModal()
     const [activeSection, setActiveSection] = useState('home')
-
+    const lenis = useLenis()
 
     useEffect(() => {
         // Initialize theme from localStorage or system preference
@@ -56,13 +58,16 @@ export function Navigation() {
     }, [])
 
     useEffect(() => {
-        const handleScroll = () => {
+        if (!lenis) return
+
+        const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
             // Update active section based on scroll position
             const sections = navItems.map(item => item.id)
             for (const section of sections) {
                 const element = document.getElementById(section)
                 if (element) {
                     const rect = element.getBoundingClientRect()
+                    // Check if section is in viewport (with offset for navbar)
                     if (rect.top <= 100 && rect.bottom >= 100) {
                         setActiveSection(section)
                         break
@@ -71,9 +76,16 @@ export function Navigation() {
             }
         }
 
-        window.addEventListener('scroll', handleScroll)
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
+        // Use Lenis scroll event
+        lenis.on('scroll', handleScroll)
+
+        // Initial check
+        handleScroll({ scroll: lenis.scroll, limit: lenis.limit })
+
+        return () => {
+            lenis.off('scroll', handleScroll)
+        }
+    }, [lenis])
 
     const toggleDarkMode = () => {
         const newTheme = !isDarkMode
@@ -129,10 +141,18 @@ export function Navigation() {
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="relative z-30 text-3xl font-bold gradient-text cursor-pointer"
+                        className="relative z-30 cursor-pointer flex items-center"
                         onClick={() => handleNavClick('home')}
                     >
-                        Sean
+                        <Image
+                            src="/images/sean_logo.svg"
+                            alt="Sean logo"
+                            className="h-12 w-auto"
+                            width={144}
+                            height={48}
+                            priority
+                            style={{ filter: isDarkMode ? 'brightness(0) invert(1)' : 'brightness(0)' }}
+                        />
                     </motion.div>
 
                     {/* Center - Stepper (Desktop only) */}
@@ -175,12 +195,20 @@ export function Navigation() {
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="relative z-30 text-2xl font-bold gradient-text cursor-pointer flex-shrink-0 ml-6"
+                            className="relative z-30 cursor-pointer flex-shrink-0 ml-6 flex items-center"
                             onClick={() => {
                                 handleNavClick('home')
                             }}
                         >
-                            Sean
+                            <Image
+                                src="/images/sean_logo.svg"
+                                alt="Sean logo"
+                                className="h-10 w-auto"
+                                width={120}
+                                height={40}
+                                priority
+                                style={{ filter: isDarkMode ? 'brightness(0) invert(1)' : 'brightness(0)' }}
+                            />
                         </motion.div>
 
                         {/* Center - Current Section Indicator (Mobile only) */}

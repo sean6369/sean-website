@@ -2,14 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Clash Display Font from Fontshare */
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600&display=swap');
+
 @layer base {
     :root {
         --font-new-york: 'New York', 'Times New Roman', Georgia, serif;
         --font-menlo: Menlo, Monaco, 'Courier New', monospace;
+        --font-bebas-neue: var(--font-bebas-neue), 'Arial Black', sans-serif;
 
         /* Light theme colors - Custom backgrounds with Anupuccin Latte text */
-        --background: #F0E6DD;
-        --background-secondary: #E6DBD1;
+        --background: #F1E7DD;
+        --background-secondary: #F1E7DD;
         --background-tertiary: #D4C4B0;
         --foreground: #4c4f69;
         /* Anupuccin Latte text */
@@ -31,6 +35,9 @@
         /* Rose Pine gold - darker warm yellow-orange */
         --secondary: #d48a87;
         /* Rose Pine rose - darker soft coral */
+        --hero-gradient-1: #d4a85c;
+        --hero-gradient-2: #d18a7a;
+        --hero-gradient-3: #8bb5d4;
         --accent: #04a5e5;
         /* Anupuccin Latte sky */
         --card: 0 0% 100%;
@@ -57,7 +64,7 @@
 
     .dark {
         /* Dark theme colors (Anupuccin) */
-        --background: #1e1e2e;
+        --background: #181825;
         --background-secondary: #181825;
         --background-tertiary: #11111b;
         --foreground: #cdd6f4;
@@ -73,6 +80,9 @@
         --primary: #cba6f7;
         --secondary: #f5c2e7;
         --accent: #89dceb;
+        --hero-gradient-1: #f2d2ff;
+        --hero-gradient-2: #ffcfe5;
+        --hero-gradient-3: #b5d8ff;
         --card: 0 0% 3.9%;
         --card-foreground: 0 0% 98%;
         --popover: 0 0% 3.9%;
@@ -158,6 +168,19 @@
 
     .gradient-text {
         @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+    }
+
+    .hero-gradient-text {
+        background-image: linear-gradient(120deg,
+                var(--hero-gradient-1),
+                var(--hero-gradient-2),
+                var(--hero-gradient-3),
+                var(--hero-gradient-1));
+        background-size: 260% 260%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        animation: hero-gradient-flow 9s ease-in-out infinite;
     }
 
     .gradient-border {
@@ -246,6 +269,20 @@
 
     .social-link:hover::after {
         @apply w-full;
+    }
+
+    @keyframes hero-gradient-flow {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     .button-hover {

@@ -8,7 +8,8 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { useLenis } from "@/components/providers/LenisProvider";
 
 
 interface NavbarProps {
@@ -58,12 +59,36 @@ export const Navbar = ({ children, className }: NavbarProps) => {
     offset: ["start start", "end start"],
   });
   const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const lenis = useLenis();
 
+  // Use Lenis scroll events for more reactive updates during momentum scrolling
+  useEffect(() => {
+    if (!lenis) return;
+
+    const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
+      // Calculate scroll progress from 0 to 1 based on scroll position
+      // Starts at 0px, fully scrolled at 300px
+      const progress = Math.min(scroll / 300, 1);
+      setScrollProgress(progress);
+    };
+
+    lenis.on('scroll', handleScroll);
+
+    // Initial check
+    handleScroll({ scroll: lenis.scroll, limit: lenis.limit });
+
+    return () => {
+      lenis.off('scroll', handleScroll);
+    };
+  }, [lenis]);
+
+  // Fallback to Framer Motion scroll for compatibility
   useMotionValueEvent(scrollY, "change", (latest) => {
-    // Calculate scroll progress from 0 to 1 based on scroll position
-    // Starts at 0px, fully scrolled at 300px
-    const progress = Math.min(latest / 300, 1);
-    setScrollProgress(progress);
+    if (!lenis) {
+      // Only use Framer Motion if Lenis is not available
+      const progress = Math.min(latest / 300, 1);
+      setScrollProgress(progress);
+    }
   });
 
   const visible = scrollProgress > 0.33; // For other effects like shadows
@@ -109,8 +134,9 @@ export const NavBody = ({ children, className, visible, scrollProgress = 0 }: Na
       }}
       transition={{
         type: "spring",
-        stiffness: 200,
-        damping: 50,
+        stiffness: 550,
+        damping: 80,
+        mass: 0.1,
       }}
       style={{
         minWidth: "800px",
@@ -124,34 +150,34 @@ export const NavBody = ({ children, className, visible, scrollProgress = 0 }: Na
     >
       {/* Light mode background */}
       <div
-        className="absolute inset-0 rounded-full dark:hidden transition-opacity duration-300"
+        className="absolute inset-0 rounded-full dark:hidden transition-opacity duration-150"
         style={{
           backgroundColor: `rgb(255 255 255 / ${bgOpacity})`,
         }}
       />
       {/* Dark mode background */}
       <div
-        className="absolute inset-0 rounded-full hidden dark:block transition-opacity duration-300"
+        className="absolute inset-0 rounded-full hidden dark:block transition-opacity duration-150"
         style={{
           backgroundColor: `rgb(10 10 11 / ${bgOpacity})`,
         }}
       />
       <div
-        className="absolute inset-0 rounded-full border transition-opacity duration-300"
+        className="absolute inset-0 rounded-full border transition-opacity duration-150"
         style={{
           borderColor: `rgb(255 255 255 / ${borderOpacityLight})`,
           opacity: scrollProgress,
         }}
       />
       <div
-        className="absolute inset-0 rounded-full dark:border transition-opacity duration-300"
+        className="absolute inset-0 rounded-full dark:border transition-opacity duration-150"
         style={{
           borderColor: `rgb(64 64 70 / ${borderOpacityDark})`,
           opacity: scrollProgress,
         }}
       />
       <div
-        className="absolute inset-0 rounded-full shadow-lg shadow-black/5 dark:shadow-black/20 transition-opacity duration-300"
+        className="absolute inset-0 rounded-full shadow-lg shadow-black/5 dark:shadow-black/20 transition-opacity duration-150"
         style={{
           opacity: shadowOpacity,
         }}
@@ -218,8 +244,9 @@ export const MobileNav = ({ children, className, visible, scrollProgress = 0 }: 
       }}
       transition={{
         type: "spring",
-        stiffness: 200,
-        damping: 50,
+        stiffness: 450,
+        damping: 35,
+        mass: 0.3,
       }}
       style={{
         backdropFilter: `blur(${blurAmount}px) saturate(${100 + scrollProgress * 80}%)`,
@@ -232,34 +259,34 @@ export const MobileNav = ({ children, className, visible, scrollProgress = 0 }: 
     >
       {/* Light mode background */}
       <div
-        className="absolute inset-0 rounded-full dark:hidden transition-opacity duration-300"
+        className="absolute inset-0 rounded-full dark:hidden transition-opacity duration-150"
         style={{
           backgroundColor: `rgb(255 255 255 / ${bgOpacity})`,
         }}
       />
       {/* Dark mode background */}
       <div
-        className="absolute inset-0 rounded-full hidden dark:block transition-opacity duration-300"
+        className="absolute inset-0 rounded-full hidden dark:block transition-opacity duration-150"
         style={{
           backgroundColor: `rgb(10 10 11 / ${bgOpacity})`,
         }}
       />
       <div
-        className="absolute inset-0 rounded-full border transition-opacity duration-300"
+        className="absolute inset-0 rounded-full border transition-opacity duration-150"
         style={{
           borderColor: `rgb(255 255 255 / ${borderOpacityLight})`,
           opacity: scrollProgress,
         }}
       />
       <div
-        className="absolute inset-0 rounded-full dark:border transition-opacity duration-300"
+        className="absolute inset-0 rounded-full dark:border transition-opacity duration-150"
         style={{
           borderColor: `rgb(64 64 70 / ${borderOpacityDark})`,
           opacity: scrollProgress,
         }}
       />
       <div
-        className="absolute inset-0 rounded-full shadow-lg shadow-black/5 dark:shadow-black/20 transition-opacity duration-300"
+        className="absolute inset-0 rounded-full shadow-lg shadow-black/5 dark:shadow-black/20 transition-opacity duration-150"
         style={{
           opacity: shadowOpacity,
         }}

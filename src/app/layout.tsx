@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import { Toaster } from '@/components/ui/sonner'
 import { ModalProvider } from '@/lib/modal-context'
 import { ThemeProvider } from 'next-themes'
+import { LenisProvider } from '@/components/providers/LenisProvider'
 
 export const metadata: Metadata = {
     title: 'Sean | Personal Website',
@@ -79,10 +80,12 @@ export default function RootLayout({
                 }}
             >
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                    <ModalProvider>
-                        {children}
-                        <Toaster />
-                    </ModalProvider>
+                    <LenisProvider>
+                        <ModalProvider>
+                            {children}
+                            <Toaster />
+                        </ModalProvider>
+                    </LenisProvider>
                 </ThemeProvider>
             </body>
         </html>

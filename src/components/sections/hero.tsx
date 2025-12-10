@@ -1,177 +1,104 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ChevronDown, Github, Linkedin, Mail, BookOpen } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { scrollToSection } from '@/lib/utils'
-import { useEffect, useState, lazy, Suspense } from 'react'
-import Link from 'next/link'
-
-// Lazy load heavy components
-const LiquidEther = lazy(() => import('@/components/ui/LiquidEther'))
-const TextType = lazy(() => import('@/components/ui/TextType'))
-
-const socialLinks = [
-    {
-        name: 'Blog',
-        href: '/blog',
-        icon: BookOpen,
-        external: false,
-    },
-]
+import { useEffect, useState } from 'react'
 
 export function Hero() {
-    const [isDarkMode, setIsDarkMode] = useState(false)
+    const [isMobile, setIsMobile] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth < 768 // md breakpoint
+        }
+        return false
+    })
 
     useEffect(() => {
-        // Check if dark mode is active
-        const checkTheme = () => {
-            const isDark = document.documentElement.classList.contains('dark')
-            setIsDarkMode(isDark)
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768) // md breakpoint
         }
 
-        // Initial check
-        checkTheme()
-
-        // Watch for theme changes
-        const observer = new MutationObserver(checkTheme)
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['class']
-        })
-
-        return () => observer.disconnect()
+        checkMobile()
+        window.addEventListener('resize', checkMobile)
+        return () => window.removeEventListener('resize', checkMobile)
     }, [])
-
-    // Theme-aware colors for LiquidEther
-    const getLiquidEtherColors = () => {
-        if (isDarkMode) {
-            // Dark theme: Anupuccin Mocha colors
-            return ['#cba6f7', '#f5c2e7', '#89dceb']
-        } else {
-            // Light theme: Rose Pine colors (lighter versions)
-            return ['#f6c177', '#ea9a97', '#3e8fb0'] // Gold, Rose, Foam
-        }
-    }
-
-    // Theme-aware background color for smoke effect
-    const getBackgroundColor = () => {
-        if (isDarkMode) {
-            // Dark theme: transparent (default)
-            return 'transparent'
-        } else {
-            // Light theme: match the main background color
-            return '#F0E6DD' // Same as main background
-        }
-    }
-
     return (
-        <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
-            {/* LiquidEther Background */}
-            <div className="absolute inset-0 z-0">
-                <Suspense fallback={<div className="w-full h-full bg-background" />}>
-                    <LiquidEther
-                        key={isDarkMode ? 'dark' : 'light'} // Force re-render when theme changes
-                        colors={getLiquidEtherColors()}
-                        backgroundColor={getBackgroundColor()}
-                        mouseForce={25}
-                        cursorSize={120}
-                        isViscous={false}
-                        viscous={30}
-                        iterationsViscous={32}
-                        iterationsPoisson={32}
-                        resolution={0.6}
-                        isBounce={false}
-                        autoDemo={true}
-                        autoSpeed={0.3}
-                        autoIntensity={1.8}
-                        takeoverDuration={0.4}
-                        autoResumeDelay={4000}
-                        autoRampDuration={0.8}
+        <section id="home" className="min-h-screen flex items-center justify-center relative overflow-x-hidden overflow-y-visible">
+            {/* SEAN Display Text - Stretched Edge to Edge */}
+            <div
+                className="absolute top-24 md:top-32 inset-x-0 w-screen overflow-visible flex flex-col items-center justify-center -translate-y-4 md:-translate-y-6"
+                style={{ paddingTop: '6rem', paddingBottom: '6rem' }}
+            >
+                <div className="flex flex-col items-center relative w-full">
+                    {/* Wall overlay that moves up to reveal text */}
+                    <motion.div
+                        initial={{ y: 0 }}
+                        animate={{ y: '-100%' }}
+                        transition={{
+                            type: 'spring',
+                            stiffness: 40,
+                            damping: 20
+                        }}
+                        className="absolute z-10 bg-background w-full"
+                        style={{
+                            height: '50vh',
+                            top: '-25vh',
+                            left: 0,
+                            right: 0,
+                        }}
                     />
-                </Suspense>
-            </div>
 
-            {/* Subtle overlay for better text readability */}
-            <div className="absolute inset-0 bg-background/20 z-5 pointer-events-none" />
+                    {/* Text container */}
+                    <div className="relative w-full flex justify-center">
+                        <motion.div
+                            initial={{ y: '-30vh' }} // start above visible area (behind wall)
+                            animate={{ y: 0, visibility: 'visible' }} // slide down into view
+                            transition={{ type: 'spring', stiffness: 40, damping: 20 }} // slower drop-in
+                            className="flex flex-col items-center"
+                            style={{ visibility: 'hidden', width: 'fit-content' }} // keep hidden before animation starts
+                        >
+                            <h2
+                                className="text-[clamp(6rem,26vw,999rem)] tracking-[-0.05em] lg:tracking-[-0.05em] font-semibold hero-gradient-text uppercase leading-[0.85] text-center inline-block"
+                                style={{
+                                    fontFamily: "'Clash Display', sans-serif",
+                                    width: 'auto',
+                                    paddingLeft: '0',
+                                    paddingRight: '0',
+                                    textAlign: 'center',
+                                    transform: 'scaleX(1.45) scaleY(1.15)',
+                                    transformOrigin: 'center',
+                                }}
+                            >
+                                SEAN
+                            </h2>
+                        </motion.div>
+                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, scaleX: 0 }}
+                        animate={{ opacity: 1, scaleX: 1 }}
+                        transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        className="h-1 bg-gradient-to-r from-primary to-secondary rounded-full mt-6 w-[95%]"
+                    />
+                </div>
 
-            <div className="container-custom relative z-10 pointer-events-none">
-                <div className="text-center max-w-4xl mx-auto">
-                    {/* Main heading with typing animation */}
+                <div className="mt-14 md:mt-16 text-[clamp(1.5rem,3vw,2rem)] w-full max-w-5xl px-6 md:px-10 text-foreground-secondary font-medium uppercase tracking-[0.2em] flex flex-col md:flex-row items-center md:items-start justify-center md:justify-between mx-auto gap-10 md:gap-6">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="mb-6"
+                        transition={{ duration: 0.9, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                        className="text-center leading-tight"
                     >
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
-                            <Suspense fallback={<span className="gradient-text">Hello, I'm Sean</span>}>
-                                <TextType
-                                    text={[
-                                        "Hello, I'm Sean",
-                                        "Hello, I'm a Developer",
-                                        "Hello, I'm a Creator"
-                                    ]}
-                                    typingSpeed={40}
-                                    pauseDuration={2000}
-                                    initialDelay={500}
-                                    showCursor={true}
-                                    cursorCharacter="|"
-                                    cursorBlinkDuration={999999}
-                                    loop={false}
-                                    className="gradient-text"
-                                    onSentenceComplete={(sentence, index) => {
-                                        // Stop after typing the first sentence completely
-                                        if (index === 0) {
-                                            // The animation will automatically stop since loop is false
-                                        }
-                                    }}
-                                />
-                            </Suspense>
-                        </h1>
-
-                        <div className="text-xl md:text-2xl lg:text-3xl text-foreground-secondary mb-2 flex justify-center">
-                            <motion.div
-                                initial={{ clipPath: "inset(0 100% 0 0)" }}
-                                animate={{ clipPath: "inset(0 0% 0 0)" }}
-                                transition={{ duration: 1.5, delay: 1.8, ease: "easeInOut" }}
-                                className="font-menlo text-accent"
-                            >
-                                const role = NUS Computer Engineering Student
-                            </motion.div>
-                        </div>
+                        <span className="block">NUS Computer</span>
+                        <span className="block">Engineering</span>
                     </motion.div>
-
-                    {/* Description */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.5, delay: 3.3 }}
-                        className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto mb-8 leading-relaxed text-center font-medium"
+                        transition={{ duration: 0.9, delay: isMobile ? 1.1 : 0.8, ease: [0.22, 1, 0.36, 1] }}
+                        className="text-center leading-tight"
                     >
-                        I am dedicated to building practical, impactful, and user-friendly products that bridge the gap between ideas and execution. Passionate about creating solutions that combine functionality with beautiful design.
-                    </motion.div>
-
-
-                    {/* Blog Button */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 3.8 }}
-                        className="flex justify-center items-center gap-3 mb-16 pointer-events-auto"
-                    >
-                        <span className="text-lg font-semibold text-foreground">
-                            Read my thoughts here:
-                        </span>
-                        <Link href="/blog">
-                            <motion.div
-                                whileHover={{ scale: 1.1, y: -2 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="p-3 rounded-full bg-surface hover:bg-surface-secondary transition-all duration-300 group"
-                                aria-label="Blog"
-                            >
-                                <BookOpen className="w-5 h-5 text-foreground-secondary group-hover:text-primary transition-colors duration-300" />
-                            </motion.div>
-                        </Link>
+                        <span className="block">Thoughtful &</span>
+                        <span className="block">User-Centric</span>
                     </motion.div>
                 </div>
             </div>
@@ -180,14 +107,14 @@ export function Hero() {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 4.5 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
                 className="absolute bottom-20 md:bottom-8 left-1/2 transform -translate-x-1/2"
             >
                 <motion.button
                     onClick={() => scrollToSection('about')}
                     animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="p-2 rounded-full hover:bg-surface/50 transition-colors duration-300 pointer-events-auto"
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    className="p-2 rounded-full hover:bg-surface/50 transition-colors duration-300"
                     aria-label="Scroll to about section"
                 >
                     <ChevronDown className="w-6 h-6 text-foreground-secondary" />
