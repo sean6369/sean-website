@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { Moon, Sun } from 'lucide-react'
 import { cn, scrollToSection } from '@/lib/utils'
 import { useModal } from '@/lib/modal-context'
-import { useLenis } from '@/components/providers/LenisProvider'
 import StaggeredMenu from './StaggeredMenu'
 import Stepper from './stepper'
 import {
@@ -41,7 +40,7 @@ export function Navigation() {
     const [isDarkMode, setIsDarkMode] = useState(false)
     const { isModalOpen } = useModal()
     const [activeSection, setActiveSection] = useState('home')
-    const lenis = useLenis()
+
 
     useEffect(() => {
         // Initialize theme from localStorage or system preference
@@ -58,34 +57,64 @@ export function Navigation() {
     }, [])
 
     useEffect(() => {
-        if (!lenis) return
+        const navbarOffset = 120 // Account for navbar height
+        let ticking = false
 
-        const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
-            // Update active section based on scroll position
-            const sections = navItems.map(item => item.id)
-            for (const section of sections) {
-                const element = document.getElementById(section)
+        const updateActiveSection = () => {
+            const scrollY = window.scrollY || window.pageYOffset || 0
+
+            // If we're at the very top, always show home
+            if (scrollY < 50) {
+                setActiveSection('home')
+                ticking = false
+                return
+            }
+
+            let activeSection = 'home' // Default to home
+
+            // Check sections in reverse order (from bottom to top)
+            // Find the section whose top has passed the navbar offset
+            for (let i = navItems.length - 1; i >= 0; i--) {
+                const section = navItems[i]
+                const element = document.getElementById(section.id)
                 if (element) {
                     const rect = element.getBoundingClientRect()
-                    // Check if section is in viewport (with offset for navbar)
-                    if (rect.top <= 100 && rect.bottom >= 100) {
-                        setActiveSection(section)
+                    const sectionTop = rect.top
+                    const sectionBottom = rect.bottom
+
+                    // A section is active if its top is at or above the navbar offset
+                    // This means the section has scrolled past the navbar
+                    if (sectionTop <= navbarOffset) {
+                        activeSection = section.id
                         break
                     }
                 }
             }
+
+            setActiveSection(activeSection)
+            ticking = false
         }
 
-        // Use Lenis scroll event
-        lenis.on('scroll', handleScroll)
+        const handleScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(updateActiveSection)
+                ticking = true
+            }
+        }
 
-        // Initial check
-        handleScroll({ scroll: lenis.scroll, limit: lenis.limit })
+        // Initial check with a small delay to ensure DOM is ready
+        const timeoutId = setTimeout(() => {
+            updateActiveSection()
+        }, 100)
+
+        // Listen to scroll events with passive for better performance
+        window.addEventListener('scroll', handleScroll, { passive: true })
 
         return () => {
-            lenis.off('scroll', handleScroll)
+            window.removeEventListener('scroll', handleScroll)
+            clearTimeout(timeoutId)
         }
-    }, [lenis])
+    }, [])
 
     const toggleDarkMode = () => {
         const newTheme = !isDarkMode
@@ -145,11 +174,11 @@ export function Navigation() {
                         onClick={() => handleNavClick('home')}
                     >
                         <Image
-                            src="/images/sean_logo.svg"
+                            src="/logos/sean_logo.svg"
                             alt="Sean logo"
-                            className="h-12 w-auto"
-                            width={144}
-                            height={48}
+                            className="h-14 w-auto"
+                            width={168}
+                            height={56}
                             priority
                             style={{ filter: isDarkMode ? 'brightness(0) invert(1)' : 'brightness(0)' }}
                         />
@@ -164,7 +193,7 @@ export function Navigation() {
                                     label: item.label,
                                     step: index + 1
                                 }))}
-                                currentStep={navItems.findIndex(item => item.id === activeSection) + 1}
+                                currentStep={Math.max(1, navItems.findIndex(item => item.id === activeSection) + 1)}
                                 onStepClick={handleNavClick}
                             />
                         </div>
@@ -201,7 +230,7 @@ export function Navigation() {
                             }}
                         >
                             <Image
-                                src="/images/sean_logo.svg"
+                                src="/logos/sean_logo.svg"
                                 alt="Sean logo"
                                 className="h-10 w-auto"
                                 width={120}

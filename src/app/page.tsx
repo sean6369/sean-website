@@ -11,6 +11,8 @@ export default function Home() {
         <main className="min-h-screen">
             <Navigation />
             <Hero />
+            {/* Spacer to maintain scroll position after fixed hero */}
+            <div className="min-h-screen" />
             <About />
             <Milestones />
             <Projects />

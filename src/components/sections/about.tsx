@@ -1,41 +1,51 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
-
-// Lazy load heavy components
-const Orb = dynamic(() => import('../ui/Orb'), {
-    ssr: false,
-    loading: () => <div className="w-full h-full bg-primary/10 rounded-full animate-pulse" />
-})
-
+import { useRef } from 'react'
 
 export function About() {
-    return (
-        <section id="about" className="section-padding bg-background-secondary">
-            <div className="container-custom">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                        About <span className="gradient-text">Me</span>
-                    </h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full" />
-                </motion.div>
+    const sectionRef = useRef<HTMLElement>(null)
 
-                <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
-                    {/* Text Content */}
+    // Track scroll progress for this section
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ['start start', 'end start']
+    })
+
+    // Transform the section to slide up as it scrolls out of view
+    // The section slides up completely as it exits the viewport
+    const y = useTransform(scrollYProgress, [0, 1], ['0%', '-100%'])
+
+    return (
+        <motion.section
+            ref={sectionRef}
+            id="about"
+            className="relative z-[2] pt-0 pb-0 mb-0 bg-background-secondary"
+            style={{ y }}
+        >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-start mb-0 pb-0">
+                {/* Left Column - Header and Text Content */}
+                <div className="container-custom pt-8 md:pt-12 lg:pt-16 pb-0 mb-0 order-2 lg:order-1">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                        className="text-left mb-16"
+                    >
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
+                            ABOUT.
+                        </h2>
+                        <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full" />
+                    </motion.div>
+
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                         viewport={{ once: true }}
-                        className="space-y-6"
+                        className="space-y-6 lg:pr-8 pb-12 md:pb-16 lg:pb-20 mb-0"
                     >
                         <div className="prose prose-lg max-w-none space-y-8">
                             <p className="text-foreground-secondary leading-relaxed font-medium text-base sm:text-lg">
@@ -48,49 +58,38 @@ export function About() {
                         </div>
 
                     </motion.div>
-
-                    {/* Profile Image with Orb Effect */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        viewport={{ once: true }}
-                        className="flex justify-center"
-                    >
-                        <motion.div
-                            className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96"
-                        >
-                            {/* Profile Image */}
-                            <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-primary/20 shadow-2xl z-10">
-                                <Image
-                                    src="/images/sean about me.jpg"
-                                    alt="Sean - About Me"
-                                    width={384}
-                                    height={384}
-                                    className="object-cover w-full h-full"
-                                    sizes="(max-width: 640px) 256px, (max-width: 768px) 288px, (max-width: 1024px) 320px, 384px"
-                                    priority
-                                    quality={85}
-                                />
-                            </div>
-
-                            {/* Orb Effect Front */}
-                            <div className="absolute -inset-8 rounded-full overflow-visible z-20 flex items-center justify-center">
-                                <div className="w-full h-full">
-                                    <Orb
-                                        hoverIntensity={1.5}
-                                        rotateOnHover={true}
-                                        hue={0}
-                                        forceHoverState={false}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
                 </div>
 
+                {/* Profile Image - Right Half */}
+                <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    viewport={{ once: true }}
+                    className="relative w-full lg:w-[50vw] lg:ml-auto lg:self-start mb-0 pb-0 order-1 lg:order-2"
+                >
+                    {/* Profile Image */}
+                    <div className="relative w-full h-80 sm:h-96 md:h-[28rem] lg:h-full overflow-hidden z-10 mb-0 pb-0">
+                        <div className="relative w-full h-[120%] -top-[25%]">
+                            <Image
+                                src="/images/sean about me.jpg"
+                                alt="Sean - About Me"
+                                width={384}
+                                height={512}
+                                className="object-cover w-full h-full object-center"
+                                sizes="(max-width: 1024px) 100vw, 50vw"
+                                priority
+                                quality={100}
+                            />
+                        </div>
+                        {/* Overlay - Light mode */}
+                        <div className="absolute inset-0 bg-[#F2E8DD] mix-blend-multiply dark:hidden" />
+                        {/* Overlay - Dark mode */}
+                        <div className="absolute inset-0 bg-[#181825] mix-blend-color-dodge hidden dark:block" />
+                    </div>
+                </motion.div>
             </div>
-        </section>
+        </motion.section>
     )
 }
 

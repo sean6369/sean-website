@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, createContext, useContext, ReactNode } from 'react'
+import { useEffect, useRef, useState, createContext, useContext, ReactNode } from 'react'
 import Lenis from 'lenis'
 import { usePathname } from 'next/navigation'
 import { setLenisInstance } from '@/lib/utils'
@@ -65,41 +65,44 @@ export function LenisProvider({
     touchMultiplier = 2,
     wheelMultiplier = 1,
 }: LenisProviderProps) {
+    const [lenis, setLenis] = useState<Lenis | null>(null)
     const lenisRef = useRef<Lenis | null>(null)
     const pathname = usePathname()
 
     useEffect(() => {
         // Initialize Lenis
-        const lenis = new Lenis({
+        const lenisInstance = new Lenis({
             duration,
             easing,
             smoothWheel,
             touchMultiplier,
             wheelMultiplier,
             infinite: false,
-            lerp: 0.08, // Lower lerp = less momentum, more direct (default is ~0.1)
+            lerp: 0.06, // Lower lerp = less momentum, more direct (default is ~0.1)
         })
 
-        lenisRef.current = lenis
-        setLenisInstance(lenis) // Set global reference for utility functions
+        lenisRef.current = lenisInstance
+        setLenis(lenisInstance) // Update state so context updates
+        setLenisInstance(lenisInstance) // Set global reference for utility functions
 
         // RAF loop for smooth scrolling and Framer Motion integration
         // This updates the actual scroll position that Framer Motion's useScroll reads
         function raf(time: number) {
-            lenis.raf(time)
+            lenisInstance.raf(time)
             requestAnimationFrame(raf)
         }
 
         requestAnimationFrame(raf)
 
         // Handle route changes - scroll to top
-        lenis.scrollTo(0, { immediate: true })
+        lenisInstance.scrollTo(0, { immediate: true })
 
         // Cleanup
         return () => {
-            lenis.destroy()
+            lenisInstance.destroy()
             setLenisInstance(null) // Clear global reference
             lenisRef.current = null
+            setLenis(null) // Clear state
         }
     }, [duration, easing, smoothWheel, touchMultiplier, wheelMultiplier])
 
@@ -111,7 +114,7 @@ export function LenisProvider({
     }, [pathname])
 
     return (
-        <LenisContext.Provider value={{ lenis: lenisRef.current }}>
+        <LenisContext.Provider value={{ lenis }}>
             {children}
         </LenisContext.Provider>
     )

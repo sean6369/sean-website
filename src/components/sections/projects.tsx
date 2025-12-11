@@ -752,7 +752,7 @@ export const Projects = memo(function Projects() {
     )
 
     return (
-        <section id="projects" className="section-padding bg-background-secondary relative">
+        <section id="projects" className="relative z-[2] section-padding bg-background-secondary">
             {/* Project Background Effects */}
             <AnimatePresence>
                 {backgroundImage ? (
@@ -920,15 +920,12 @@ export const Projects = memo(function Projects() {
                                 }
                             }}
                             viewport={{ once: true, margin: "-100px" }}
-                            className="text-center mb-16"
+                            className="text-left mb-16"
                         >
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                                Featured <span className="gradient-text">Projects</span>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
+                                PROJECTS.
                             </h2>
-                            <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-6" />
-                            <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
-                                A showcase of my recent work and personal projects that demonstrate my skills and passion for development
-                            </p>
+                            <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6" />
                         </motion.div>
 
                         {/* Desktop Split Layout */}

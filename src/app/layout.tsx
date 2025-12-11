@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     icons: {
         icon: [
             { url: '/favicon.ico', sizes: 'any' },
-            { url: '/images/sean_logo.png', sizes: '32x32', type: 'image/png' },
-            { url: '/images/sean_logo.png', sizes: '16x16', type: 'image/png' },
+            { url: '/logos/sean_logo.png', sizes: '32x32', type: 'image/png' },
+            { url: '/logos/sean_logo.png', sizes: '16x16', type: 'image/png' },
         ],
         shortcut: '/favicon.ico',
-        apple: '/images/sean_logo.png',
+        apple: '/logos/sean_logo.png',
     },
     openGraph: {
         type: 'website',
@@ -31,14 +31,14 @@ export const metadata: Metadata = {
         siteName: 'Sean',
         images: [
             {
-                url: '/images/sean_logo.png',
+                url: '/logos/sean_logo.png',
                 width: 1200,
                 height: 630,
                 alt: 'Sean - Personal Website',
                 type: 'image/png',
             },
             {
-                url: '/images/sean_logo.png',
+                url: '/logos/sean_logo.png',
                 width: 800,
                 height: 600,
                 alt: 'Sean - Personal Website',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Sean | Personal Website',
         description: 'Student passionate about creating beautiful, functional, and user-friendly digital experiences. Always learning, always building.',
-        images: ['/images/sean_logo.png'],
+        images: ['/logos/sean_logo.png'],
     },
     robots: {
         index: true,

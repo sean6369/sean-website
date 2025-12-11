@@ -1,9 +1,10 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { scrollToSection } from '@/lib/utils'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { useLenis } from '@/components/providers/LenisProvider'
 
 export function Hero() {
     const [isMobile, setIsMobile] = useState(() => {
@@ -12,6 +13,14 @@ export function Hero() {
         }
         return false
     })
+    const [blurAmount, setBlurAmount] = useState(0)
+    const [overlayOpacity, setOverlayOpacity] = useState(0)
+    const [isDarkMode, setIsDarkMode] = useState(false)
+    const sectionRef = useRef<HTMLElement>(null)
+    const lenis = useLenis()
+
+    // Track scroll position using Framer Motion
+    const { scrollY } = useScroll()
 
     useEffect(() => {
         const checkMobile = () => {
@@ -22,8 +31,103 @@ export function Hero() {
         window.addEventListener('resize', checkMobile)
         return () => window.removeEventListener('resize', checkMobile)
     }, [])
+
+    useEffect(() => {
+        // Check initial theme
+        const checkTheme = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'))
+        }
+
+        checkTheme()
+
+        // Watch for theme changes
+        const observer = new MutationObserver(checkTheme)
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        })
+
+        return () => observer.disconnect()
+    }, [])
+
+    // Calculate blur based on scroll position
+    useEffect(() => {
+        if (!lenis) return
+
+        const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
+            // Get viewport height
+            const viewportHeight = window.innerHeight
+            // Start blurring earlier - at 50% of viewport height
+            // Blur increases from 0 to max (e.g., 20px) as scroll goes from threshold to threshold + 200px
+            const scrollThreshold = viewportHeight * 0.5
+            const blurRange = 200 // Range over which blur increases
+            const maxBlur = 20 // Maximum blur amount in pixels
+            // Use lower opacity for light mode
+            const maxOverlayOpacity = isDarkMode ? 0.85 : 0.6 // Maximum overlay opacity
+
+            if (scroll <= scrollThreshold) {
+                setBlurAmount(0)
+                setOverlayOpacity(0)
+            } else {
+                const scrollPast = scroll - scrollThreshold
+                const blurProgress = Math.min(scrollPast / blurRange, 1)
+                setBlurAmount(blurProgress * maxBlur)
+                setOverlayOpacity(blurProgress * maxOverlayOpacity)
+            }
+        }
+
+        lenis.on('scroll', handleScroll)
+
+        // Initial check
+        handleScroll({ scroll: lenis.scroll, limit: lenis.limit })
+
+        return () => {
+            lenis.off('scroll', handleScroll)
+        }
+    }, [lenis, isDarkMode])
+
+    // Fallback to Framer Motion scroll for compatibility
+    useMotionValueEvent(scrollY, 'change', (latest) => {
+        if (!lenis) {
+            const viewportHeight = window.innerHeight
+            const scrollThreshold = viewportHeight * 0.5
+            const blurRange = 200
+            const maxBlur = 20
+            // Use lower opacity for light mode
+            const maxOverlayOpacity = isDarkMode ? 0.85 : 0.4
+
+            if (latest <= scrollThreshold) {
+                setBlurAmount(0)
+                setOverlayOpacity(0)
+            } else {
+                const scrollPast = latest - scrollThreshold
+                const blurProgress = Math.min(scrollPast / blurRange, 1)
+                setBlurAmount(blurProgress * maxBlur)
+                setOverlayOpacity(blurProgress * maxOverlayOpacity)
+            }
+        }
+    })
     return (
-        <section id="home" className="min-h-screen flex items-center justify-center relative overflow-x-hidden overflow-y-visible">
+        <motion.section
+            ref={sectionRef}
+            id="home"
+            className="min-h-screen flex items-center justify-center fixed top-0 left-0 right-0 z-[1] overflow-x-hidden overflow-y-visible dark:bg-[#12121a]"
+            style={{
+                filter: `blur(${blurAmount}px)`,
+                transition: 'filter 0.3s ease-out',
+                backgroundColor: isDarkMode ? undefined : '#E8DDD0',
+            }}
+        >
+            {/* Dark overlay that fades in on scroll */}
+            <div
+                className="absolute inset-0 z-[20] pointer-events-none"
+                style={{
+                    backgroundColor: isDarkMode ? '#181825' : '#F2E8DD',
+                    opacity: overlayOpacity,
+                    transition: 'opacity 0.3s ease-out, background-color 0.3s ease-out',
+                }}
+            />
+
             {/* SEAN Display Text - Stretched Edge to Edge */}
             <div
                 className="absolute top-24 md:top-32 inset-x-0 w-screen overflow-visible flex flex-col items-center justify-center -translate-y-4 md:-translate-y-6"
@@ -39,12 +143,13 @@ export function Hero() {
                             stiffness: 40,
                             damping: 20
                         }}
-                        className="absolute z-10 bg-background w-full"
+                        className="absolute z-10 dark:bg-[#12121a] w-full"
                         style={{
                             height: '50vh',
                             top: '-25vh',
                             left: 0,
                             right: 0,
+                            backgroundColor: isDarkMode ? '#12121a' : '#E8DDD0',
                         }}
                     />
 
@@ -81,7 +186,7 @@ export function Hero() {
                     />
                 </div>
 
-                <div className="mt-14 md:mt-16 text-[clamp(1.5rem,3vw,2rem)] w-full max-w-5xl px-6 md:px-10 text-foreground-secondary font-medium uppercase tracking-[0.2em] flex flex-col md:flex-row items-center md:items-start justify-center md:justify-between mx-auto gap-10 md:gap-6">
+                <div className="mt-14 md:mt-16 text-[clamp(1.5rem,3vw,2rem)] w-full max-w-5xl px-6 md:px-10 text-foreground-secondary font-bold uppercase tracking-[0.2em] flex flex-col md:flex-row items-center md:items-start justify-center md:justify-between mx-auto gap-10 md:gap-6">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -120,6 +225,6 @@ export function Hero() {
                     <ChevronDown className="w-6 h-6 text-foreground-secondary" />
                 </motion.button>
             </motion.div>
-        </section>
+        </motion.section>
     )
 }

@@ -106,6 +106,10 @@ const config: Config = {
 					'var(--font-new-york)',
 					'serif'
 				],
+				'clash-display': [
+					'Clash Display',
+					'sans-serif'
+				],
 				menlo: [
 					'var(--font-menlo)',
 					'monospace'

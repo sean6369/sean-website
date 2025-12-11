@@ -165,7 +165,7 @@ export function Contact() {
     }
 
     return (
-        <section id="contact" className="pt-16 md:pt-24 lg:pt-32 pb-0 relative">
+        <section id="contact" className="relative z-[2] pt-16 md:pt-24 lg:pt-32 pb-0">
             {/* Bottom blur transition for smooth footer connection */}
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background via-background/60 to-transparent backdrop-blur-sm pointer-events-none"></div>
             <div className="container-custom pb-16 md:pb-24 lg:pb-32">
@@ -174,13 +174,13 @@ export function Contact() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
-                    className="text-center mb-16"
+                    className="text-left mb-16"
                 >
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                        Get In <span className="gradient-text">Touch</span>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
+                        CONTACT.
                     </h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-6" />
-                    <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
+                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6" />
+                    <p className="text-lg text-foreground-secondary max-w-2xl">
                         Have a project in mind or just want to chat? I'd love to hear from you.
                         Let's create something amazing together.
                     </p>

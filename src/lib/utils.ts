@@ -16,8 +16,35 @@ export function cn(...inputs: ClassValue[]) {
 export function scrollToSection(sectionId: string) {
   const section = document.getElementById(sectionId)
   if (section) {
-    const offset = 80 // Adjust this value based on your navbar height
-    const sectionTop = section.getBoundingClientRect().top + window.pageYOffset - offset
+    const navbarOffset = 120 // Match the offset used in navigation detection
+    const sectionOffsets: Record<string, number> = {
+      about: 80, // Scroll slightly into the About section
+      milestones: 140, // Scroll further into Milestones
+    }
+    const extraOffset = sectionOffsets[sectionId] ?? 0
+
+    // For home section, scroll to top
+    if (sectionId === 'home') {
+      const targetScroll = 0
+      if (lenisInstance) {
+        lenisInstance.scrollTo(targetScroll, {
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          offset: 0,
+        })
+      } else {
+        window.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
+        })
+      }
+      return
+    }
+
+    // Calculate position using layout (offsetTop) to avoid transform-induced drift
+    // Framer-motion transforms (like y) change getBoundingClientRect but not layout,
+    // so offsetTop gives a stable reference for scrolling both up and down.
+    const sectionTop = Math.max(0, (section as HTMLElement).offsetTop - navbarOffset + extraOffset)
 
     // Use Lenis if available, otherwise fallback to native smooth scroll
     if (lenisInstance) {
@@ -25,6 +52,7 @@ export function scrollToSection(sectionId: string) {
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // ease-in-out
         offset: 0,
+        immediate: false,
       })
     } else {
       // Fallback to native smooth scroll

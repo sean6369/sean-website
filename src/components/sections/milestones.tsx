@@ -76,22 +76,19 @@ const education = [
 
 export function Milestones() {
     return (
-        <section id="milestones" className="section-padding">
+        <section id="milestones" className="relative z-[1] section-padding -mt-[400px] md:-mt-[500px]">
             <div className="container-custom">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
-                    className="text-center mb-16"
+                    className="text-left mb-16"
                 >
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                        Professional <span className="gradient-text">Milestones</span>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
+                        MILESTONES.
                     </h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-6" />
-                    <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
-                        A journey of growth, learning, and meaningful contributions across diverse industries
-                    </p>
+                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6" />
                 </motion.div>
 
                 {/* Experience Subheader */}

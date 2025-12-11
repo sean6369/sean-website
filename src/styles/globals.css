@@ -125,6 +125,14 @@
         font-feature-settings: "kern" 1, "liga" 1;
     }
 
+    /* Clash Display font styling */
+    .font-clash-display {
+        font-family: 'Clash Display', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
     ::selection {
         background-color: var(--primary);
         color: var(--background);
@@ -237,7 +245,8 @@
     }
 
     /* Apply rounded corners to favicon and metadata images */
-    img[src*="sean_logo.png"] {
+    img[src*="sean_logo.png"],
+    img[src*="/logos/sean_logo"] {
         border-radius: 12px;
     }
 
