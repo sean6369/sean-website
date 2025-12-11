@@ -180,10 +180,6 @@ export function Contact() {
                         CONTACT.
                     </h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6" />
-                    <p className="text-lg text-foreground-secondary max-w-2xl">
-                        Have a project in mind or just want to chat? I'd love to hear from you.
-                        Let's create something amazing together.
-                    </p>
                 </motion.div>
 
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">

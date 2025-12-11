@@ -10,7 +10,7 @@ const projectsData = [
     {
         id: 1,
         title: 'SilverSigma',
-        description: 'A comprehensive web-app platform for seniors featuring real-time interactive AI avatar companionship, hobby discovery hub, and a safe social media network to enhance mental health, life fulfillment and connectivity.',
+        description: 'Digital hub for seniors to connect, explore hobbies, and chat with an AI companion.',
         longDescription: 'Part of a team of 5 to build a web-app platform for seniors, featuring real-time interactive AI avatar companionship, hobby discovery hub, and a safe social media network, to enhance mental health, life fulfillment and connectivity. The platform includes an AI-powered companion with HeyGen streaming avatar technology supporting 4 languages (English, Mandarin, Bahasa Melayu, Tamil), a comprehensive hobby hub with 30+ activities across 6 categories, SeniorGram social feed for safe sharing, and community classes integration with 32+ workshop options across Singapore. Built with accessibility-first design featuring WCAG AA+ compliance, mobile-first approach, and voice-first interaction options.',
         image: '/projects/silversigma.jpg',
         technologies: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'HeyGen AI Avatar', 'OpenAI', 'Supabase', 'WebSocket', 'PWA'],
@@ -23,7 +23,7 @@ const projectsData = [
     {
         id: 2,
         title: 'SentinelAI',
-        description: 'An AI-powered system that transforms IP cameras into real-time anomaly detectors for falls, emergencies, and safety hazards, with applications in elderly care, pet monitoring, and industrial safety.',
+        description: 'AI system that turns IP cameras into real-time detectors for falls and emergencies.',
         longDescription: 'Part of a team of 5 to develop an AI-powered system that transforms IP cameras into real-time anomaly detectors for falls, emergencies, and safety hazards, with applications in elderly care, pet monitoring, and industrial safety. The system features cloud-first architecture with automatic RTSP to HLS conversion, real-time AI processing with WebSocket-based alerts, cross-platform compatibility, and enterprise-grade security with HTTPS encryption. While our project didn\'t advance, we reflected on challenges such as scaling difficulties, limited long-term differentiation, and missing safeguards like background checks, highlighting the importance of focusing on innovative approaches that address the limitations of current offerings and stronger market validation.',
         image: '/projects/sentinelai.jpg',
         technologies: ['Machine Learning', 'Fullstack Development', 'Cloud Architecture', 'Real-time Streaming', 'AI Detection', 'WebSocket', 'RTSP', 'HLS'],
@@ -49,7 +49,7 @@ const projectsData = [
         id: 3,
         title: 'SigmaHealth',
         achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award',
-        description: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform.',
+        description: 'Public health app with live data, GPT-based guidance, and community reporting',
         longDescription: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform. Features include AI health assistant (SigmaBoy), real-time dengue/PSI/COVID data integration, interactive health mapping, gamified health quizzes, community reporting system, and multilingual support for Singapore\'s diverse population.',
         image: '/projects/sigmahealth.jpg',
         technologies: ['React Native', 'Expo', 'Firebase', 'OpenAI GPT', 'TypeScript', 'JavaScript'],
@@ -62,7 +62,7 @@ const projectsData = [
     {
         id: 4,
         title: 'Goldjewel Website & CMS',
-        description: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS).',
+        description: 'Contemporary jewelry site paired with a fully custom content management system.',
         longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
         image: '/projects/goldjewel.jpg',
         technologies: ['Frontend Development', 'CMS Development', 'Database Management', 'Image Processing', 'Real-time Updates'],
@@ -75,7 +75,7 @@ const projectsData = [
         id: 5,
         title: 'SigmaShield',
         achievement: '🏆 Finalist (top 20 of 80+ teams)',
-        description: 'An AI-powered mobile app that helps users detect, understand, and prevent online scams. It offers real-time URL analysis, educational content, scam analytics, and a community forum for sharing experiences and insights.',
+        description: 'AI app for URL analysis, scam education, and community reporting.',
         longDescription: 'An AI-powered mobile app that helps users detect, understand, and prevent online scams. It offers real-time URL analysis, educational content, scam analytics, and a community forum for sharing experiences and insights. Features include scam detection with AI-powered confidence scores, educational modules about different scam types, analytics dashboards for tracking detections, and a community forum for discussion and support.',
         image: '/projects/sigmashield.jpg',
         technologies: ['React Native', 'Expo', 'TypeScript', 'AI/ML', 'Python', 'Node.js'],
@@ -88,7 +88,7 @@ const projectsData = [
     {
         id: 6,
         title: 'Oxley Pawnshop Website',
-        description: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern.',
+        description: 'Modern website for a Singapore-based pawnshop with live gold prices.',
         longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
         image: '/projects/oxleypawnshop.jpg',
         technologies: ['Frontend Development', 'Backend Integration', 'API Integration', 'Email Services', 'Real-time Data'],
@@ -99,7 +99,7 @@ const projectsData = [
     {
         id: 7,
         title: 'GymFit',
-        description: 'Built during Orbital 2025, a cross-platform fitness app built with Flutter and Firebase, featuring real-time workout tracking and timers, YouTube video integration, and science-based calorie calculations.',
+        description: 'Cross-platform fitness app featuring workout and calorie tracking.',
         longDescription: 'Built during Orbital 2025, a cross-platform fitness app built with Flutter and Firebase, featuring real-time workout tracking and timers, YouTube video integration, and science-based calorie calculations. It includes social networking, workout history tracking and statistics, advanced muscle recovery monitoring, and personalized workout recommendations.',
         image: '/projects/gymfit.jpg',
         technologies: ['Flutter', 'Firebase', 'Dart', 'YouTube API', 'Cross-platform'],
@@ -112,7 +112,7 @@ const projectsData = [
     {
         id: 8,
         title: 'NoFap',
-        description: 'Built during Hackomania 2025, a modern web app designed to help users stay motivated on their NoFap journey through progress tracking, achievements, and community support.',
+        description: 'Social motivation app featuring donation incentives and peer support.',
         longDescription: 'Built during Hackomania 2025, a modern web app designed to help users stay motivated on their NoFap journey through progress tracking, achievements, and community support. It features donation-based support platform enabling micro-donations through the Open Payments API to assist individuals overcoming addiction.',
         image: '/projects/nofap.jpg',
         technologies: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS', 'Vercel'],
@@ -126,7 +126,7 @@ const projectsData = [
         id: 9,
         title: 'Ship Vessel Risk Detection Model',
         achievement: '🏆 Top 3',
-        description: 'A two-stage AI pipeline to predict vessel deficiency severity from Port State Control inspection text.',
+        description: 'A two-stage AI pipeline predicting vessel deficiency severity from inspection text.',
         longDescription: 'A two-stage AI pipeline to predict vessel deficiency severity from Port State Control inspection text. Stage 1 resolves and consolidates multiple annotations into a single severity label per inspection, and Stage 2 fine-tunes a DistilBERT transformer to classify severity and generate predictions for new inspections.',
         image: '/projects/ship-vessel.jpg',
         technologies: ['Python', 'DistilBERT', 'Transformers', 'NLP', 'Machine Learning', 'PyTorch'],
@@ -340,7 +340,7 @@ export const Projects = memo(function Projects() {
     }
 
     return (
-        <section id="projects" className="relative z-[2] bg-background-secondary">
+        <section id="projects" className="relative z-[2] bg-background-tertiary">
             <div className="relative z-10 pt-8 md:pt-12 lg:pt-16 px-3 sm:px-4 lg:px-6 pb-12 md:pb-16 lg:pb-20">
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -352,12 +352,12 @@ export const Projects = memo(function Projects() {
                         }
                     }}
                     viewport={{ once: true, margin: "-100px" }}
-                    className="text-center md:text-left mb-10"
+                    className="text-left mb-10"
                 >
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 font-clash-display">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
                         PROJECTS.
                     </h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-4 md:mb-6 mx-auto md:mx-0" />
+                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6" />
                 </motion.div>
 
                 <motion.div
@@ -403,31 +403,31 @@ export const Projects = memo(function Projects() {
                                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                                         style={{ backgroundImage: `url('${background}')` }}
                                     />
-                                    {project.achievement && (
-                                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 text-xs font-semibold text-secondary shadow-sm">
-                                            {project.achievement}
-                                        </div>
-                                    )}
-                                    <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-black/60 text-xs font-semibold text-white">
-                                        {project.date}
-                                    </div>
                                 </div>
 
-                                <div className="p-4 sm:p-6 flex flex-col gap-4 flex-1">
-                                    <div className="flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-2">
-                                            <CategoryIcon className="w-4 h-4 text-primary" />
-                                            <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold">
+                                <div className="p-4 sm:p-6 flex flex-col gap-2 flex-1">
+                                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="text-xs px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold flex items-center gap-1.5">
+                                                <CategoryIcon className="w-4 h-4 text-foreground-secondary" />
                                                 {project.category}
                                             </span>
+                                            <span className="text-xs px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold">
+                                                {project.date}
+                                            </span>
                                         </div>
+                                        {project.achievement && (
+                                            <span className="text-xs px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold">
+                                                {project.achievement}
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div>
                                         <h3 className="text-xl font-bold text-foreground mb-1 line-clamp-2">
                                             {project.title}
                                         </h3>
-                                        <p className="text-sm text-foreground-secondary line-clamp-3">
+                                        <p className="text-base text-foreground-secondary font-medium line-clamp-3">
                                             {project.description}
                                         </p>
                                     </div>

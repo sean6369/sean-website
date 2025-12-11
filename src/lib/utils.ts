@@ -20,6 +20,7 @@ export function scrollToSection(sectionId: string) {
     const sectionOffsets: Record<string, number> = {
       about: 80, // Scroll slightly into the About section
       milestones: 140, // Scroll further into Milestones
+      projects: 80, // Scroll slightly into Projects section
     }
     const extraOffset = sectionOffsets[sectionId] ?? 0
 

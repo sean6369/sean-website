@@ -61,7 +61,7 @@ export function BlogSidebar() {
                         {/* Compact Profile Image */}
                         <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-800 flex-shrink-0 transition-[width,height] duration-300 ease-in-out">
                             <Image
-                                src="/images/sean about me.jpg"
+                                src="/images/sean blog.jpg"
                                 alt="Profile"
                                 width={64}
                                 height={64}
@@ -89,7 +89,7 @@ export function BlogSidebar() {
                             aria-haspopup="true"
                         >
                             Links
-                            <ChevronDown 
+                            <ChevronDown
                                 className={`h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
                             />
                         </button>
@@ -128,7 +128,7 @@ export function BlogSidebar() {
                     <div className="flex justify-start">
                         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-800 transition-[width,height] duration-300 ease-in-out">
                             <Image
-                                src="/images/sean about me.jpg"
+                                src="/images/sean blog.jpg"
                                 alt="Profile"
                                 width={128}
                                 height={128}

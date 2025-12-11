@@ -188,10 +188,10 @@ export function Milestones() {
                                         viewport={{ once: true }}
                                         className="mb-3 sm:mb-4"
                                     >
-                                        <h3 className="text-lg sm:text-xl font-semibold text-primary mb-1 sm:mb-2">
+                                        <h3 className="text-lg sm:text-xl font-bold text-primary mb-1 sm:mb-2">
                                             {milestone.company}
                                         </h3>
-                                        <h4 className="text-base sm:text-lg font-medium text-foreground">
+                                        <h4 className="text-base sm:text-lg font-semibold text-foreground">
                                             {milestone.role}
                                         </h4>
                                     </motion.div>
@@ -205,7 +205,7 @@ export function Milestones() {
                                             delay: index * 0.1 + 0.1
                                         }}
                                         viewport={{ once: true }}
-                                        className="text-foreground-secondary text-sm sm:text-base md:text-lg leading-relaxed"
+                                        className="text-foreground-secondary text-sm sm:text-base md:text-lg leading-relaxed font-medium"
                                     >
                                         {milestone.description}
                                     </motion.p>
@@ -302,10 +302,10 @@ export function Milestones() {
                                         viewport={{ once: true }}
                                         className="mb-3 sm:mb-4"
                                     >
-                                        <h3 className="text-lg sm:text-xl font-semibold text-primary mb-1 sm:mb-2">
+                                        <h3 className="text-lg sm:text-xl font-bold text-primary mb-1 sm:mb-2">
                                             {edu.institution}
                                         </h3>
-                                        <h4 className="text-base sm:text-lg font-medium text-foreground">
+                                        <h4 className="text-base sm:text-lg font-semibold text-foreground">
                                             {edu.degree}
                                         </h4>
                                     </motion.div>
