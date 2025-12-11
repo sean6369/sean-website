@@ -1,12 +1,10 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Github, X, FileCode, Smartphone, Brain, Trophy, Folder, Globe } from 'lucide-react'
+import { ExternalLink, Github, X, Smartphone, Brain, Trophy, Globe } from 'lucide-react'
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
 import { useModal } from '@/lib/modal-context'
-import { getAnimationVariants } from '@/lib/animations'
-import { useSwipeable } from 'react-swipeable'
 
 const projectsData = [
     {
@@ -183,91 +181,6 @@ const VideoPlayer = ({ videoUrl, title, className = "" }: {
     </div>
 );
 
-// Helper component for preview (hover state)
-const PreviewSection = ({ project }: { project: typeof projectsData[0] }): JSX.Element | null => {
-    // Check for live website first
-    if ('live' in project && project.live && (project.title === 'Oxley Pawnshop Website' || project.title === 'Goldjewel Website & CMS' || project.title === 'SilverSigma')) {
-        return (
-            <div className="relative w-full h-full rounded-lg overflow-hidden border border-surface-secondary bg-black">
-                <div
-                    className="w-full h-full"
-                    style={{
-                        transform: 'scale(0.5)',
-                        transformOrigin: 'top left',
-                        width: '200%',
-                        height: '200%'
-                    }}
-                >
-                    <iframe
-                        src={project.live}
-                        className="w-full h-full"
-                        title={`${project.title} Live Preview`}
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                        loading="lazy"
-                    />
-                </div>
-                {/* Open in New Tab Button */}
-                <div className="absolute top-2 right-2 z-10">
-                    <a
-                        href={project.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 bg-surface dark:bg-surface-secondary hover:bg-transparent dark:hover:bg-transparent text-foreground border border-surface-secondary dark:border-surface-tertiary px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 shadow-lg backdrop-blur-sm"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        Open in New Tab
-                    </a>
-                </div>
-            </div>
-        );
-    }
-
-    // Check for projects with background images (NoFap and Ship Vessel)
-    if (project.title === 'NoFap' || project.title === 'Ship Vessel Risk Detection Model') {
-        const backgroundImage = project.title === 'NoFap'
-            ? "url('/images/Hackomania screen.png')"
-            : "url('/images/Marinetime Hackathon screen.jpeg')";
-
-        return (
-            <div className="w-full h-full rounded-lg overflow-hidden border border-surface-secondary bg-black">
-                <div
-                    className="w-full h-full bg-cover bg-center"
-                    style={{ backgroundImage }}
-                />
-            </div>
-        );
-    }
-
-    // Check for video demo
-    if ('video' in project && project.video) {
-        const videoUrl = project.video as string;
-        if (videoUrl.includes('/videos/') || videoUrl.endsWith('.mp4') || videoUrl.endsWith('.mov') || videoUrl.endsWith('.webm')) {
-            return <VideoPlayer videoUrl={videoUrl} title={`${project.title} Demo Video`} className="w-full h-full" />;
-        }
-    }
-
-    // Check for multiple videos
-    if ('videos' in project && project.videos && Array.isArray(project.videos) && project.videos.length > 0) {
-        return <VideoPlayer videoUrl={project.videos[0].url} title={`${project.title} Demo Video`} className="w-full h-full" />;
-    }
-
-    // Fallback to project image or description
-    return (
-        <div className="w-full h-full rounded-lg border border-surface-secondary bg-surface flex items-center justify-center p-6">
-            <div className="text-center max-w-md">
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 mx-auto">
-                    <ExternalLink className="w-8 h-8 text-primary" />
-                </div>
-                <h4 className="text-xl font-semibold text-foreground mb-3">{project.title}</h4>
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                    {project.description}
-                </p>
-            </div>
-        </div>
-    );
-};
-
 // Helper component for video section
 const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsData[0] }): JSX.Element | null => {
     // Check for multiple videos first
@@ -359,32 +272,13 @@ export const Projects = memo(function Projects() {
     const projects = useMemo(() => projectsData, []);
     const { setIsModalOpen } = useModal()
 
+    const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
 
-    // Consolidated state management
-    const [projectState, setProjectState] = useState({
-        selectedProject: null as typeof projects[0] | null,
-        hoveredProject: null as typeof projects[0] | null,
-        hoverTimeout: null as NodeJS.Timeout | null,
-        previewRect: null as DOMRect | null,
-    });
-
-    // Story cards state for mobile
-    const [storyState, setStoryState] = useState({
-        currentCardIndex: 0, // 0 = logo, 1+ = projects
-        isStoryMode: false,
-        swipeDirection: 'left' as 'left' | 'right', // Track swipe direction for animation
-    });
-
-    const previewRef = useRef<HTMLDivElement>(null)
     const iframeContainerRef = useRef<HTMLDivElement>(null)
     const [iframeScale, setIframeScale] = useState(1)
     const [iframeDimensions, setIframeDimensions] = useState({ width: 1280, height: 720 })
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
-    const animations = getAnimationVariants(prefersReducedMotion) as any
-
-    // Destructure for easier access
-    const { selectedProject, hoveredProject, hoverTimeout, previewRect } = projectState;
 
     // Project background images mapping
     const projectBackgrounds: Record<number, string> = {
@@ -398,101 +292,6 @@ export const Projects = memo(function Projects() {
         8: '/images/Hackomania screen.png',
         9: '/images/Marinetime Hackathon screen.jpeg',
     };
-
-    // Get active project ID - include story card project for mobile
-    const currentStoryProject = isMobile && storyState.currentCardIndex > 0
-        ? projects[storyState.currentCardIndex - 1]
-        : null;
-    const activeProjectId = hoveredProject?.id || selectedProject?.id || currentStoryProject?.id;
-    const backgroundImage = activeProjectId ? projectBackgrounds[activeProjectId] : null;
-
-
-    const handleMouseEnter = (project: typeof projects[0]) => {
-        if (hoverTimeout) {
-            clearTimeout(hoverTimeout)
-            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
-        }
-        // Immediately set hover state for fast cursor movement
-        setProjectState(prev => ({ ...prev, hoveredProject: project }))
-    }
-
-    const handleMouseLeave = () => {
-        // Reduced delay for faster response, especially for file explorer items
-        const timeout = setTimeout(() => {
-            setProjectState(prev => ({ ...prev, hoveredProject: null }))
-        }, 50) // Reduced from 150ms to 50ms for faster response
-        setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
-    }
-
-    const handleFileItemMouseEnter = (project: typeof projects[0]) => {
-        // Immediate hover for file explorer items - no delay
-        if (hoverTimeout) {
-            clearTimeout(hoverTimeout)
-            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
-        }
-        // Immediately set hover state to show preview
-        setProjectState(prev => ({ ...prev, hoveredProject: project }))
-    }
-
-    const handleFileItemMouseLeave = (e: React.MouseEvent) => {
-        // Check if mouse is moving to another file item (relatedTarget check)
-        const relatedTarget = e.relatedTarget as HTMLElement
-        const isMovingToAnotherItem = relatedTarget?.closest('[data-file-item]')
-
-        // Only set timeout if not moving to another item
-        if (!isMovingToAnotherItem) {
-            // Longer delay to allow for fast cursor movement - preview will persist longer
-            const timeout = setTimeout(() => {
-                setProjectState(prev => ({ ...prev, hoveredProject: null }))
-            }, 200) // Increased delay to keep preview visible when stopping
-            setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
-        } else {
-            // Clear any pending timeout when moving to another item
-            if (hoverTimeout) {
-                clearTimeout(hoverTimeout)
-                setProjectState(prev => ({ ...prev, hoverTimeout: null }))
-            }
-        }
-    }
-
-    const handleFileExplorerMouseEnter = () => {
-        // Clear timeout when entering the file explorer container
-        if (hoverTimeout) {
-            clearTimeout(hoverTimeout)
-            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
-        }
-    }
-
-    const handleFileExplorerMouseLeave = () => {
-        // Only clear hover when leaving the entire explorer area
-        const timeout = setTimeout(() => {
-            setProjectState(prev => ({ ...prev, hoveredProject: null }))
-        }, 200) // Delay to allow re-entry if cursor bounces
-        setProjectState(prev => ({ ...prev, hoverTimeout: timeout }))
-    }
-
-    const handlePreviewMouseEnter = () => {
-        if (hoverTimeout) {
-            clearTimeout(hoverTimeout)
-            setProjectState(prev => ({ ...prev, hoverTimeout: null }))
-        }
-    }
-
-    // Cleanup timeout on unmount
-    useEffect(() => {
-        return () => {
-            if (hoverTimeout) {
-                clearTimeout(hoverTimeout)
-            }
-        }
-    }, [hoverTimeout])
-
-    // Reset preview rect when overlay closes
-    useEffect(() => {
-        if (!selectedProject) {
-            setProjectState(prev => ({ ...prev, previewRect: null }))
-        }
-    }, [selectedProject])
 
     // Calculate iframe scale to maintain desktop or mobile viewport
     useEffect(() => {
@@ -530,660 +329,114 @@ export const Projects = memo(function Projects() {
         }
     }, [selectedProject, isMobile])
 
-    // Story cards handlers
-    const totalCards = 1 + projects.length // Logo + projects
-
-    // Configure react-swipeable for story container
-    const swipeHandlers = useSwipeable({
-        onSwipedLeft: (eventData) => {
-            // Swipe left - go to next card
-            // Prevent swipe if interacting with buttons, videos, links, or iframes
-            const target = eventData.event?.target as HTMLElement
-            if (target?.closest('button') || target?.closest('video') || target?.closest('a') || target?.closest('iframe')) {
-                return
-            }
-            setStoryState(prev => ({
-                ...prev,
-                currentCardIndex: Math.min(totalCards - 1, prev.currentCardIndex + 1),
-                swipeDirection: 'left',
-            }))
-        },
-        onSwipedRight: (eventData) => {
-            // Swipe right - go to previous card
-            // Prevent swipe if interacting with buttons, videos, links, or iframes
-            const target = eventData.event?.target as HTMLElement
-            if (target?.closest('button') || target?.closest('video') || target?.closest('a') || target?.closest('iframe')) {
-                return
-            }
-            setStoryState(prev => ({
-                ...prev,
-                currentCardIndex: Math.max(0, prev.currentCardIndex - 1),
-                swipeDirection: 'right',
-            }))
-        },
-        preventScrollOnSwipe: true,
-        trackTouch: true,
-        trackMouse: false, // Only track touch, not mouse
-        delta: 10, // Minimum distance for swipe
-    })
-
-    const handleStoryCardClick = () => {
-        // Only open modal if it's a project card (not logo)
-        if (storyState.currentCardIndex > 0) {
-            const project = projects[storyState.currentCardIndex - 1]
-            if (previewRef.current) {
-                const rect = previewRef.current.getBoundingClientRect()
-                setProjectState(prev => ({ ...prev, previewRect: rect }))
-            }
-            setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
-            setIsModalOpen(true)
-        }
+    const handleCardClick = (project: typeof projects[0]) => {
+        setSelectedProject(project)
+        setIsModalOpen(true)
     }
 
-    const handleExitStoryMode = () => {
-        setStoryState(prev => ({ ...prev, isStoryMode: false, currentCardIndex: 0 }))
+    const handleClose = () => {
+        setSelectedProject(null)
+        setIsModalOpen(false)
     }
-
-    // Story card component for logo
-    const LogoStoryCard = () => (
-        <div className="flex items-center justify-center h-full min-h-[400px]">
-            <div className="text-center flex flex-col items-center justify-center px-4">
-                <div className="mb-6 sm:mb-8 text-primary flex justify-center">
-                    <div className="w-48 h-48 sm:w-64 sm:h-64 lg:w-96 lg:h-96">
-                        <AnimatedLogo />
-                    </div>
-                </div>
-                <h3 className="text-xl lg:text-2xl font-semibold mb-3 text-foreground">Select a Project</h3>
-                <p className="text-sm lg:text-base text-muted-foreground">
-                    Swipe to browse projects
-                </p>
-            </div>
-        </div>
-    )
-
-    // Story card component for projects - matches desktop hover preview exactly
-    const ProjectStoryCard = ({ project }: { project: typeof projects[0] }) => {
-        const cardTouchStartRef = useRef({ x: 0, y: 0, time: 0 })
-
-        const handleCardClick = (e: React.MouseEvent) => {
-            // Don't handle click if it's on interactive elements
-            const target = e.target as HTMLElement
-            if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
-                return
-            }
-            // For mouse clicks (desktop), open modal
-            e.stopPropagation()
-            handleStoryCardClick()
-        }
-
-        const handleCardTouchStart = (e: React.TouchEvent) => {
-            // Don't track if it's on interactive elements
-            const target = e.target as HTMLElement
-            if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
-                return
-            }
-            // Track touch for tap detection
-            const touch = e.touches[0]
-            cardTouchStartRef.current = {
-                x: touch.clientX,
-                y: touch.clientY,
-                time: Date.now()
-            }
-            // Don't stop propagation - let container track too
-        }
-
-        const handleCardTouchEnd = (e: React.TouchEvent) => {
-            // Don't handle if it's on interactive elements
-            const target = e.target as HTMLElement
-            if (target.closest('button') || target.closest('video') || target.closest('a') || target.closest('iframe') || target.tagName === 'VIDEO' || target.tagName === 'A' || target.tagName === 'BUTTON') {
-                return
-            }
-
-            const touch = e.changedTouches[0]
-            const deltaX = touch.clientX - cardTouchStartRef.current.x
-            const deltaY = touch.clientY - cardTouchStartRef.current.y
-            const deltaTime = Date.now() - cardTouchStartRef.current.time
-            const absDeltaX = Math.abs(deltaX)
-            const absDeltaY = Math.abs(deltaY)
-
-            // If it's a significant movement or long press, don't treat as tap
-            // react-swipeable handles swipe detection, so we just check for small movements here
-            if (absDeltaX > 30 || absDeltaY > 30 || deltaTime > 400) {
-                return // Let event bubble - swipe was likely detected by react-swipeable
-            }
-
-            // Small movement and short time = tap - open modal
-            e.preventDefault()
-            e.stopPropagation()
-            handleStoryCardClick()
-        }
-
-        return (
-            <div
-                className="story-card-content backdrop-blur-md border border-surface/50 bg-background pt-14 sm:pt-16 px-4 sm:px-6 pb-4 sm:pb-6 rounded-xl h-full flex flex-col relative cursor-pointer"
-                onClick={handleCardClick}
-                onTouchStart={handleCardTouchStart}
-                onTouchEnd={handleCardTouchEnd}
-            >
-                {/* Header - matches desktop */}
-                <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xl sm:text-2xl font-bold text-foreground pr-2">
-                        {project.title}
-                    </h3>
-                    <span className="text-xs sm:text-sm font-semibold text-muted-foreground flex-shrink-0">{project.date}</span>
-                </div>
-
-                {/* Achievement - matches desktop */}
-                {'achievement' in project && project.achievement && (
-                    <div className="mb-3">
-                        <div className="overflow-hidden">
-                            <span className="text-xs sm:text-sm font-menlo text-secondary font-semibold line-clamp-2 block">
-                                {project.achievement}
-                            </span>
-                        </div>
-                    </div>
-                )}
-
-                {/* Preview Content - matches desktop */}
-                <div className="flex-1 min-h-0" ref={previewRef}>
-                    <PreviewSection project={project} />
-                </div>
-
-                {/* Tap hint at bottom */}
-                <div className="mt-3 text-center">
-                    <span className="text-xs text-muted-foreground">Tap to view full details</span>
-                </div>
-            </div>
-        )
-    }
-
-    // Progress bar component
-    const ProgressBar = () => {
-        const progress = ((storyState.currentCardIndex + 1) / totalCards) * 100
-
-        return (
-            <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-40">
-                <motion.div
-                    className="h-full bg-white"
-                    initial={false}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-                />
-            </div>
-        )
-    }
-
-    // Progress indicators (dots)
-    const ProgressIndicators = () => (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 flex gap-1.5 pointer-events-auto">
-            {Array.from({ length: totalCards }).map((_, index) => (
-                <button
-                    key={index}
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        setStoryState(prev => ({
-                            ...prev,
-                            currentCardIndex: index,
-                            swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
-                        }))
-                    }}
-                    onTouchEnd={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        setStoryState(prev => ({
-                            ...prev,
-                            currentCardIndex: index,
-                            swipeDirection: index > prev.currentCardIndex ? 'left' : 'right'
-                        }))
-                    }}
-                    className={`rounded-full touch-manipulation ${index === storyState.currentCardIndex
-                        ? 'bg-white'
-                        : 'bg-white/40 hover:bg-white/60'
-                        }`}
-                    style={index === storyState.currentCardIndex
-                        ? { width: '24px', height: '6px', transition: 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }
-                        : { width: '6px', height: '6px', transition: 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }
-                    }
-                    aria-label={`Go to card ${index + 1}`}
-                />
-            ))}
-        </div>
-    )
 
     return (
-        <section id="projects" className="relative z-[2] section-padding bg-background-secondary">
-            {/* Project Background Effects */}
-            <AnimatePresence>
-                {backgroundImage ? (
-                    <motion.div
-                        key={`background-image-${activeProjectId}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: prefersReducedMotion ? 0.1 : 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="absolute inset-0 z-0"
-                    >
-                        <div
-                            className="absolute inset-0 bg-cover bg-center blur-sm"
-                            style={{ backgroundImage: `url('${backgroundImage}')` }}
-                        />
-                        <div className="absolute inset-0 bg-black/40" />
-                    </motion.div>
-                ) : null}
-            </AnimatePresence>
+        <section id="projects" className="relative z-[2] bg-background-secondary">
+            <div className="relative z-10 pt-8 md:pt-12 lg:pt-16 px-3 sm:px-4 lg:px-6 pb-12 md:pb-16 lg:pb-20">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{
+                        opacity: 1,
+                        transition: {
+                            duration: 0.7,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                        }
+                    }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="text-center md:text-left mb-10"
+                >
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 font-clash-display">
+                        PROJECTS.
+                    </h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-4 md:mb-6 mx-auto md:mx-0" />
+                </motion.div>
 
-            <div className="container-custom relative z-10">
-                {/* Mobile Story Cards */}
-                {isMobile ? (
-                    <div className="lg:hidden">
-                        <motion.div
-                            initial={{ opacity: 0, y: 40, scale: 0.98 }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                                transition: {
-                                    duration: 0.9,
-                                    ease: [0.25, 0.46, 0.45, 0.94],
-                                    opacity: { duration: 0.7 },
-                                    y: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
-                                    scale: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
-                                }
-                            }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            className="text-center mb-8"
-                        >
-                            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                                Featured <span className="gradient-text">Projects</span>
-                            </h2>
-                            <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mb-4" />
-                            <p className="text-sm text-foreground-secondary max-w-xl mx-auto">
-                                A showcase of my recent work and personal projects
-                            </p>
-                        </motion.div>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{
+                        opacity: 1,
+                        transition: {
+                            duration: 0.9,
+                            delay: 0.05,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                        }
+                    }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8"
+                >
+                    {projects.map((project) => {
+                        const background = projectBackgrounds[project.id]
 
-                        {/* Story Cards Container */}
-                        <div
-                            ref={swipeHandlers.ref}
-                            className="relative h-[80vh] max-h-[600px] rounded-xl overflow-hidden border border-surface-secondary bg-background"
-                        >
-                            <ProgressBar />
-                            <ProgressIndicators />
+                        const getCategoryIcon = () => {
+                            switch (project.category) {
+                                case 'Web App':
+                                    return Globe
+                                case 'Mobile App':
+                                    return Smartphone
+                                case 'AI/ML':
+                                    return Brain
+                                default:
+                                    return Globe
+                            }
+                        }
+                        const CategoryIcon = getCategoryIcon()
 
-                            {/* Close Button */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleExitStoryMode()
-                                }}
-                                className="absolute top-4 right-4 z-40 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
-                                aria-label="Close story mode"
+                        return (
+                            <motion.button
+                                key={project.id}
+                                type="button"
+                                className="group text-left w-full h-full rounded-2xl bg-background/60 backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 flex flex-col"
+                                onClick={() => handleCardClick(project)}
+                                whileTap={{ scale: 0.995 }}
                             >
-                                <X className="w-5 h-5" />
-                            </button>
-
-                            {/* Card Counter */}
-                            <div className="absolute top-4 left-4 z-40 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-semibold">
-                                {storyState.currentCardIndex + 1} / {totalCards}
-                            </div>
-
-                            {/* Story Cards */}
-                            <AnimatePresence mode="wait" custom={storyState.swipeDirection}>
-                                {storyState.currentCardIndex === 0 ? (
-                                    <motion.div
-                                        key="logo"
-                                        custom={storyState.swipeDirection}
-                                        initial={{
-                                            opacity: 0,
-                                            x: storyState.swipeDirection === 'left' ? 100 : -100,
-                                            scale: 0.95,
-                                            filter: 'blur(4px)'
-                                        }}
-                                        animate={{
-                                            opacity: 1,
-                                            x: 0,
-                                            scale: 1,
-                                            filter: 'blur(0px)'
-                                        }}
-                                        exit={{
-                                            opacity: 0,
-                                            x: storyState.swipeDirection === 'left' ? -100 : 100,
-                                            scale: 0.95,
-                                            filter: 'blur(4px)'
-                                        }}
-                                        transition={{
-                                            type: 'spring',
-                                            stiffness: 300,
-                                            damping: 30,
-                                            mass: 0.8,
-                                            opacity: { duration: 0.3 },
-                                            filter: { duration: 0.3 }
-                                        }}
-                                        className="absolute inset-0 p-4"
-                                    >
-                                        <LogoStoryCard />
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key={projects[storyState.currentCardIndex - 1].id}
-                                        custom={storyState.swipeDirection}
-                                        initial={{
-                                            opacity: 0,
-                                            x: storyState.swipeDirection === 'left' ? 100 : -100,
-                                            scale: 0.95,
-                                            filter: 'blur(4px)'
-                                        }}
-                                        animate={{
-                                            opacity: 1,
-                                            x: 0,
-                                            scale: 1,
-                                            filter: 'blur(0px)'
-                                        }}
-                                        exit={{
-                                            opacity: 0,
-                                            x: storyState.swipeDirection === 'left' ? -100 : 100,
-                                            scale: 0.95,
-                                            filter: 'blur(4px)'
-                                        }}
-                                        transition={{
-                                            type: 'spring',
-                                            stiffness: 300,
-                                            damping: 30,
-                                            mass: 0.8,
-                                            opacity: { duration: 0.3 },
-                                            filter: { duration: 0.3 }
-                                        }}
-                                        className="absolute inset-0"
-                                    >
-                                        <ProjectStoryCard project={projects[storyState.currentCardIndex - 1]} />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                ) : (
-                    <>
-                        {/* Desktop Layout */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40, scale: 0.98 }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                                transition: {
-                                    duration: 0.9,
-                                    ease: [0.25, 0.46, 0.45, 0.94],
-                                    opacity: { duration: 0.7 },
-                                    y: { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] },
-                                    scale: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
-                                }
-                            }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            className="text-left mb-16"
-                        >
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
-                                PROJECTS.
-                            </h2>
-                            <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6" />
-                        </motion.div>
-
-                        {/* Desktop Split Layout */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40, scale: 0.98 }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                                transition: {
-                                    duration: 1.0,
-                                    delay: 0.3,
-                                    ease: [0.25, 0.46, 0.45, 0.94],
-                                    opacity: { duration: 0.8, delay: 0.3 },
-                                    y: { duration: 1.0, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
-                                    scale: { duration: 0.7, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }
-                                }
-                            }}
-                            viewport={{ once: true, margin: "-80px" }}
-                            className="grid grid-cols-1 lg:grid-cols-[25%_1fr] gap-6 lg:gap-8"
-                        >
-                            {/* Left Column - File Explorer & Legend */}
-                            <div className="flex flex-col">
-                                {/* VS Code Style File Explorer */}
-                                <div
-                                    className="flex flex-col h-[500px] lg:h-[600px] border border-surface-secondary/50 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm"
-                                    onMouseEnter={handleFileExplorerMouseEnter}
-                                    onMouseLeave={handleFileExplorerMouseLeave}
-                                >
-                                    {/* Explorer Header */}
-                                    <div className="flex items-center gap-2 px-3 py-2 border-b border-surface-secondary/50 bg-surface/30">
-                                        <Folder className="w-4 h-4 text-muted-foreground" />
-                                        <span className="text-sm font-semibold uppercase tracking-wider text-foreground-secondary">
-                                            Explorer
-                                        </span>
-                                    </div>
-
-                                    {/* File List */}
-                                    <div className="flex-1 overflow-y-auto space-y-0.5 p-1">
-                                        {projects.map((project, index) => {
-                                            const isSelected = selectedProject?.id === project.id
-                                            const isHovered = hoveredProject?.id === project.id
-                                            const shouldBlur = (selectedProject && !isSelected) || (hoveredProject && !isHovered && !isSelected)
-
-                                            // Get icon based on category
-                                            const getCategoryIcon = () => {
-                                                switch (project.category) {
-                                                    case 'Web App':
-                                                        return Globe
-                                                    case 'Mobile App':
-                                                        return Smartphone
-                                                    case 'AI/ML':
-                                                        return Brain
-                                                    default:
-                                                        return Globe
-                                                }
-                                            }
-                                            const IconComponent = getCategoryIcon()
-
-                                            return (
-                                                <motion.div
-                                                    key={project.id}
-                                                    data-file-item
-                                                    initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        x: 0,
-                                                        filter: "blur(0px)",
-                                                        transition: {
-                                                            duration: 0.7,
-                                                            ease: [0.16, 1, 0.3, 1]
-                                                        }
-                                                    }}
-                                                    className={`
-                                        relative cursor-pointer transition-all duration-200
-                                        ${shouldBlur ? 'opacity-40' : 'opacity-100'}
-                                    `}
-                                                    onMouseEnter={() => handleFileItemMouseEnter(project)}
-                                                    onMouseLeave={(e) => handleFileItemMouseLeave(e)}
-                                                    onClick={() => {
-                                                        // Capture the preview element position for smooth transition
-                                                        if (previewRef.current) {
-                                                            const rect = previewRef.current.getBoundingClientRect()
-                                                            setProjectState(prev => ({ ...prev, previewRect: rect }))
-                                                        }
-                                                        setProjectState(prev => ({ ...prev, selectedProject: project, hoveredProject: null }))
-                                                        setIsModalOpen(true)
-                                                    }}
-                                                >
-                                                    {/* Hover/Selected Indicator Bar */}
-                                                    {(isSelected || isHovered) && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, scaleX: 0 }}
-                                                            animate={{ opacity: 1, scaleX: 1 }}
-                                                            exit={{ opacity: 0, scaleX: 0 }}
-                                                            transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                                            className={`
-                                                    absolute left-0 top-0 bottom-0 w-0.5 rounded-r
-                                                    ${isSelected ? 'bg-primary' : 'bg-primary/60'}
-                                                `}
-                                                        />
-                                                    )}
-
-                                                    <div className={`
-                                            flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-100 relative
-                                            ${isSelected
-                                                            ? 'bg-primary/20 dark:bg-primary/10'
-                                                            : isHovered
-                                                                ? 'bg-surface-secondary dark:bg-surface-secondary/40'
-                                                                : ''
-                                                        }
-                                            hover:bg-surface-secondary dark:hover:bg-surface-secondary/40
-                                        `}>
-                                                        {/* File Icon */}
-                                                        <IconComponent
-                                                            className={`
-                                                    w-4 h-4 flex-shrink-0 transition-colors duration-150
-                                                    ${isSelected
-                                                                    ? 'text-primary'
-                                                                    : isHovered
-                                                                        ? 'text-foreground-secondary'
-                                                                        : 'text-muted-foreground'
-                                                                }
-                                                `}
-                                                        />
-
-                                                        {/* Project Title */}
-                                                        <span className={`
-                                                text-base truncate flex-1 transition-colors duration-150
-                                                ${isSelected
-                                                                ? 'text-foreground font-medium'
-                                                                : isHovered
-                                                                    ? 'text-foreground'
-                                                                    : 'text-foreground-secondary'
-                                                            }
-                                            `}>
-                                                            {project.title}
-                                                        </span>
-
-                                                        {/* Achievement Indicator */}
-                                                        {'achievement' in project && project.achievement && (
-                                                            <Trophy
-                                                                className={`
-                                                        w-3.5 h-3.5 flex-shrink-0 transition-colors duration-150
-                                                        ${isSelected
-                                                                        ? 'text-primary'
-                                                                        : isHovered
-                                                                            ? 'text-foreground-secondary'
-                                                                            : 'text-muted-foreground'
-                                                                    }
-                                                    `}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </motion.div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-
-                                {/* Icon Legend */}
-                                <div className="mt-3 px-3 py-2 rounded-lg border border-surface-secondary/50 bg-surface/30 backdrop-blur-sm">
-                                    <div className="flex flex-wrap gap-3 text-xs">
-                                        <div className="flex items-center gap-1.5">
-                                            <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-                                            <span className="text-foreground-secondary">Web App</span>
+                                <div className="relative w-full aspect-[16/11] overflow-hidden">
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                                        style={{ backgroundImage: `url('${background}')` }}
+                                    />
+                                    {project.achievement && (
+                                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 text-xs font-semibold text-secondary shadow-sm">
+                                            {project.achievement}
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
-                                            <span className="text-foreground-secondary">Mobile App</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Brain className="w-3.5 h-3.5 text-muted-foreground" />
-                                            <span className="text-foreground-secondary">AI/ML</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Trophy className="w-3.5 h-3.5 text-muted-foreground" />
-                                            <span className="text-foreground-secondary">Award Winner</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Expanded View - Only Hover Previews */}
-                            <div className="h-[500px] lg:h-[600px]">
-                                <AnimatePresence mode="wait">
-                                    {hoveredProject ? (
-                                        <motion.div
-                                            key={hoveredProject.id}
-                                            initial={{
-                                                opacity: 0,
-                                                y: 10,
-                                                scale: 0.98
-                                            }}
-                                            animate={{
-                                                opacity: 1,
-                                                y: 0,
-                                                scale: 1
-                                            }}
-                                            exit={{
-                                                opacity: 0,
-                                                y: 10,
-                                                scale: 0.98,
-                                                transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }
-                                            }}
-                                            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                            className="h-full"
-                                            onMouseEnter={handlePreviewMouseEnter}
-                                            onMouseLeave={handleMouseLeave}
-                                        >
-                                            <div className="backdrop-blur-md border border-surface/50 bg-background p-6 rounded-xl h-full flex flex-col">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <h3 className="text-2xl font-bold text-foreground">
-                                                        {hoveredProject.title}
-                                                    </h3>
-                                                    <span className="text-sm font-semibold text-muted-foreground">{hoveredProject.date}</span>
-                                                </div>
-
-                                                {'achievement' in hoveredProject && hoveredProject.achievement && (
-                                                    <div className="mb-3">
-                                                        <div className="overflow-hidden">
-                                                            <span className="text-sm font-menlo text-secondary font-semibold line-clamp-2 block">
-                                                                {hoveredProject.achievement}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                <div className="flex-1 min-h-0" ref={previewRef}>
-                                                    <PreviewSection project={hoveredProject} />
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div
-                                            key="empty"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                            className="flex items-center justify-center h-full min-h-[400px] lg:min-h-[600px]"
-                                        >
-                                            <div className="text-center flex flex-col items-center justify-center">
-                                                <div className="mb-8 text-primary flex justify-center">
-                                                    <AnimatedLogo />
-                                                </div>
-                                                <h3 className="text-xl lg:text-2xl font-semibold mb-3 text-foreground">Select a Project</h3>
-                                                <p className="text-sm lg:text-base text-muted-foreground">
-                                                    Choose a project to see a preview, or click for full details
-                                                </p>
-                                            </div>
-                                        </motion.div>
                                     )}
-                                </AnimatePresence>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
+                                    <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-black/60 text-xs font-semibold text-white">
+                                        {project.date}
+                                    </div>
+                                </div>
+
+                                <div className="p-4 sm:p-6 flex flex-col gap-4 flex-1">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-2">
+                                            <CategoryIcon className="w-4 h-4 text-primary" />
+                                            <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold">
+                                                {project.category}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-xl font-bold text-foreground mb-1 line-clamp-2">
+                                            {project.title}
+                                        </h3>
+                                        <p className="text-sm text-foreground-secondary line-clamp-3">
+                                            {project.description}
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </motion.button>
+                        )
+                    })}
+                </motion.div>
 
                 {/* Full-Screen Project Overlay - Works for both mobile and desktop */}
                 <AnimatePresence>
@@ -1207,10 +460,7 @@ export const Projects = memo(function Projects() {
                                 }
                             }}
                             className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] overflow-y-auto p-4 sm:p-6 lg:p-8"
-                            onClick={() => {
-                                setProjectState(prev => ({ ...prev, selectedProject: null }))
-                                setIsModalOpen(false)
-                            }}
+                            onClick={handleClose}
                         >
                             <motion.div
                                 initial={{
@@ -1247,10 +497,7 @@ export const Projects = memo(function Projects() {
                                         </span>
                                     </div>
                                     <button
-                                        onClick={() => {
-                                            setProjectState(prev => ({ ...prev, selectedProject: null }))
-                                            setIsModalOpen(false)
-                                        }}
+                                        onClick={handleClose}
                                         className="p-3 hover:bg-surface rounded-lg transition-colors duration-300 touch-manipulation"
                                         style={{ WebkitTapHighlightColor: 'transparent' }}
                                     >
