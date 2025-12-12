@@ -14,8 +14,6 @@ export function Footer() {
             ref={footerRef}
             className="relative z-[1] w-full overflow-hidden pt-20 pb-8 bg-background dark:bg-[#12121a]"
         >
-            {/* Always visible background transition */}
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-background/30 to-background backdrop-blur-sm"></div>
             <style jsx global>{`
         .glass {
           backdrop-filter: blur(3px) saturate(180%);

@@ -165,10 +165,8 @@ export function Contact() {
     }
 
     return (
-        <section id="contact" className="relative z-[2] pt-16 md:pt-24 lg:pt-32 pb-0">
-            {/* Bottom blur transition for smooth footer connection */}
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background via-background/60 to-transparent backdrop-blur-sm pointer-events-none"></div>
-            <div className="container-custom pb-16 md:pb-24 lg:pb-32">
+        <section id="contact" className="relative z-[1] section-padding -mt-[1300px] md:-mt-[1600px]">
+            <div className="container-custom">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}

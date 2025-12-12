@@ -21,6 +21,7 @@ export function scrollToSection(sectionId: string) {
       about: 80, // Scroll slightly into the About section
       milestones: 140, // Scroll further into Milestones
       projects: 80, // Scroll slightly into Projects section
+      contact: 80, // Scroll further into Contact section
     }
     const extraOffset = sectionOffsets[sectionId] ?? 0
 
