@@ -17,12 +17,26 @@ export function scrollToSection(sectionId: string) {
   const section = document.getElementById(sectionId)
   if (section) {
     const navbarOffset = 120 // Match the offset used in navigation detection
-    const sectionOffsets: Record<string, number> = {
+    // Detect mobile mode (less than 1024px, which is Tailwind's lg breakpoint)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
+
+    // Desktop offsets
+    const desktopOffsets: Record<string, number> = {
       about: 80, // Scroll slightly into the About section
       milestones: 140, // Scroll further into Milestones
       projects: 80, // Scroll slightly into Projects section
-      contact: 80, // Scroll further into Contact section
+      contact: 140, // Scroll further into Contact section
     }
+
+    // Mobile offsets (smaller values = scroll higher)
+    const mobileOffsets: Record<string, number> = {
+      about: 70,
+      milestones: 100, // Reduced from 140 to scroll higher on mobile
+      projects: 70,
+      contact: 100, // Reduced from 140 to scroll higher on mobile
+    }
+
+    const sectionOffsets = isMobile ? mobileOffsets : desktopOffsets
     const extraOffset = sectionOffsets[sectionId] ?? 0
 
     // For home section, scroll to top
