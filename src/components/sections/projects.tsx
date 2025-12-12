@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, Github, X, Smartphone, Brain, Trophy, Globe } from 'lucide-react'
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
@@ -275,21 +275,10 @@ export const Projects = memo(function Projects() {
     const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
 
     const iframeContainerRef = useRef<HTMLDivElement>(null)
-    const sectionRef = useRef<HTMLElement>(null)
     const [iframeScale, setIframeScale] = useState(1)
     const [iframeDimensions, setIframeDimensions] = useState({ width: 1280, height: 720 })
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
-
-    // Track scroll progress for this section
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ['start start', 'end start']
-    })
-
-    // Transform the section to slide up as it scrolls out of view
-    // The section slides up completely as it exits the viewport
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '-100%'])
 
     // Project background images mapping
     const projectBackgrounds: Record<number, string> = {
@@ -352,10 +341,8 @@ export const Projects = memo(function Projects() {
 
     return (
         <motion.section
-            ref={sectionRef}
             id="projects"
             className="relative z-[2] pt-0 pb-0 mb-0 bg-background-tertiary"
-            style={{ y }}
         >
             <div className="relative z-10 pt-8 md:pt-12 lg:pt-16 px-3 sm:px-4 lg:px-6 pb-12 md:pb-16 lg:pb-20">
                 <motion.div

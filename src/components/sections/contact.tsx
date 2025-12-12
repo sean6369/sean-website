@@ -165,7 +165,7 @@ export function Contact() {
     }
 
     return (
-        <section id="contact" className="relative z-[1] section-padding -mt-[1960px] md:-mt-[1640px]">
+        <section id="contact" className="relative z-[1] section-padding">
             <div className="container-custom">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
