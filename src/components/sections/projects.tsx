@@ -296,7 +296,7 @@ export const Projects = memo(function Projects() {
 
     // Project background images mapping
     const projectBackgrounds: Record<number, string> = {
-        1: '/images/PSA code sprint screen.png',
+        1: '/images/PSA Code Sprint screen.png',
         2: '/images/What the Hack screen.png',
         3: '/images/IDEATE screen.png',
         4: '/images/Lifehack screen.jpeg',
