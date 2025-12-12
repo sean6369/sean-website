@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Github, X, Smartphone, Brain, Globe } from 'lucide-react'
+import { ExternalLink, Github, X, Smartphone, Brain, Trophy, Globe } from 'lucide-react'
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
 import { useModal } from '@/lib/modal-context'
@@ -14,7 +14,6 @@ const projectsData = [
         description: 'AI diagnostic assistant analyzes alerts and generates actionable root-cause reports.',
         longDescription: 'An AI-powered co-pilot for Level 2 port operations, built to automate incident triage, diagnosis, and resolution planning. It ingests unstructured alerts from email, SMS, and phone logs, extracts ticket context, and correlates evidence across application logs, SOPs, and historical cases to surface probable root causes with confidence scores. The system generates step-by-step resolution plans, including SQL checks, verification steps, and escalation guidance, and stores them in a full ticket lifecycle UI for editing, notes, and status tracking. Backed by Flask APIs, Azure OpenAI, and Neon Postgres (with SQLite for local dev). Features include a modern analytics dashboard and queue-managed request handling. Designed for fast, reliable L2 support with transparent reasoning, responsive UX, and zero local setup friction.',
         image: '/images/PSA Code Sprint screen.png',
-        linksNote: 'Live site and code are confidential and cannot be shared publicly.',
         technologies: [],
         video: '/videos/PSA code sprint demo video.mp4',
         hackathon: '@PSA Code Sprint',
@@ -354,19 +353,6 @@ export const Projects = memo(function Projects() {
         setIsModalOpen(false)
     }
 
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case 'Web App':
-                return Globe
-            case 'Mobile App':
-                return Smartphone
-            case 'AI/ML':
-                return Brain
-            default:
-                return Globe
-        }
-    }
-
     return (
         <motion.section
             id="projects"
@@ -523,6 +509,9 @@ export const Projects = memo(function Projects() {
                                         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
                                             {selectedProject.title}
                                         </h3>
+                                        <span className="text-sm px-3 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary whitespace-nowrap font-semibold">
+                                            {selectedProject.category}
+                                        </span>
                                     </div>
                                     <button
                                         onClick={handleClose}
@@ -536,20 +525,23 @@ export const Projects = memo(function Projects() {
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {/* Left Column - Project Info */}
                                     <div className="space-y-6">
-                                        <div className="flex flex-wrap gap-2 -mt-4">
-                                            <span className="text-sm px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold flex items-center gap-1.5 whitespace-nowrap">
-                                                {(() => {
-                                                    const CategoryIcon = getCategoryIcon(selectedProject.category)
-                                                    return <CategoryIcon className="w-4 h-4 text-foreground-secondary" />
-                                                })()}
-                                                {selectedProject.category}
-                                            </span>
-                                            {'achievement' in selectedProject && selectedProject.achievement && (
-                                                <span className="text-sm px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold whitespace-nowrap">
-                                                    {selectedProject.achievement}
+                                        {'achievement' in selectedProject && selectedProject.achievement && (
+                                            <div className="relative group">
+                                                <div className="overflow-x-auto scrollbar-hide">
+                                                    <span className="text-lg font-menlo text-secondary font-semibold whitespace-nowrap">
+                                                        {selectedProject.achievement}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {selectedProject.hackathon && (
+                                            <div className="flex flex-wrap gap-3">
+                                                <span className="text-sm px-3 py-2 bg-secondary border border-secondary rounded-xl text-background whitespace-nowrap font-semibold">
+                                                    {selectedProject.hackathon}
                                                 </span>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
 
                                         <div>
                                             <h4 className="text-xl font-semibold mb-4 text-foreground">About This Project</h4>
@@ -566,7 +558,7 @@ export const Projects = memo(function Projects() {
                                                     rel="noopener noreferrer"
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
-                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-none text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
                                                     Open in New Tab
@@ -579,7 +571,7 @@ export const Projects = memo(function Projects() {
                                                     rel="noopener noreferrer"
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
-                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-none text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
                                                 >
                                                     <Github className="w-4 h-4" />
                                                     View Code
@@ -599,27 +591,10 @@ export const Projects = memo(function Projects() {
                                                 </motion.a>
                                             )}
                                         </div>
-                                        {!('live' in selectedProject && selectedProject.live) &&
-                                            !('github' in selectedProject && selectedProject.github) &&
-                                            !('cms' in selectedProject && selectedProject.cms) &&
-                                            'linksNote' in selectedProject && selectedProject.linksNote && (
-                                                <p className="text-sm text-muted-foreground mt-2">
-                                                    {selectedProject.linksNote}
-                                                </p>
-                                            )}
                                     </div>
 
                                     {/* Right Column - Media Content */}
                                     <div className="space-y-6">
-                                        {/* Hackathon Tag */}
-                                        {selectedProject.hackathon && (
-                                            <div className="flex flex-wrap gap-2 -mt-4">
-                                                <span className="text-sm px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold whitespace-nowrap">
-                                                    {selectedProject.hackathon}
-                                                </span>
-                                            </div>
-                                        )}
-
                                         {/* Live Website Preview */}
                                         {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
                                             <div>
@@ -705,4 +680,3 @@ export const Projects = memo(function Projects() {
         </motion.section>
     )
 });
-
