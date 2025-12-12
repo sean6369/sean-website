@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Github, X, Smartphone, Brain, Trophy, Globe } from 'lucide-react'
+import { ExternalLink, Github, X, Smartphone, Brain, Globe } from 'lucide-react'
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
 import { useModal } from '@/lib/modal-context'
@@ -9,6 +9,20 @@ import { useModal } from '@/lib/modal-context'
 const projectsData = [
     {
         id: 1,
+        title: 'PSA L2 Ops AI-Copliot',
+        achievement: '🏆 3rd runner up (top 4 of 400+ teams)',
+        description: 'AI diagnostic assistant analyzes alerts and generates actionable root-cause reports.',
+        longDescription: 'An AI-powered co-pilot for Level 2 port operations, built to automate incident triage, diagnosis, and resolution planning. It ingests unstructured alerts from email, SMS, and phone logs, extracts ticket context, and correlates evidence across application logs, SOPs, and historical cases to surface probable root causes with confidence scores. The system generates step-by-step resolution plans, including SQL checks, verification steps, and escalation guidance, and stores them in a full ticket lifecycle UI for editing, notes, and status tracking. Backed by Flask APIs, Azure OpenAI, and Neon Postgres (with SQLite for local dev). Features include a modern analytics dashboard and queue-managed request handling. Designed for fast, reliable L2 support with transparent reasoning, responsive UX, and zero local setup friction.',
+        image: '/images/PSA Code Sprint screen.png',
+        linksNote: 'Live site and code are confidential and cannot be shared publicly.',
+        technologies: [],
+        video: '/videos/PSA code sprint demo video.mp4',
+        hackathon: '@PSA Code Sprint',
+        category: 'Web App',
+        date: 'Oct 2025',
+    },
+    {
+        id: 2,
         title: 'SilverSigma',
         description: 'Digital hub for seniors to connect, explore hobbies, and chat with an AI companion.',
         longDescription: 'Part of a team of 5 to build a web-app platform for seniors, featuring real-time interactive AI avatar companionship, hobby discovery hub, and a safe social media network, to enhance mental health, life fulfillment and connectivity. The platform includes an AI-powered companion with HeyGen streaming avatar technology supporting 4 languages (English, Mandarin, Bahasa Melayu, Tamil), a comprehensive hobby hub with 30+ activities across 6 categories, SeniorGram social feed for safe sharing, and community classes integration with 32+ workshop options across Singapore. Built with accessibility-first design featuring WCAG AA+ compliance, mobile-first approach, and voice-first interaction options.',
@@ -21,7 +35,7 @@ const projectsData = [
         date: 'Sep 2025',
     },
     {
-        id: 2,
+        id: 3,
         title: 'SentinelAI',
         description: 'AI system that turns IP cameras into real-time detectors for falls and emergencies.',
         longDescription: 'Part of a team of 5 to develop an AI-powered system that transforms IP cameras into real-time anomaly detectors for falls, emergencies, and safety hazards, with applications in elderly care, pet monitoring, and industrial safety. The system features cloud-first architecture with automatic RTSP to HLS conversion, real-time AI processing with WebSocket-based alerts, cross-platform compatibility, and enterprise-grade security with HTTPS encryption. While our project didn\'t advance, we reflected on challenges such as scaling difficulties, limited long-term differentiation, and missing safeguards like background checks, highlighting the importance of focusing on innovative approaches that address the limitations of current offerings and stronger market validation.',
@@ -46,7 +60,7 @@ const projectsData = [
         date: 'Aug 2025 - Sep 2025',
     },
     {
-        id: 3,
+        id: 4,
         title: 'SigmaHealth',
         achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award',
         description: 'Public health app with live data, GPT-based guidance, and community reporting',
@@ -60,7 +74,7 @@ const projectsData = [
         date: 'Jul 2025',
     },
     {
-        id: 4,
+        id: 5,
         title: 'Goldjewel Website & CMS',
         description: 'Contemporary jewelry site paired with a fully custom content management system.',
         longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
@@ -72,7 +86,7 @@ const projectsData = [
         date: 'Jun 2025 - Aug 2025',
     },
     {
-        id: 5,
+        id: 6,
         title: 'SigmaShield',
         achievement: '🏆 Finalist (top 20 of 80+ teams)',
         description: 'AI app for URL analysis, scam education, and community reporting.',
@@ -86,7 +100,7 @@ const projectsData = [
         date: 'Jun 2025 - Jul 2025',
     },
     {
-        id: 6,
+        id: 7,
         title: 'Oxley Pawnshop Website',
         description: 'Modern website for a Singapore-based pawnshop with live gold prices.',
         longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
@@ -97,7 +111,7 @@ const projectsData = [
         date: 'May 2025 - Jun 2025',
     },
     {
-        id: 7,
+        id: 8,
         title: 'GymFit',
         description: 'Cross-platform fitness app featuring workout and calorie tracking.',
         longDescription: 'Built during Orbital 2025, a cross-platform fitness app built with Flutter and Firebase, featuring real-time workout tracking and timers, YouTube video integration, and science-based calorie calculations. It includes social networking, workout history tracking and statistics, advanced muscle recovery monitoring, and personalized workout recommendations.',
@@ -110,7 +124,7 @@ const projectsData = [
         date: 'May 2025 - Aug 2025',
     },
     {
-        id: 8,
+        id: 9,
         title: 'NoFap',
         description: 'Social motivation app featuring donation incentives and peer support.',
         longDescription: 'Built during Hackomania 2025, a modern web app designed to help users stay motivated on their NoFap journey through progress tracking, achievements, and community support. It features donation-based support platform enabling micro-donations through the Open Payments API to assist individuals overcoming addiction.',
@@ -123,7 +137,7 @@ const projectsData = [
         date: 'Feb 2025',
     },
     {
-        id: 9,
+        id: 10,
         title: 'Ship Vessel Risk Detection Model',
         achievement: '🏆 Top 3',
         description: 'A two-stage AI pipeline predicting vessel deficiency severity from inspection text.',
@@ -282,15 +296,16 @@ export const Projects = memo(function Projects() {
 
     // Project background images mapping
     const projectBackgrounds: Record<number, string> = {
-        1: '/images/What the Hack screen.png',
-        2: '/images/IDEATE screen.png',
-        3: '/images/Lifehack screen.jpeg',
-        4: '/images/Goldjewel screen.jpg',
-        5: '/images/DSTA Brainhack screen.png',
-        6: '/images/Oxley Pawnshop screen.jpeg',
-        7: '/images/Orbital screen.png',
-        8: '/images/Hackomania screen.png',
-        9: '/images/Marinetime Hackathon screen.jpeg',
+        1: '/images/PSA code sprint screen.png',
+        2: '/images/What the Hack screen.png',
+        3: '/images/IDEATE screen.png',
+        4: '/images/Lifehack screen.jpeg',
+        5: '/images/Goldjewel screen.jpg',
+        6: '/images/DSTA Brainhack screen.png',
+        7: '/images/Oxley Pawnshop screen.jpeg',
+        8: '/images/Orbital screen.png',
+        9: '/images/Hackomania screen.png',
+        10: '/images/Marinetime Hackathon screen.jpeg',
     };
 
     // Calculate iframe scale to maintain desktop or mobile viewport
@@ -337,6 +352,19 @@ export const Projects = memo(function Projects() {
     const handleClose = () => {
         setSelectedProject(null)
         setIsModalOpen(false)
+    }
+
+    const getCategoryIcon = (category: string) => {
+        switch (category) {
+            case 'Web App':
+                return Globe
+            case 'Mobile App':
+                return Smartphone
+            case 'AI/ML':
+                return Brain
+            default:
+                return Globe
+        }
     }
 
     return (
@@ -495,9 +523,6 @@ export const Projects = memo(function Projects() {
                                         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
                                             {selectedProject.title}
                                         </h3>
-                                        <span className="text-sm px-3 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary whitespace-nowrap font-semibold">
-                                            {selectedProject.category}
-                                        </span>
                                     </div>
                                     <button
                                         onClick={handleClose}
@@ -511,23 +536,20 @@ export const Projects = memo(function Projects() {
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {/* Left Column - Project Info */}
                                     <div className="space-y-6">
-                                        {'achievement' in selectedProject && selectedProject.achievement && (
-                                            <div className="relative group">
-                                                <div className="overflow-x-auto scrollbar-hide">
-                                                    <span className="text-lg font-menlo text-secondary font-semibold whitespace-nowrap">
-                                                        {selectedProject.achievement}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {selectedProject.hackathon && (
-                                            <div className="flex flex-wrap gap-3">
-                                                <span className="text-sm px-3 py-2 bg-secondary border border-secondary rounded-xl text-background whitespace-nowrap font-semibold">
-                                                    {selectedProject.hackathon}
+                                        <div className="flex flex-wrap gap-2 -mt-4">
+                                            <span className="text-sm px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                                                {(() => {
+                                                    const CategoryIcon = getCategoryIcon(selectedProject.category)
+                                                    return <CategoryIcon className="w-4 h-4 text-foreground-secondary" />
+                                                })()}
+                                                {selectedProject.category}
+                                            </span>
+                                            {'achievement' in selectedProject && selectedProject.achievement && (
+                                                <span className="text-sm px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold whitespace-nowrap">
+                                                    {selectedProject.achievement}
                                                 </span>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
 
                                         <div>
                                             <h4 className="text-xl font-semibold mb-4 text-foreground">About This Project</h4>
@@ -544,7 +566,7 @@ export const Projects = memo(function Projects() {
                                                     rel="noopener noreferrer"
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
-                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-lg text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                    className="text-sm px-6 py-3 bg-primary/10 border border-gray-600 dark:border-primary/20 rounded-none text-primary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-background transition-colors duration-200 touch-manipulation"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
                                                     Open in New Tab
@@ -557,7 +579,7 @@ export const Projects = memo(function Projects() {
                                                     rel="noopener noreferrer"
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
-                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-lg text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
+                                                    className="text-sm px-6 py-3 bg-secondary/10 border border-gray-600 dark:border-secondary/20 rounded-none text-secondary whitespace-nowrap font-medium flex items-center justify-center gap-2 hover:bg-secondary hover:text-background transition-colors duration-200 touch-manipulation"
                                                 >
                                                     <Github className="w-4 h-4" />
                                                     View Code
@@ -577,10 +599,27 @@ export const Projects = memo(function Projects() {
                                                 </motion.a>
                                             )}
                                         </div>
+                                        {!('live' in selectedProject && selectedProject.live) &&
+                                            !('github' in selectedProject && selectedProject.github) &&
+                                            !('cms' in selectedProject && selectedProject.cms) &&
+                                            'linksNote' in selectedProject && selectedProject.linksNote && (
+                                                <p className="text-sm text-muted-foreground mt-2">
+                                                    {selectedProject.linksNote}
+                                                </p>
+                                            )}
                                     </div>
 
                                     {/* Right Column - Media Content */}
                                     <div className="space-y-6">
+                                        {/* Hackathon Tag */}
+                                        {selectedProject.hackathon && (
+                                            <div className="flex flex-wrap gap-2 -mt-4">
+                                                <span className="text-sm px-3 py-1 bg-background border-[0.5px] border-foreground/10 text-foreground-secondary font-semibold whitespace-nowrap">
+                                                    {selectedProject.hackathon}
+                                                </span>
+                                            </div>
+                                        )}
+
                                         {/* Live Website Preview */}
                                         {'live' in selectedProject && selectedProject.live && (selectedProject.title === 'Oxley Pawnshop Website' || selectedProject.title === 'Goldjewel Website & CMS' || selectedProject.title === 'SilverSigma') && (
                                             <div>
