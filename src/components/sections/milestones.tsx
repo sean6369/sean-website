@@ -76,7 +76,7 @@ const education = [
 
 export function Milestones() {
     return (
-        <section id="milestones" className="relative z-[1] section-padding -mt-[300px] md:-mt-[400px]">
+        <section id="milestones" className="relative z-[1] section-padding">
             <div className="container-custom">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}

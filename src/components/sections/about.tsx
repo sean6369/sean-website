@@ -1,28 +1,13 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useRef } from 'react'
 
 export function About() {
-    const sectionRef = useRef<HTMLElement>(null)
-
-    // Track scroll progress for this section
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ['start start', 'end start']
-    })
-
-    // Transform the section to slide up as it scrolls out of view
-    // The section slides up completely as it exits the viewport
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '-100%'])
-
     return (
-        <motion.section
-            ref={sectionRef}
+        <section
             id="about"
             className="relative z-[2] pt-0 pb-0 mb-0 bg-background-secondary"
-            style={{ y }}
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-start mb-0 pb-0">
                 {/* Left Column - Header and Text Content */}
@@ -89,7 +74,7 @@ export function About() {
                     </div>
                 </motion.div>
             </div>
-        </motion.section>
+        </section>
     )
 }
 
