@@ -9,7 +9,7 @@ import { useModal } from '@/lib/modal-context'
 const projectsData = [
     {
         id: 1,
-        title: 'PSA L2 Ops AI-Copliot',
+        title: 'PSA L2 Ops AI-Copilot',
         achievement: '🏆 3rd runner up (top 4 of 400+ teams)',
         description: 'AI diagnostic assistant analyzes alerts and generates actionable root-cause reports.',
         longDescription: 'An AI-powered co-pilot for Level 2 port operations, built to automate incident triage, diagnosis, and resolution planning. It ingests unstructured alerts from email, SMS, and phone logs, extracts ticket context, and correlates evidence across application logs, SOPs, and historical cases to surface probable root causes with confidence scores. The system generates step-by-step resolution plans, including SQL checks, verification steps, and escalation guidance, and stores them in a full ticket lifecycle UI for editing, notes, and status tracking. Backed by Flask APIs, Azure OpenAI, and Neon Postgres (with SQLite for local dev). Features include a modern analytics dashboard and queue-managed request handling. Designed for fast, reliable L2 support with transparent reasoning, responsive UX, and zero local setup friction.',
@@ -298,7 +298,7 @@ export const Projects = memo(function Projects() {
     const projectBackgrounds: Record<number, string> = {
         1: '/images/PSA Code Sprint screen.png',
         2: '/images/What the Hack screen.png',
-        3: '/images/IDEATE screen.png',
+        3: '/images/SentinelAI screen.png',
         4: '/images/Lifehack screen.jpeg',
         5: '/images/Goldjewel screen.jpg',
         6: '/images/DSTA Brainhack screen.png',
