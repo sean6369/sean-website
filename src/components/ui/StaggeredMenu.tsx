@@ -31,6 +31,11 @@ interface StaggeredMenuProps {
     onMenuOpen?: () => void;
     onMenuClose?: () => void;
     onItemClick?: (item: MenuItem) => void;
+    /** Controlled open state */
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    /** When true, do not render the default toggle button (parent provides trigger) */
+    hideDefaultButton?: boolean;
 }
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
@@ -48,10 +53,48 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     changeMenuColorOnOpen = true,
     onMenuOpen,
     onMenuClose,
-    onItemClick
+    onItemClick,
+    open: controlledOpen,
+    onOpenChange,
+    hideDefaultButton = false
 }) => {
-    const [open, setOpen] = useState(false);
     const openRef = useRef(false);
+    const [internalOpen, setInternalOpen] = useState(false);
+    const isControlled = controlledOpen !== undefined && onOpenChange !== undefined;
+    const open = isControlled ? controlledOpen : internalOpen;
+    const setOpenState = useCallback((value: boolean) => {
+        openRef.current = value;
+        if (isControlled) {
+            onOpenChange?.(value);
+        } else {
+            setInternalOpen(value);
+        }
+    }, [isControlled, onOpenChange]);
+
+    React.useEffect(() => {
+        openRef.current = open;
+    }, [open]);
+
+    const prevOpenRef = useRef(open);
+    React.useEffect(() => {
+        if (!isControlled) return;
+        const prev = prevOpenRef.current;
+        if (open && !prev) {
+            onMenuOpen?.();
+            playOpen();
+            animateIcon(true);
+            animateColor(true);
+            animateText(true);
+        } else if (!open && prev) {
+            onMenuClose?.();
+            playClose();
+            animateIcon(false);
+            animateColor(false);
+            animateText(false);
+        }
+        prevOpenRef.current = open;
+    }, [open, isControlled]);
+
     const panelRef = useRef<HTMLDivElement>(null);
     const preLayersRef = useRef<HTMLDivElement>(null);
     const preLayerElsRef = useRef<HTMLElement[]>([]);
@@ -76,28 +119,33 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         const ctx = gsap.context(() => {
             const panel = panelRef.current;
             const preContainer = preLayersRef.current;
-            const plusH = plusHRef.current;
-            const plusV = plusVRef.current;
-            const icon = iconRef.current;
-            const textInner = textInnerRef.current;
-            if (!panel || !plusH || !plusV || !icon || !textInner) return;
-
-            let preLayers: HTMLElement[] = [];
-            if (preContainer) {
-                preLayers = Array.from(preContainer.querySelectorAll('.sm-prelayer')) as HTMLElement[];
-            }
-            preLayerElsRef.current = preLayers;
-
             const offscreen = position === 'left' ? -100 : 100;
-            gsap.set([panel, ...preLayers], { xPercent: offscreen });
-            gsap.set(plusH, { transformOrigin: '50% 50%', rotate: 0, opacity: 1, visibility: 'visible' });
-            gsap.set(plusV, { transformOrigin: '50% 50%', rotate: 90, opacity: 1, visibility: 'visible' });
-            gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%', opacity: 1, visibility: 'visible' });
-            gsap.set(textInner, { yPercent: 0 });
-            if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
+
+            if (panel) {
+                let preLayers: HTMLElement[] = [];
+                if (preContainer) {
+                    preLayers = Array.from(preContainer.querySelectorAll('.sm-prelayer')) as HTMLElement[];
+                }
+                preLayerElsRef.current = preLayers;
+                gsap.set([panel, ...preLayers], { xPercent: offscreen });
+            }
+
+            if (!hideDefaultButton) {
+                const plusH = plusHRef.current;
+                const plusV = plusVRef.current;
+                const icon = iconRef.current;
+                const textInner = textInnerRef.current;
+                if (plusH && plusV && icon && textInner) {
+                    gsap.set(plusH, { transformOrigin: '50% 50%', rotate: 0, opacity: 1, visibility: 'visible' });
+                    gsap.set(plusV, { transformOrigin: '50% 50%', rotate: 90, opacity: 1, visibility: 'visible' });
+                    gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%', opacity: 1, visibility: 'visible' });
+                    gsap.set(textInner, { yPercent: 0 });
+                    if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
+                }
+            }
         });
         return () => ctx.revert();
-    }, [menuButtonColor, position]);
+    }, [menuButtonColor, position, hideDefaultButton]);
 
     const buildOpenTimeline = useCallback(() => {
         const panel = panelRef.current;
@@ -323,13 +371,15 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
         const target = false;
         openRef.current = target;
-        setOpen(target);
+        setOpenState(target);
         onMenuClose?.();
-        playClose();
-        animateIcon(target);
-        animateColor(target);
-        animateText(target);
-    }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
+        if (!isControlled) {
+            playClose();
+            animateIcon(target);
+            animateColor(target);
+            animateText(target);
+        }
+    }, [isControlled, playClose, animateIcon, animateColor, animateText, onMenuClose]);
 
     React.useEffect(() => {
         if (toggleBtnRef.current) {
@@ -386,13 +436,15 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         // Close menu after clicking an item
         const target = false;
         openRef.current = target;
-        setOpen(target);
+        setOpenState(target);
         onMenuClose?.();
-        playClose();
-        animateIcon(target);
-        animateColor(target);
-        animateText(target);
-    }, [onItemClick, onMenuClose, playClose, animateIcon, animateColor, animateText]);
+        if (!isControlled) {
+            playClose();
+            animateIcon(target);
+            animateColor(target);
+            animateText(target);
+        }
+    }, [isControlled, onItemClick, onMenuClose, playClose, animateIcon, animateColor, animateText]);
 
     const animateButtonHover = useCallback((isHovering: boolean) => {
         const button = toggleBtnRef.current;
@@ -483,7 +535,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
         const target = !openRef.current;
         openRef.current = target;
-        setOpen(target);
+        setOpenState(target);
         if (target) {
             onMenuOpen?.();
             playOpen();
@@ -499,7 +551,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     return (
         <div
             ref={wrapperRef}
-            className={(className ? className + ' ' : '') + 'staggered-menu-wrapper'}
+            className={(className ? className + ' ' : '') + 'staggered-menu-wrapper' + (hideDefaultButton ? ' staggered-menu-wrapper--no-button' : '')}
             style={accentColor ? { ['--sm-accent' as any]: accentColor } : undefined}
             data-position={position}
             data-open={open || undefined}
@@ -516,31 +568,33 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 })()}
             </div>
             <div className="staggered-menu-header" aria-label="Main navigation header">
-                <button
-                    ref={toggleBtnRef}
-                    className="sm-toggle"
-                    aria-label={open ? 'Close menu' : 'Open menu'}
-                    aria-expanded={open}
-                    aria-controls="staggered-menu-panel"
-                    onClick={toggleMenu}
-                    onMouseEnter={() => animateButtonHover(true)}
-                    onMouseLeave={() => animateButtonHover(false)}
-                    type="button"
-                >
-                    <span ref={textWrapRef} className="sm-toggle-textWrap" aria-hidden="true">
-                        <span ref={textInnerRef} className="sm-toggle-textInner">
-                            {textLines.map((l, i) => (
-                                <span className="sm-toggle-line" key={i}>
-                                    {l}
-                                </span>
-                            ))}
+                {!hideDefaultButton && (
+                    <button
+                        ref={toggleBtnRef}
+                        className="sm-toggle"
+                        aria-label={open ? 'Close menu' : 'Open menu'}
+                        aria-expanded={open}
+                        aria-controls="staggered-menu-panel"
+                        onClick={toggleMenu}
+                        onMouseEnter={() => animateButtonHover(true)}
+                        onMouseLeave={() => animateButtonHover(false)}
+                        type="button"
+                    >
+                        <span ref={textWrapRef} className="sm-toggle-textWrap" aria-hidden="true">
+                            <span ref={textInnerRef} className="sm-toggle-textInner">
+                                {textLines.map((l, i) => (
+                                    <span className="sm-toggle-line" key={i}>
+                                        {l}
+                                    </span>
+                                ))}
+                            </span>
                         </span>
-                    </span>
-                    <span ref={iconRef} className="sm-icon" aria-hidden="true">
-                        <span ref={plusHRef} className="sm-icon-line" />
-                        <span ref={plusVRef} className="sm-icon-line sm-icon-line-v" />
-                    </span>
-                </button>
+                        <span ref={iconRef} className="sm-icon" aria-hidden="true">
+                            <span ref={plusHRef} className="sm-icon-line" />
+                            <span ref={plusVRef} className="sm-icon-line sm-icon-line-v" />
+                        </span>
+                    </button>
+                )}
             </div>
 
             <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>

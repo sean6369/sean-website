@@ -203,7 +203,7 @@
     }
 
     .button-primary {
-        @apply bg-primary text-background font-medium px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+        @apply bg-primary text-background font-medium px-6 py-3 rounded-lg transition-all duration-200;
         background-color: var(--primary);
     }
 

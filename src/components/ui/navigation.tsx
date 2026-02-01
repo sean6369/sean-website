@@ -40,6 +40,7 @@ export function Navigation() {
     const [isDarkMode, setIsDarkMode] = useState(false)
     const { isModalOpen } = useModal()
     const [activeSection, setActiveSection] = useState('home')
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
 
     useEffect(() => {
@@ -240,17 +241,22 @@ export function Navigation() {
                             />
                         </motion.div>
 
-                        {/* Center - Current Section Indicator (Mobile only) */}
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <motion.div
-                                key={activeSection}
+                        {/* Center - Current Section Label as Menu Trigger (Mobile only) */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[50]">
+                            <motion.button
+                                key={mobileMenuOpen ? 'close' : activeSection}
+                                type="button"
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, ease: "easeOut" }}
-                                className="pointer-events-auto text-lg font-medium text-primary"
+                                className="pointer-events-auto text-lg font-medium text-primary cursor-pointer px-3 py-2 rounded-lg hover:bg-surface active:bg-surface-secondary transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+                                onClick={() => setMobileMenuOpen(prev => !prev)}
+                                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                                aria-expanded={mobileMenuOpen}
+                                aria-controls="staggered-menu-panel"
                             >
-                                {navItems.find(item => item.id === activeSection)?.label || 'Home'}
-                            </motion.div>
+                                {mobileMenuOpen ? 'Close' : (navItems.find(item => item.id === activeSection)?.label || 'Home')}
+                            </motion.button>
                         </div>
 
                         {/* Right Side - Menu button and Theme toggle */}
@@ -269,6 +275,9 @@ export function Navigation() {
                                     colors={isDarkMode ? ['#1e1e2e', '#313244', '#45475a'] : ['#F0E6DD', '#E6DBD1', '#D4C4B0']}
                                     logoUrl="/src/assets/logos/reactbits-gh-white.svg"
                                     accentColor="var(--primary)"
+                                    open={mobileMenuOpen}
+                                    onOpenChange={setMobileMenuOpen}
+                                    hideDefaultButton={true}
                                     onMenuOpen={() => { }}
                                     onMenuClose={() => { }}
                                     onItemClick={(item) => {

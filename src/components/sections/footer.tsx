@@ -184,7 +184,7 @@ export function Footer() {
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
-                    className="group relative flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-2xl overflow-hidden button-primary"
+                    className="group relative flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-2xl overflow-hidden button-primary"
                     style={{
                         background: `linear-gradient(to bottom right, var(--primary), var(--secondary))`,
                         color: 'var(--background)'

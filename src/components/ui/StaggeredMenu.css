@@ -26,6 +26,17 @@
     pointer-events: auto;
 }
 
+.staggered-menu-wrapper--no-button {
+    width: auto;
+    min-width: 0;
+}
+
+.staggered-menu-wrapper--no-button .staggered-menu-header {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
 .sm-logo {
     display: flex;
     align-items: center;
