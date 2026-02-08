@@ -11,7 +11,7 @@ const projectsData = [
         id: 12,
         title: 'SigmaGuide',
         description: 'AI-powered screen guidance assistant that watches your screen and gives step-by-step instructions for any software.',
-        longDescription: 'SigmaGuide is an AI-powered desktop assistant that captures and analyzes your screen to provide step-by-step guidance for any software. It uses OpenAI GPT-4o vision to understand what\'s on screen, decomposes tasks into atomic steps, and automatically detects when you complete each step. Features include an always-on-top sidebar (toggle with ⌘/Ctrl + Shift + G), natural-language chat for questions like "How do I freeze the top row in Excel?", and progress tracking that advances as you follow the steps. Built with Electron, React, TypeScript, Vite, Tailwind, Zustand, and the OpenAI API. Built for Hack & Roll 2026.',
+        longDescription: 'SigmaGuide is an AI-powered desktop assistant that captures and analyzes your screen to provide step-by-step guidance for any software. It uses OpenAI GPT-4o vision to understand what\'s on screen, decomposes tasks into atomic steps, and automatically detects when you complete each step. Features include an always-on-top sidebar (toggle with ⌘/Ctrl + Shift + G), natural-language chat for questions like "How do I freeze the top row in Excel?", and progress tracking that advances as you follow the steps.',
         image: '/images/Hack&Roll screen.png',
         technologies: ['Electron', 'React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Zustand', 'OpenAI GPT-4o'],
         video: '/videos/SigmaGuide demo video.mp4',
@@ -519,8 +519,12 @@ export const Projects = memo(function Projects() {
                                     ease: [0.25, 0.46, 0.45, 0.94]
                                 }
                             }}
-                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex flex-col min-h-0 p-4 sm:p-6 lg:p-8"
-                            style={{ maxHeight: '100vh', overflow: 'hidden' }}
+                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 overscroll-contain"
+                            style={{
+                                maxHeight: '100vh',
+                                WebkitOverflowScrolling: 'touch',
+                            }}
+                            onWheel={(e) => e.stopPropagation()}
                             onClick={handleClose}
                         >
                             <motion.div
