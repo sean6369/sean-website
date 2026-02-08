@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, createContext, useContext, ReactNode } fro
 import Lenis from 'lenis'
 import { usePathname } from 'next/navigation'
 import { setLenisInstance } from '@/lib/utils'
+import { useModal } from '@/lib/modal-context'
 
 // Easing functions
 export const easingFunctions = {
@@ -68,6 +69,9 @@ export function LenisProvider({
     const [lenis, setLenis] = useState<Lenis | null>(null)
     const lenisRef = useRef<Lenis | null>(null)
     const pathname = usePathname()
+    const { isModalOpen } = useModal()
+    const isModalOpenRef = useRef(isModalOpen)
+    isModalOpenRef.current = isModalOpen
 
     useEffect(() => {
         // Initialize Lenis
@@ -86,9 +90,11 @@ export function LenisProvider({
         setLenisInstance(lenisInstance) // Set global reference for utility functions
 
         // RAF loop for smooth scrolling and Framer Motion integration
-        // This updates the actual scroll position that Framer Motion's useScroll reads
+        // Skip Lenis when a modal is open so the modal can scroll instead
         function raf(time: number) {
-            lenisInstance.raf(time)
+            if (!isModalOpenRef.current) {
+                lenisInstance.raf(time)
+            }
             requestAnimationFrame(raf)
         }
 

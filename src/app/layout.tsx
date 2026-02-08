@@ -80,12 +80,12 @@ export default function RootLayout({
                 }}
             >
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                    <LenisProvider>
-                        <ModalProvider>
+                    <ModalProvider>
+                        <LenisProvider>
                             {children}
                             <Toaster />
-                        </ModalProvider>
-                    </LenisProvider>
+                        </LenisProvider>
+                    </ModalProvider>
                 </ThemeProvider>
             </body>
         </html>
