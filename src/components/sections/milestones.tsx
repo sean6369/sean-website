@@ -114,7 +114,7 @@ export function Milestones() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
                                 viewport={{ once: true }}
-                                className="relative flex flex-col md:flex-row md:items-start pl-24 sm:pl-24 md:pl-0"
+                                className="relative flex flex-col md:flex-row md:items-start pl-20 sm:pl-24 md:pl-0"
                             >
                                 {/* Timeline Dot */}
                                 {milestone.company === 'Oxley Pawnshop' ? (
@@ -123,7 +123,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/oxleyLogo3.jpg"
@@ -139,7 +139,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/goldjewelLogo2.png"
@@ -155,7 +155,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/logo-yoga-movement.png"
@@ -171,7 +171,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/singapore_army_saf.jpg"
@@ -187,7 +187,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges"
                                     />
                                 )}
 
@@ -267,7 +267,7 @@ export function Milestones() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
                                 viewport={{ once: true }}
-                                className="relative flex flex-col md:flex-row md:items-start pl-24 sm:pl-24 md:pl-0"
+                                className="relative flex flex-col md:flex-row md:items-start pl-20 sm:pl-24 md:pl-0"
                             >
                                 {/* Timeline Dot */}
                                 {edu.institution === 'National University of Singapore' ? (
@@ -276,7 +276,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/nus_logo.jpg"
@@ -292,7 +292,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/eunoia_logo.png"
@@ -308,7 +308,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
                                     >
                                         <Image
                                             src="/logos/chs_logo.jpg"
@@ -324,7 +324,7 @@ export function Milestones() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
                                         viewport={{ once: true }}
-                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges"
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges"
                                     />
                                 )}
 
