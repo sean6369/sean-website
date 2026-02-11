@@ -65,7 +65,7 @@ export function BlogPost({ post }: BlogPostProps) {
                             <h4 className="text-lg md:text-lg lg:text-xl font-bold md:font-extrabold font-new-york text-gray-700 dark:text-gray-300 mt-5 mb-2 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out" style={{ WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', letterSpacing: '-0.01em' }}>{children}</h4>
                         ),
                         p: ({ children }) => (
-                            <p className="mb-4 leading-relaxed text-base md:text-lg text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
+                            <p className="mb-4 leading-relaxed text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</p>
                         ),
                         ul: ({ children }) => (
                             <ul className="list-disc list-outside mb-4 space-y-2 pl-6 transition-[margin,padding] duration-300 ease-in-out">{children}</ul>
@@ -74,10 +74,10 @@ export function BlogPost({ post }: BlogPostProps) {
                             <ol className="list-decimal list-outside mb-4 space-y-2 pl-6 transition-[margin,padding] duration-300 ease-in-out">{children}</ol>
                         ),
                         li: ({ children }) => (
-                            <li className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</li>
+                            <li className="text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 leading-relaxed transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">{children}</li>
                         ),
                         blockquote: ({ children }) => (
-                            <blockquote className="border-l-4 border-primary pl-4 italic my-4 text-muted-foreground transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
+                            <blockquote className="border-l-4 border-primary pl-4 italic my-4 font-medium text-muted-foreground transition-[font-size,line-height,margin,padding] duration-300 ease-in-out">
                                 {children}
                             </blockquote>
                         ),

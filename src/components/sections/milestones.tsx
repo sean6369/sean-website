@@ -102,115 +102,144 @@ export function Milestones() {
                     <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground text-left">
                         Experience
                     </h3>
-                    <div className="w-12 sm:w-16 h-0.5 bg-gradient-to-r from-primary to-primary/60 mt-2 sm:mt-3" />
                 </motion.div>
 
                 {/* Timeline */}
                 <div className="relative w-full max-w-7xl mx-auto">
-                    {/* Timeline Line */}
-                    <div className="absolute left-6 sm:left-8 md:left-1/4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-accent" />
-
-                    <div className="space-y-8 sm:space-y-12 lg:space-y-16">
+                    <div className="space-y-0">
                         {milestones.map((milestone, index) => (
+                            <div key={milestone.company} className="pb-4 sm:pb-6 lg:pb-8">
                             <motion.div
-                                key={milestone.company}
-                                initial={{ opacity: 0, y: 50 }}
+                                initial={{ opacity: 0, y: 24 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
                                 viewport={{ once: true }}
-                                className="relative flex flex-col md:flex-row md:items-start pl-16 sm:pl-20 md:pl-0"
+                                className="relative flex flex-col md:flex-row md:items-start pl-24 sm:pl-24 md:pl-0"
                             >
                                 {/* Timeline Dot */}
                                 {milestone.company === 'Oxley Pawnshop' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/oxleyLogo3.jpg"
                                             alt="Oxley Pawnshop Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : milestone.company === 'Goldjewel Pte. Ltd.' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/goldjewelLogo2.png"
                                             alt="Goldjewel Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : milestone.company === 'Yoga Movement' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/logo-yoga-movement.png"
                                             alt="Yoga Movement Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : milestone.company === 'Singapore Armed Forces' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/singapore_army_saf.jpg"
                                             alt="Singapore Armed Forces Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10" />
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges"
+                                    />
                                 )}
 
-                                {/* Date - Stacked on mobile, side-by-side on desktop */}
-                                <div className="w-full md:w-1/4 md:pr-8 lg:pr-12 mb-3 md:mb-0 md:text-right">
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -30 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                                        viewport={{ once: true }}
-                                        className="text-sm sm:text-base text-foreground-secondary font-medium"
-                                    >
+                                {/* Left Column: Date (paired with logo) */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
+                                    viewport={{ once: true }}
+                                    className="w-full md:w-1/4 md:pl-12 md:pr-8 lg:pr-12 mb-3 md:mb-0 md:text-left"
+                                >
+                                    <div className="text-sm sm:text-base text-foreground-secondary font-medium">
                                         {milestone.period}
-                                    </motion.div>
-                                </div>
+                                    </div>
+                                </motion.div>
 
-                                {/* Content */}
-                                <div className="w-full md:w-3/4 md:pl-12">
+                                {/* Right Column: Content */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
+                                    viewport={{ once: true }}
+                                    className="w-full md:w-3/4 md:pl-20"
+                                >
                                     {/* Header */}
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 30 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                                        viewport={{ once: true }}
-                                        className="mb-3 sm:mb-4"
-                                    >
+                                    <div className="mb-3 sm:mb-4">
                                         <h3 className="text-lg sm:text-xl font-bold text-primary mb-1 sm:mb-2">
                                             {milestone.company}
                                         </h3>
                                         <h4 className="text-base sm:text-lg font-semibold text-foreground">
                                             {milestone.role}
                                         </h4>
-                                    </motion.div>
+                                    </div>
 
                                     {/* Description */}
-                                    <motion.p
-                                        initial={{ opacity: 0, x: 30 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{
-                                            duration: 0.4,
-                                            delay: index * 0.1 + 0.1
-                                        }}
-                                        viewport={{ once: true }}
-                                        className="text-foreground-secondary text-sm sm:text-base md:text-lg leading-relaxed font-medium"
-                                    >
+                                    <p className="text-foreground-secondary text-sm sm:text-base leading-relaxed font-sans font-medium">
                                         {milestone.description}
-                                    </motion.p>
-                                </div>
+                                    </p>
+                                </motion.div>
                             </motion.div>
+                            {index < milestones.length - 1 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    transition={{ duration: 0.3, delay: index * 0.08 + 0.2, ease: [0.25, 0.4, 0.25, 1] }}
+                                    viewport={{ once: true }}
+                                    className="mt-4 sm:mt-6 lg:mt-8 md:ml-[calc(25%-3rem)] md:w-[calc(75%+3rem)]"
+                                >
+                                    <hr className="milestones-divider" />
+                                </motion.div>
+                            )}
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -226,91 +255,123 @@ export function Milestones() {
                     <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground text-left">
                         Education
                     </h3>
-                    <div className="w-12 sm:w-16 h-0.5 bg-gradient-to-r from-primary to-primary/60 mt-2 sm:mt-3" />
                 </motion.div>
 
                 {/* Education Timeline */}
                 <div className="relative w-full max-w-7xl mx-auto">
-                    {/* Timeline Line */}
-                    <div className="absolute left-6 sm:left-8 md:left-1/4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-accent" />
-
-                    <div className="space-y-8 sm:space-y-12 lg:space-y-16">
+                    <div className="space-y-0">
                         {education.map((edu, index) => (
+                            <div key={edu.institution} className="pb-4 sm:pb-6 lg:pb-8">
                             <motion.div
-                                key={edu.institution}
-                                initial={{ opacity: 0, y: 50 }}
+                                initial={{ opacity: 0, y: 24 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
                                 viewport={{ once: true }}
-                                className="relative flex flex-col md:flex-row md:items-start pl-16 sm:pl-20 md:pl-0"
+                                className="relative flex flex-col md:flex-row md:items-start pl-24 sm:pl-24 md:pl-0"
                             >
                                 {/* Timeline Dot */}
                                 {edu.institution === 'National University of Singapore' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/nus_logo.jpg"
                                             alt="NUS Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : edu.institution === 'Eunoia Junior College' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/eunoia_logo.png"
                                             alt="Eunoia Junior College Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : edu.institution === 'Catholic High School' ? (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10 flex items-center justify-center overflow-hidden">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
                                         <Image
                                             src="/logos/chs_logo.jpg"
                                             alt="Catholic High School Logo"
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover object-center w-full h-full"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
                                         />
-                                    </div>
+                                    </motion.div>
                                 ) : (
-                                    <div className="absolute left-6 sm:left-8 md:left-1/4 transform -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 sm:border-4 border-primary bg-background z-10" />
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-8 sm:left-8 md:left-[22%] transform -translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges"
+                                    />
                                 )}
 
-                                {/* Date - Stacked on mobile, side-by-side on desktop */}
-                                <div className="w-full md:w-1/4 md:pr-8 lg:pr-12 mb-3 md:mb-0 md:text-right">
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -30 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                                        viewport={{ once: true }}
-                                        className="text-sm sm:text-base text-foreground-secondary font-medium"
-                                    >
+                                {/* Left Column: Date (paired with logo) */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
+                                    viewport={{ once: true }}
+                                    className="w-full md:w-1/4 md:pl-12 md:pr-8 lg:pr-12 mb-3 md:mb-0 md:text-left"
+                                >
+                                    <div className="text-sm sm:text-base text-foreground-secondary font-medium">
                                         {edu.period}
-                                    </motion.div>
-                                </div>
+                                    </div>
+                                </motion.div>
 
-                                {/* Content */}
-                                <div className="w-full md:w-3/4 md:pl-12">
+                                {/* Right Column: Content */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
+                                    viewport={{ once: true }}
+                                    className="w-full md:w-3/4 md:pl-20"
+                                >
                                     {/* Header */}
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 30 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                                        viewport={{ once: true }}
-                                        className="mb-3 sm:mb-4"
-                                    >
+                                    <div className="mb-3 sm:mb-4">
                                         <h3 className="text-lg sm:text-xl font-bold text-primary mb-1 sm:mb-2">
                                             {edu.institution}
                                         </h3>
                                         <h4 className="text-base sm:text-lg font-semibold text-foreground">
                                             {edu.degree}
                                         </h4>
-                                    </motion.div>
-                                </div>
+                                    </div>
+                                </motion.div>
                             </motion.div>
+                            {index < education.length - 1 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    transition={{ duration: 0.3, delay: index * 0.08 + 0.2, ease: [0.25, 0.4, 0.25, 1] }}
+                                    viewport={{ once: true }}
+                                    className="mt-4 sm:mt-6 lg:mt-8 md:ml-[calc(25%-3rem)] md:w-[calc(75%+3rem)]"
+                                >
+                                    <hr className="milestones-divider" />
+                                </motion.div>
+                            )}
+                            </div>
                         ))}
                     </div>
                 </div>
