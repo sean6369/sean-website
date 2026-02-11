@@ -407,11 +407,11 @@ export const Projects = memo(function Projects() {
                     whileInView={{
                         opacity: 1,
                         transition: {
-                            duration: 0.7,
+                            duration: 0.6,
                             ease: [0.25, 0.46, 0.45, 0.94],
                         }
                     }}
-                    viewport={{ once: true, margin: "-100px" }}
+                    viewport={{ once: true, amount: 0.1 }}
                     className="text-left mb-10"
                 >
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-clash-display">
@@ -425,13 +425,12 @@ export const Projects = memo(function Projects() {
                     whileInView={{
                         opacity: 1,
                         transition: {
-                            duration: 0.9,
-                            delay: 0.05,
+                            duration: 0.65,
                             ease: [0.25, 0.46, 0.45, 0.94],
                         }
                     }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8"
+                    viewport={{ once: true, amount: 0.05 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 [content-visibility:auto]"
                 >
                     {projects.map((project) => {
                         const background = projectBackgrounds[project.id]
@@ -454,7 +453,7 @@ export const Projects = memo(function Projects() {
                             <motion.button
                                 key={project.id}
                                 type="button"
-                                className="group text-left w-full h-full rounded-2xl bg-background/60 backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 flex flex-col"
+                                className="group text-left w-full h-full rounded-2xl bg-background/90 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 flex flex-col"
                                 onClick={() => handleCardClick(project)}
                                 whileTap={{ scale: 0.995 }}
                             >
