@@ -51,8 +51,8 @@ interface LenisProviderProps {
     children: ReactNode
     easing?: (t: number) => number
     duration?: number
+    /** Smooth wheel (mouse/trackpad) only; touch uses native scroll. */
     smoothWheel?: boolean
-    smoothTouch?: boolean
     touchMultiplier?: number
     wheelMultiplier?: number
 }
@@ -62,7 +62,6 @@ export function LenisProvider({
     easing = easingFunctions.easeOutQuart,
     duration = 0.8,
     smoothWheel = true,
-    smoothTouch = true,
     touchMultiplier = 2,
     wheelMultiplier = 1,
 }: LenisProviderProps) {
@@ -74,11 +73,12 @@ export function LenisProvider({
     isModalOpenRef.current = isModalOpen
 
     useEffect(() => {
-        // Initialize Lenis
+        // Initialize Lenis: smooth wheel only, native touch (scroll-only)
         const lenisInstance = new Lenis({
             duration,
             easing,
             smoothWheel,
+            syncTouch: false, // Native touch scroll; Lenis only smooths wheel
             touchMultiplier,
             wheelMultiplier,
             infinite: false,

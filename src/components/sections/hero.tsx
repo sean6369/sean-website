@@ -50,20 +50,21 @@ export function Hero() {
         return () => observer.disconnect()
     }, [])
 
-    // Calculate blur based on scroll position
+    // Calculate blur based on scroll position (throttled to reduce re-renders)
     useEffect(() => {
         if (!lenis) return
 
-        const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
-            // Get viewport height
+        const THROTTLE_MS = 40 // ~25 updates/sec instead of 60
+        const maxBlur = 15 // Slightly lower for cheaper filter cost
+        let rafId: number | null = null
+        let lastUpdate = 0
+        let pendingScroll: number | null = null
+
+        const applyScroll = (scroll: number) => {
             const viewportHeight = window.innerHeight
-            // Start blurring earlier - at 50% of viewport height
-            // Blur increases from 0 to max (e.g., 20px) as scroll goes from threshold to threshold + 200px
             const scrollThreshold = viewportHeight * 0.5
-            const blurRange = 200 // Range over which blur increases
-            const maxBlur = 20 // Maximum blur amount in pixels
-            // Use lower opacity for light mode
-            const maxOverlayOpacity = isDarkMode ? 0.85 : 0.6 // Maximum overlay opacity
+            const blurRange = 200
+            const maxOverlayOpacity = isDarkMode ? 0.85 : 0.6
 
             if (scroll <= scrollThreshold) {
                 setBlurAmount(0)
@@ -71,29 +72,50 @@ export function Hero() {
             } else {
                 const scrollPast = scroll - scrollThreshold
                 const blurProgress = Math.min(scrollPast / blurRange, 1)
-                setBlurAmount(blurProgress * maxBlur)
-                setOverlayOpacity(blurProgress * maxOverlayOpacity)
+                // Round to reduce repaints: blur to whole pixels, opacity to 2 decimals
+                const blur = Math.round(blurProgress * maxBlur)
+                const opacity = Math.round(blurProgress * maxOverlayOpacity * 100) / 100
+                setBlurAmount(blur)
+                setOverlayOpacity(opacity)
             }
         }
 
-        lenis.on('scroll', handleScroll)
+        const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
+            pendingScroll = scroll
+            const now = performance.now()
+            if (rafId !== null) return
+            if (now - lastUpdate >= THROTTLE_MS) {
+                lastUpdate = now
+                applyScroll(scroll)
+                pendingScroll = null
+                return
+            }
+            rafId = requestAnimationFrame(() => {
+                rafId = null
+                lastUpdate = performance.now()
+                if (pendingScroll !== null) {
+                    applyScroll(pendingScroll)
+                    pendingScroll = null
+                }
+            })
+        }
 
-        // Initial check
-        handleScroll({ scroll: lenis.scroll, limit: lenis.limit })
+        lenis.on('scroll', handleScroll)
+        applyScroll(lenis.scroll)
 
         return () => {
+            if (rafId !== null) cancelAnimationFrame(rafId)
             lenis.off('scroll', handleScroll)
         }
     }, [lenis, isDarkMode])
 
-    // Fallback to Framer Motion scroll for compatibility
+    // Fallback to Framer Motion scroll when Lenis is not available
     useMotionValueEvent(scrollY, 'change', (latest) => {
         if (!lenis) {
             const viewportHeight = window.innerHeight
             const scrollThreshold = viewportHeight * 0.5
             const blurRange = 200
-            const maxBlur = 20
-            // Use lower opacity for light mode
+            const maxBlur = 15
             const maxOverlayOpacity = isDarkMode ? 0.85 : 0.4
 
             if (latest <= scrollThreshold) {
@@ -102,8 +124,8 @@ export function Hero() {
             } else {
                 const scrollPast = latest - scrollThreshold
                 const blurProgress = Math.min(scrollPast / blurRange, 1)
-                setBlurAmount(blurProgress * maxBlur)
-                setOverlayOpacity(blurProgress * maxOverlayOpacity)
+                setBlurAmount(Math.round(blurProgress * maxBlur))
+                setOverlayOpacity(Math.round(blurProgress * maxOverlayOpacity * 100) / 100)
             }
         }
     })

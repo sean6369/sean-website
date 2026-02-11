@@ -61,23 +61,50 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const lenis = useLenis();
 
-  // Use Lenis scroll events for more reactive updates during momentum scrolling
+  // Use Lenis scroll events (throttled, setState only when progress changes)
   useEffect(() => {
     if (!lenis) return;
 
-    const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
-      // Calculate scroll progress from 0 to 1 based on scroll position
-      // Starts at 0px, fully scrolled at 300px
+    const THROTTLE_MS = 40;
+    let rafId: number | null = null;
+    let lastUpdate = 0;
+    let pendingScroll: number | null = null;
+    let lastProgress = -1;
+
+    const applyProgress = (scroll: number) => {
       const progress = Math.min(scroll / 300, 1);
-      setScrollProgress(progress);
+      const rounded = Math.round(progress * 100) / 100;
+      if (rounded !== lastProgress) {
+        lastProgress = rounded;
+        setScrollProgress(rounded);
+      }
+    };
+
+    const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
+      pendingScroll = scroll;
+      const now = performance.now();
+      if (rafId !== null) return;
+      if (now - lastUpdate >= THROTTLE_MS) {
+        lastUpdate = now;
+        applyProgress(scroll);
+        pendingScroll = null;
+        return;
+      }
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        lastUpdate = performance.now();
+        if (pendingScroll !== null) {
+          applyProgress(pendingScroll);
+          pendingScroll = null;
+        }
+      });
     };
 
     lenis.on('scroll', handleScroll);
-
-    // Initial check
-    handleScroll({ scroll: lenis.scroll, limit: lenis.limit });
+    applyProgress(lenis.scroll);
 
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
       lenis.off('scroll', handleScroll);
     };
   }, [lenis]);
