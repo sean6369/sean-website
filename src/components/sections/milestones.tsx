@@ -7,6 +7,16 @@ import { Button } from '@/components/ui/button'
 
 const milestones = [
     {
+        company: 'A*STAR Advanced Remanufacturing and Technology Centre',
+        role: 'AI Research Engineer',
+        period: 'Feb 2026 - Present',
+        location: 'Singapore',
+        description:
+            'Developed and evaluated context-aware, user-centric capabilities within a multi-agent AI platform, focusing on adaptive intelligence and intelligent agent coordination.',
+        icon: Briefcase,
+        color: 'from-primary to-primary/60'
+    },
+    {
         company: 'Goldjewel Pte. Ltd.',
         role: 'Software Engineer',
         period: 'Jun 2025 - Aug 2025',
@@ -176,6 +186,26 @@ export function Milestones() {
                                         <Image
                                             src="/logos/singapore_army_saf.jpg"
                                             alt="Singapore Armed Forces Logo"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
+                                        />
+                                    </motion.div>
+                                ) : milestone.company === 'A*STAR Advanced Remanufacturing and Technology Centre' ? (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{
+                                            duration: 0.4,
+                                            delay: index * 0.08 + 0.15,
+                                            ease: [0.25, 0.4, 0.25, 1]
+                                        }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
+                                        <Image
+                                            src="/logos/astar_logo.png"
+                                            alt="A*STAR Advanced Remanufacturing and Technology Centre Logo"
                                             width={96}
                                             height={96}
                                             className="rounded-none object-cover object-center w-full h-full"
