@@ -7,9 +7,19 @@ import { Button } from '@/components/ui/button'
 
 const milestones = [
     {
+        company: 'PSA Singapore',
+        role: 'AI Engineer',
+        period: 'May 2026 - Aug 2026',
+        location: 'Singapore',
+        description:
+            'Developed the product operations agent into live use by duty officers, building the SOP and case log ingestion pipeline plus database and log query tools; prototyped a second agent to refresh a 350+ article knowledge base.',
+        icon: Briefcase,
+        color: 'from-primary to-primary/60'
+    },
+    {
         company: 'A*STAR Advanced Remanufacturing and Technology Centre',
         role: 'AI Research Engineer',
-        period: 'Feb 2026 - Present',
+        period: 'Feb 2026 - May 2026',
         location: 'Singapore',
         description:
             'Developed and evaluated context-aware, user-centric capabilities within a multi-agent AI platform, focusing on adaptive intelligence and intelligent agent coordination.',
@@ -127,7 +137,23 @@ export function Milestones() {
                                 className="relative flex flex-col md:flex-row md:items-start pl-20 sm:pl-24 md:pl-0"
                             >
                                 {/* Timeline Dot */}
-                                {milestone.company === 'Oxley Pawnshop' ? (
+                                {milestone.company === 'PSA Singapore' ? (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.4, delay: index * 0.08 + 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+                                        viewport={{ once: true }}
+                                        className="absolute left-0 sm:left-8 md:left-[22%] md:transform md:-translate-x-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-none bg-inherit z-10 milestone-logo-soft-edges flex items-center justify-center overflow-hidden"
+                                    >
+                                        <Image
+                                            src="/logos/psa.png"
+                                            alt="PSA Singapore Logo"
+                                            width={96}
+                                            height={96}
+                                            className="rounded-none object-cover object-center w-full h-full"
+                                        />
+                                    </motion.div>
+                                ) : milestone.company === 'Oxley Pawnshop' ? (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.92 }}
                                         whileInView={{ opacity: 1, scale: 1 }}
@@ -244,10 +270,10 @@ export function Milestones() {
                                 >
                                     {/* Header */}
                                     <div className="mb-3 sm:mb-4">
-                                        <h3 className="text-lg sm:text-xl font-bold text-primary mb-1 sm:mb-2">
+                                        <h3 className="text-lg sm:text-xl font-bold text-primary leading-snug mb-0.5">
                                             {milestone.company}
                                         </h3>
-                                        <h4 className="text-base sm:text-lg font-semibold text-foreground">
+                                        <h4 className="text-base sm:text-lg font-semibold text-foreground leading-snug">
                                             {milestone.role}
                                         </h4>
                                     </div>
@@ -381,10 +407,10 @@ export function Milestones() {
                                 >
                                     {/* Header */}
                                     <div className="mb-3 sm:mb-4">
-                                        <h3 className="text-lg sm:text-xl font-bold text-primary mb-1 sm:mb-2">
+                                        <h3 className="text-lg sm:text-xl font-bold text-primary leading-snug mb-0.5">
                                             {edu.institution}
                                         </h3>
-                                        <h4 className="text-base sm:text-lg font-semibold text-foreground">
+                                        <h4 className="text-base sm:text-lg font-semibold text-foreground leading-snug">
                                             {edu.degree}
                                         </h4>
                                     </div>
@@ -425,7 +451,8 @@ export function Milestones() {
                         >
                             <a
                                 href="/documents/Sean_Resume.pdf"
-                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="inline-flex items-center justify-center"
                             >
                                 <span className="group-hover/modal-btn:translate-x-full group-hover/modal-btn:opacity-0 text-center transition-all duration-500">

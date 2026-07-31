@@ -57,7 +57,7 @@ export function About() {
                     <div className="relative w-full h-80 sm:h-96 md:h-[28rem] lg:h-full overflow-hidden z-10 mb-0 pb-0">
                         <div className="relative w-full h-[120%] -top-[25%]">
                             <Image
-                                src="/images/sean about me.jpg"
+                                src="/images/sean blog.jpg"
                                 alt="Sean - About Me"
                                 width={384}
                                 height={512}
