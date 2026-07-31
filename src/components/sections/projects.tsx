@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, Github, X, Smartphone, Brain, Globe } from 'lucide-react'
-import { useState, useMemo, memo, useEffect, useRef } from 'react'
+import { useState, memo, useEffect, useRef } from 'react'
 import { useIsMobile, useReducedMotion } from '@/lib/hooks'
 import { useModal } from '@/lib/modal-context'
 
@@ -12,7 +12,6 @@ const projectsData = [
         title: 'SigmaGuide',
         description: 'AI-powered screen guidance assistant that watches your screen and gives step-by-step instructions for any software.',
         longDescription: 'SigmaGuide is an AI-powered desktop assistant that captures and analyzes your screen to provide step-by-step guidance for any software. It uses OpenAI GPT-4o vision to understand what\'s on screen, decomposes tasks into atomic steps, and automatically detects when you complete each step. Features include an always-on-top sidebar (toggle with ⌘/Ctrl + Shift + G), natural-language chat for questions like "How do I freeze the top row in Excel?", and progress tracking that advances as you follow the steps.',
-        image: '/images/Hack&Roll screen.png',
         technologies: ['Electron', 'React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Zustand', 'OpenAI GPT-4o'],
         video: '/videos/SigmaGuide demo video.mp4',
         github: 'https://github.com/Path-yang/SigmaGuide',
@@ -25,7 +24,6 @@ const projectsData = [
         title: 'SigmaPay',
         description: 'Cross-border financial platform for instant remittances, escrow, and RWA tokenization on the XRP Ledger.',
         longDescription: 'SigmaPay unifies payments, escrow, and asset tokenization into a single mobile-first interface built on the XRP Ledger. It delivers instant transfers settling in 3-5 seconds, fees under $0.01 per transaction, and RLUSD stablecoin for price stability. Features include on-chain identity verification (DID) for compliance, time-locked and condition-locked escrow payments, and real-world asset tokenization for property, commodities, and trade finance. Verified users get direct instant payments; unverified users send via claimable checks.',
-        image: '/images/Fintech Summit screen.jpeg',
         technologies: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'xrpl.js', 'shadcn/ui'],
         video: '/videos/SigmaPay demo video.mp4',
         github: 'https://github.com/Path-yang/SigmaPay',
@@ -40,7 +38,6 @@ const projectsData = [
         achievement: '🏆 3rd runner up (top 4 of 400+ teams)',
         description: 'AI diagnostic assistant analyzes alerts and generates actionable root-cause reports.',
         longDescription: 'An AI-powered co-pilot for Level 2 port operations, built to automate incident triage, diagnosis, and resolution planning. It ingests unstructured alerts from email, SMS, and phone logs, extracts ticket context, and correlates evidence across application logs, SOPs, and historical cases to surface probable root causes with confidence scores. The system generates step-by-step resolution plans, including SQL checks, verification steps, and escalation guidance, and stores them in a full ticket lifecycle UI for editing, notes, and status tracking. Backed by Flask APIs, Azure OpenAI, and Neon Postgres (with SQLite for local dev). Features include a modern analytics dashboard and queue-managed request handling. Designed for fast, reliable L2 support with transparent reasoning, responsive UX, and zero local setup friction.',
-        image: '/images/PSA Code Sprint screen.png',
         linksNote: 'Live site and code are confidential and cannot be shared publicly.',
         technologies: [],
         video: '/videos/PSA code sprint demo video.mp4',
@@ -53,7 +50,6 @@ const projectsData = [
         title: 'SilverSigma',
         description: 'Digital hub for seniors to connect, explore hobbies, and chat with an AI companion.',
         longDescription: 'Part of a team of 5 to build a web-app platform for seniors, featuring real-time interactive AI avatar companionship, hobby discovery hub, and a safe social media network, to enhance mental health, life fulfillment and connectivity. The platform includes an AI-powered companion with HeyGen streaming avatar technology supporting 4 languages (English, Mandarin, Bahasa Melayu, Tamil), a comprehensive hobby hub with 30+ activities across 6 categories, SeniorGram social feed for safe sharing, and community classes integration with 32+ workshop options across Singapore. Built with accessibility-first design featuring WCAG AA+ compliance, mobile-first approach, and voice-first interaction options.',
-        image: '/projects/silversigma.jpg',
         technologies: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'HeyGen AI Avatar', 'OpenAI', 'Supabase', 'WebSocket', 'PWA'],
         github: 'https://github.com/Path-yang/SilverSigma',
         live: 'https://silver-sigma.vercel.app',
@@ -66,7 +62,6 @@ const projectsData = [
         title: 'SentinelAI',
         description: 'AI system that turns IP cameras into real-time detectors for falls and emergencies.',
         longDescription: 'Part of a team of 5 to develop an AI-powered system that transforms IP cameras into real-time anomaly detectors for falls, emergencies, and safety hazards, with applications in elderly care, pet monitoring, and industrial safety. The system features cloud-first architecture with automatic RTSP to HLS conversion, real-time AI processing with WebSocket-based alerts, cross-platform compatibility, and enterprise-grade security with HTTPS encryption. While our project didn\'t advance, we reflected on challenges such as scaling difficulties, limited long-term differentiation, and missing safeguards like background checks, highlighting the importance of focusing on innovative approaches that address the limitations of current offerings and stronger market validation.',
-        image: '/projects/sentinelai.jpg',
         technologies: ['Machine Learning', 'Fullstack Development', 'Cloud Architecture', 'Real-time Streaming', 'AI Detection', 'WebSocket', 'RTSP', 'HLS'],
         github: 'https://github.com/Path-yang/SentinelAI',
         live: 'https://sentinel-ai-web-ll3v.vercel.app',
@@ -92,7 +87,6 @@ const projectsData = [
         achievement: '🏆 Finalist (top 10 of 60+ teams) • Best Usage of Data Award',
         description: 'Public health app with live data, GPT-based guidance, and community reporting',
         longDescription: 'An AI-powered, multilingual React Native app that integrates real-time Singapore health data, GPT-based health guidance, and community reporting to create a crowdsourced public health monitoring and education platform. Features include AI health assistant (SigmaBoy), real-time dengue/PSI/COVID data integration, interactive health mapping, gamified health quizzes, community reporting system, and multilingual support for Singapore\'s diverse population.',
-        image: '/projects/sigmahealth.jpg',
         technologies: ['React Native', 'Expo', 'Firebase', 'OpenAI GPT', 'TypeScript', 'JavaScript'],
         github: 'https://github.com/clemenong1/SigmaHealth',
         hackathon: '@NUS Lifehack 2025',
@@ -105,7 +99,6 @@ const projectsData = [
         title: 'Goldjewel Website & CMS',
         description: 'Contemporary jewelry site paired with a fully custom content management system.',
         longDescription: 'As a solo software engineer intern, I built and deployed a modern website for a jewelry business along with a custom content management system (CMS). The website features a dynamic homepage with fluid animations to showcase products elegantly, while the CMS provides an intuitive interface for the team to manage product listings with ease. The CMS includes built-in image cropping tools and supports instant, real-time updates to the website whenever new products are added or existing ones are modified, ensuring a seamless workflow between product management and customer-facing updates.',
-        image: '/projects/goldjewel.jpg',
         technologies: ['Frontend Development', 'CMS Development', 'Database Management', 'Image Processing', 'Real-time Updates'],
         live: 'https://www.goldjewel.sg/',
         cms: 'https://cms.goldjewel.sg/login',
@@ -118,7 +111,6 @@ const projectsData = [
         achievement: '🏆 Finalist (top 20 of 80+ teams)',
         description: 'Scam detection app for URL analysis, scam education, and community reporting.',
         longDescription: 'An AI-powered mobile app that helps users detect, understand, and prevent online scams. It offers real-time URL analysis, educational content, scam analytics, and a community forum for sharing experiences and insights. Features include scam detection with AI-powered confidence scores, educational modules about different scam types, analytics dashboards for tracking detections, and a community forum for discussion and support.',
-        image: '/projects/sigmashield.jpg',
         technologies: ['React Native', 'Expo', 'TypeScript', 'AI/ML', 'Python', 'Node.js'],
         github: 'https://github.com/Path-yang/DSTA-Code-Exp-2025',
         hackathon: '@DSTA Brainhack-Code EXP 2025',
@@ -131,7 +123,6 @@ const projectsData = [
         title: 'Oxley Pawnshop Website',
         description: 'Modern website for a Singapore-based pawnshop with live gold prices.',
         longDescription: 'A modern website for a Singapore-based pawnshop designed and launched by a solo developer intern. Features an interactive homepage with smooth animations, contact form integrated with company email and automated replies, real-time gold price updates with fallback data sources, and fully configured company email accounts for all team members.',
-        image: '/projects/oxleypawnshop.jpg',
         technologies: ['Frontend Development', 'Backend Integration', 'API Integration', 'Email Services', 'Real-time Data'],
         live: 'https://www.oxleypawnshop.com/',
         category: 'Web App',
@@ -142,7 +133,6 @@ const projectsData = [
         title: 'GymFit',
         description: 'Cross-platform fitness app featuring workout and calorie tracking.',
         longDescription: 'Built during Orbital 2025, a cross-platform fitness app built with Flutter and Firebase, featuring real-time workout tracking and timers, YouTube video integration, and science-based calorie calculations. It includes social networking, workout history tracking and statistics, advanced muscle recovery monitoring, and personalized workout recommendations.',
-        image: '/projects/gymfit.jpg',
         technologies: ['Flutter', 'Firebase', 'Dart', 'YouTube API', 'Cross-platform'],
         github: 'https://github.com/WangZX2001/GymFit',
         hackathon: '@Orbital 2025',
@@ -155,7 +145,6 @@ const projectsData = [
         title: 'NoFap',
         description: 'Social motivation app featuring donation incentives and peer support.',
         longDescription: 'Built during Hackomania 2025, a modern web app designed to help users stay motivated on their NoFap journey through progress tracking, achievements, and community support. It features donation-based support platform enabling micro-donations through the Open Payments API to assist individuals overcoming addiction.',
-        image: '/projects/nofap.jpg',
         technologies: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS', 'Vercel'],
         github: 'https://github.com/Path-yang/Hackomania_2025',
         live: 'https://geekshackinghackathon-8ygu.vercel.app',
@@ -169,7 +158,6 @@ const projectsData = [
         achievement: '🏆 Top 3',
         description: 'A two-stage AI pipeline predicting vessel deficiency severity from inspection text.',
         longDescription: 'A two-stage AI pipeline to predict vessel deficiency severity from Port State Control inspection text. Stage 1 resolves and consolidates multiple annotations into a single severity label per inspection, and Stage 2 fine-tunes a DistilBERT transformer to classify severity and generate predictions for new inspections.',
-        image: '/projects/ship-vessel.jpg',
         technologies: ['Python', 'DistilBERT', 'Transformers', 'NLP', 'Machine Learning', 'PyTorch'],
         github: 'https://github.com/Path-yang/Maritime-Hackathon-2025',
         hackathon: '@Maritime Hackathon 2025',
@@ -309,11 +297,39 @@ const VideoSection = ({ selectedProject }: { selectedProject: typeof projectsDat
     );
 };
 
+// Project background images mapping (id = newest first, 12 = newest)
+const projectBackgrounds: Record<number, string> = {
+    12: '/images/Hack&Roll screen.png',
+    11: '/images/Fintech Summit screen.jpeg',
+    10: '/images/PSA Code Sprint screen.png',
+    9: '/images/What the Hack screen.png',
+    8: '/images/SentinelAI screen.png',
+    7: '/images/Lifehack screen.jpeg',
+    6: '/images/Goldjewel screen.jpg',
+    5: '/images/DSTA Brainhack screen.png',
+    4: '/images/Oxley Pawnshop screen.jpeg',
+    3: '/images/Orbital screen.png',
+    2: '/images/Hackomania screen.png',
+    1: '/images/Marinetime Hackathon screen.jpeg',
+};
+
+const getCategoryIcon = (category: string) => {
+    switch (category) {
+        case 'Web App':
+            return Globe
+        case 'Mobile App':
+            return Smartphone
+        case 'AI/ML':
+            return Brain
+        default:
+            return Globe
+    }
+}
+
 export const Projects = memo(function Projects() {
-    const projects = useMemo(() => projectsData, []);
     const { setIsModalOpen } = useModal()
 
-    const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null)
+    const [selectedProject, setSelectedProject] = useState<typeof projectsData[0] | null>(null)
 
     const iframeContainerRef = useRef<HTMLDivElement>(null)
     const [iframeScale, setIframeScale] = useState(1)
@@ -321,21 +337,6 @@ export const Projects = memo(function Projects() {
     const isMobile = useIsMobile()
     const prefersReducedMotion = useReducedMotion()
 
-    // Project background images mapping (id = newest first, 12 = newest)
-    const projectBackgrounds: Record<number, string> = {
-        12: '/images/Hack&Roll screen.png',
-        11: '/images/Fintech Summit screen.jpeg',
-        10: '/images/PSA Code Sprint screen.png',
-        9: '/images/What the Hack screen.png',
-        8: '/images/SentinelAI screen.png',
-        7: '/images/Lifehack screen.jpeg',
-        6: '/images/Goldjewel screen.jpg',
-        5: '/images/DSTA Brainhack screen.png',
-        4: '/images/Oxley Pawnshop screen.jpeg',
-        3: '/images/Orbital screen.png',
-        2: '/images/Hackomania screen.png',
-        1: '/images/Marinetime Hackathon screen.jpeg',
-    };
 
     // Calculate iframe scale to maintain desktop or mobile viewport
     useEffect(() => {
@@ -373,7 +374,40 @@ export const Projects = memo(function Projects() {
         }
     }, [selectedProject, isMobile])
 
-    const handleCardClick = (project: typeof projects[0]) => {
+    // The overlay is a modal dialog, so Escape must dismiss it. Bound on the
+    // document because focus starts on the card that opened it, which is outside
+    // the overlay's own DOM subtree.
+    useEffect(() => {
+        if (!selectedProject) return
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') handleClose()
+        }
+
+        document.addEventListener('keydown', onKeyDown)
+        return () => document.removeEventListener('keydown', onKeyDown)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedProject])
+
+    // Move focus into the dialog on open, and return it to the triggering card
+    // on close so keyboard users do not get dropped back at the top of the page.
+    const openerRef = useRef<HTMLElement | null>(null)
+    const dialogRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (selectedProject) {
+            dialogRef.current?.focus()
+        } else {
+            openerRef.current?.focus()
+            openerRef.current = null
+        }
+    }, [selectedProject])
+
+    const handleCardClick = (
+        project: typeof projectsData[0],
+        event: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        openerRef.current = event.currentTarget
         setSelectedProject(project)
         setIsModalOpen(true)
     }
@@ -383,18 +417,6 @@ export const Projects = memo(function Projects() {
         setIsModalOpen(false)
     }
 
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case 'Web App':
-                return Globe
-            case 'Mobile App':
-                return Smartphone
-            case 'AI/ML':
-                return Brain
-            default:
-                return Globe
-        }
-    }
 
     return (
         <motion.section
@@ -432,29 +454,17 @@ export const Projects = memo(function Projects() {
                     viewport={{ once: true, amount: 0.05 }}
                     className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 [content-visibility:auto]"
                 >
-                    {projects.map((project) => {
+                    {projectsData.map((project) => {
                         const background = projectBackgrounds[project.id]
 
-                        const getCategoryIcon = () => {
-                            switch (project.category) {
-                                case 'Web App':
-                                    return Globe
-                                case 'Mobile App':
-                                    return Smartphone
-                                case 'AI/ML':
-                                    return Brain
-                                default:
-                                    return Globe
-                            }
-                        }
-                        const CategoryIcon = getCategoryIcon()
+                        const CategoryIcon = getCategoryIcon(project.category)
 
                         return (
                             <motion.button
                                 key={project.id}
                                 type="button"
                                 className="group text-left w-full h-full rounded-2xl bg-background/90 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 flex flex-col"
-                                onClick={() => handleCardClick(project)}
+                                onClick={(e) => handleCardClick(project, e)}
                                 whileTap={{ scale: 0.995 }}
                             >
                                 <div className="relative w-full aspect-[16/11] overflow-hidden">
@@ -548,7 +558,12 @@ export const Projects = memo(function Projects() {
                                         ease: [0.4, 0.0, 0.2, 1]
                                     }
                                 }}
-                                className="min-h-full w-full glass-effect rounded-xl p-6 lg:p-8"
+                                ref={dialogRef}
+                                role="dialog"
+                                aria-modal="true"
+                                aria-label={`${selectedProject.title} project details`}
+                                tabIndex={-1}
+                                className="min-h-full w-full glass-effect rounded-xl p-6 lg:p-8 focus:outline-none"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div className="flex items-center justify-between mb-6">

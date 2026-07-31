@@ -50,7 +50,18 @@ A modern, responsive personal website built with Next.js 14, React 18, TypeScrip
    pnpm install
    ```
 
-3. **Start the development server**
+3. **Set up environment variables**
+   ```bash
+   cp env.example .env.local
+   ```
+   Then fill in the values. See `env.example` for where each key comes from and
+   what the Notion database schema needs to look like.
+
+   The app builds and runs without these, but degrades quietly rather than
+   erroring: the contact form fails on submit, and `/blog` shows
+   "No blog posts yet."
+
+4. **Start the development server**
    ```bash
    npm run dev
    # or
@@ -59,7 +70,7 @@ A modern, responsive personal website built with Next.js 14, React 18, TypeScrip
    pnpm dev
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 📁 Project Structure

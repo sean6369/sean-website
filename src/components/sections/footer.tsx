@@ -164,6 +164,15 @@ export function Footer() {
                                 </button>
                             </li>
                             <li className="group">
+                                <button
+                                    onClick={() => scrollToSection('contact')}
+                                    className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105"
+                                >
+                                    <span className="relative z-10">Contact</span>
+                                    <div className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></div>
+                                </button>
+                            </li>
+                            <li className="group">
                                 <Link
                                     href="/blog"
                                     className="relative text-foreground/70 hover:text-foreground transition-all duration-300 hover:translate-x-1 hover:scale-105"
@@ -181,7 +190,10 @@ export function Footer() {
                 : 'opacity-0 translate-y-4'
                 }`}>
                 <motion.button
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    // Routes through Lenis like every other nav control. A raw
+                    // window.scrollTo animates the same value Lenis is driving,
+                    // and the two fight each other.
+                    onClick={() => scrollToSection('home')}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
                     className="group relative flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-2xl overflow-hidden button-primary"

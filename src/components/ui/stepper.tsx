@@ -23,7 +23,6 @@ interface StepperItemProps {
     }
     isActive: boolean
     isCompleted: boolean
-    isPending: boolean
     onClick: () => void
     index: number
 }
@@ -32,13 +31,15 @@ const StepperItem: React.FC<StepperItemProps> = ({
     step,
     isActive,
     isCompleted,
-    isPending,
     onClick,
     index
 }) => {
     return (
-        <motion.div
-            className="flex flex-col items-center cursor-pointer mr-2 sm:mr-3 md:mr-4 lg:mr-4 last:mr-0 group min-w-0 flex-shrink-0"
+        <motion.button
+            type="button"
+            aria-label={`Go to ${step.label} section`}
+            aria-current={isActive ? 'step' : undefined}
+            className="flex flex-col items-center cursor-pointer mr-2 sm:mr-3 md:mr-4 lg:mr-4 last:mr-0 group min-w-0 flex-shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{
@@ -209,7 +210,7 @@ const StepperItem: React.FC<StepperItemProps> = ({
                 />
                 <span className="relative z-10">{step.label}</span>
             </motion.span>
-        </motion.div>
+        </motion.button>
     )
 }
 
@@ -229,7 +230,6 @@ export const Stepper: React.FC<StepperProps> = ({
                     {steps.map((step, index) => {
                         const isActive = step.step === currentStep
                         const isCompleted = index < currentStepIndex
-                        const isPending = index > currentStepIndex
 
                         return (
                             <StepperItem
@@ -237,7 +237,6 @@ export const Stepper: React.FC<StepperProps> = ({
                                 step={step}
                                 isActive={isActive}
                                 isCompleted={isCompleted}
-                                isPending={isPending}
                                 onClick={() => onStepClick(step.id)}
                                 index={index}
                             />

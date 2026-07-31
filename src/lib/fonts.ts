@@ -9,11 +9,3 @@ export const newYork = {
         fontFamily: `'New York', 'Times New Roman', Georgia, serif`,
     },
 }
-
-// For Menlo font (monospace)
-export const menlo = {
-    variable: '--font-menlo',
-    style: {
-        fontFamily: `Menlo, Monaco, 'Courier New', monospace`,
-    },
-}

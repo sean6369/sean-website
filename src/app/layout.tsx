@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { ModalProvider } from '@/lib/modal-context'
 import { ThemeProvider } from 'next-themes'
 import { LenisProvider } from '@/components/providers/LenisProvider'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
     title: 'Sean | Personal Website',
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
     keywords: ['developer', 'portfolio', 'personal website', 'projects'],
     authors: [{ name: 'Sean' }],
     creator: 'Sean',
-    metadataBase: new URL('https://your-domain.com'),
+    metadataBase: new URL(SITE_URL),
     icons: {
         icon: [
             { url: '/favicon.ico', sizes: 'any' },
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     openGraph: {
         type: 'website',
         locale: 'en_US',
-        url: 'https://your-domain.com',
+        url: SITE_URL,
         title: 'Sean | Personal Website',
         description: 'Student passionate about creating beautiful, functional, and user-friendly digital experiences. Always learning, always building.',
         siteName: 'Sean',
@@ -72,6 +73,14 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                {/* Clash Display is imported in globals.css. Warm both hops up front:
+                    api.* serves the @font-face CSS, cdn.* serves the .woff2 files.
+                    crossOrigin is required on the cdn hint — font files are fetched in
+                    CORS mode, so a non-CORS preconnect would open an unusable connection. */}
+                <link rel="preconnect" href="https://api.fontshare.com" />
+                <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
+            </head>
             <body
                 className="min-h-screen antialiased bg-background text-foreground"
                 style={{

@@ -28,6 +28,53 @@ async function notionFetch(endpoint: string, options: RequestInit = {}) {
     return response.json()
 }
 
+/**
+ * Every Notion list endpoint caps a response at 100 items and signals the rest
+ * via has_more/next_cursor. Reading only the first response silently truncates
+ * results with no error, so both helpers walk the cursor to the end.
+ *
+ * The `has_more && next_cursor` guard is deliberate: a truthy has_more paired
+ * with a null cursor would otherwise re-request the first page forever.
+ */
+async function fetchAllBlockChildren(blockId: string): Promise<any[]> {
+    const results: any[] = []
+    let cursor: string | undefined
+
+    do {
+        const params = new URLSearchParams({ page_size: '100' })
+        if (cursor) params.set('start_cursor', cursor)
+
+        const page = await notionFetch(`/blocks/${blockId}/children?${params.toString()}`)
+        results.push(...page.results)
+        cursor = page.has_more && page.next_cursor ? page.next_cursor : undefined
+    } while (cursor)
+
+    return results
+}
+
+async function queryDatabaseAll(
+    databaseId: string,
+    query: Record<string, any> = {}
+): Promise<any[]> {
+    const results: any[] = []
+    let cursor: string | undefined
+
+    do {
+        const page = await notionFetch(`/databases/${databaseId}/query`, {
+            method: 'POST',
+            body: JSON.stringify({
+                ...query,
+                page_size: 100,
+                ...(cursor ? { start_cursor: cursor } : {}),
+            }),
+        })
+        results.push(...page.results)
+        cursor = page.has_more && page.next_cursor ? page.next_cursor : undefined
+    } while (cursor)
+
+    return results
+}
+
 // Convert Notion rich text to plain text
 function getPlainText(richText: any[]): string {
     if (!richText || richText.length === 0) return ''
@@ -105,11 +152,16 @@ async function isBlogPost(pageId: string): Promise<string | null> {
         // This handles cases where parent relationship might not be set correctly
         if (hasSlug) {
             try {
-                // Query the database to see if this page exists in it
+                // Ask only for rows carrying this slug instead of scanning the whole
+                // database. The previous version read just the first 100 rows, so a
+                // mention of the 101st post fell through to a raw Notion URL.
                 const queryResponse = await notionFetch(`/databases/${databaseId}/query`, {
                     method: 'POST',
                     body: JSON.stringify({
-                        page_size: 100 // Check first 100 pages
+                        filter: {
+                            property: 'Slug',
+                            rich_text: { equals: hasSlug },
+                        },
                     })
                 })
                 
@@ -248,12 +300,12 @@ function isYouTubeUrl(url: string): boolean {
 
 // Convert Notion blocks to markdown
 async function blocksToMarkdown(blockId: string): Promise<string> {
-    const blocks = await notionFetch(`/blocks/${blockId}/children`)
+    const blocks = await fetchAllBlockChildren(blockId)
     let markdown = ''
-    
-    for (let i = 0; i < blocks.results.length; i++) {
-        const block = blocks.results[i]
-        const nextBlock = blocks.results[i + 1]
+
+    for (let i = 0; i < blocks.length; i++) {
+        const block = blocks[i]
+        const nextBlock = blocks[i + 1]
         const type = block.type
         const content = block[type]
         
@@ -366,25 +418,22 @@ export const getBlogPosts = cache(async (): Promise<BlogPost[]> => {
             return []
         }
 
-        const response = await notionFetch(`/databases/${databaseId}/query`, {
-            method: 'POST',
-            body: JSON.stringify({
-                filter: {
-                    property: 'Published',
-                    checkbox: {
-                        equals: true,
-                    },
+        const results = await queryDatabaseAll(databaseId, {
+            filter: {
+                property: 'Published',
+                checkbox: {
+                    equals: true,
                 },
-                sorts: [
-                    {
-                        property: 'Date',
-                        direction: 'descending',
-                    },
-                ],
-            }),
+            },
+            sorts: [
+                {
+                    property: 'Date',
+                    direction: 'descending',
+                },
+            ],
         })
 
-        const posts = response.results.map((page: any) => {
+        const posts = results.map((page: any) => {
             const properties = page.properties
 
             // Find the title property (could be "Title", "Name", or the first title type property)
@@ -451,6 +500,8 @@ export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPostWit
                         },
                     ],
                 },
+                // Only results[0] is ever read, so don't pull a default page of 100.
+                page_size: 1,
             }),
         })
 
@@ -505,11 +556,23 @@ export const getAllBlogSlugs = cache(async (): Promise<string[]> => {
 
 // Format date for display
 export function formatDate(dateString: string): string {
+    if (!dateString) return ''
+
     const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) return ''
+
+    // A Notion date-only value ("2026-01-15") parses as UTC midnight. Formatting
+    // that in a timezone behind UTC lands on the previous day, so a post dated
+    // the 15th reads as the 14th for readers in the Americas. Pinning date-only
+    // values to UTC renders the date that was actually stored. Values that carry
+    // a time component are left to render in the reader's local zone.
+    const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+
     return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        ...(isDateOnly ? { timeZone: 'UTC' } : {}),
     })
 }
 

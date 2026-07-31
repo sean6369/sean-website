@@ -42,7 +42,8 @@ const config: Config = {
 					'700': '#6d28d9',
 					'800': '#5b21b6',
 					'900': '#4c1d95',
-					DEFAULT: 'var(--primary)'
+					DEFAULT: 'var(--primary)',
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
 					'50': '#fdf2f8',
@@ -55,7 +56,8 @@ const config: Config = {
 					'700': '#be185d',
 					'800': '#9d174d',
 					'900': '#831843',
-					DEFAULT: 'var(--secondary)'
+					DEFAULT: 'var(--secondary)',
+					foreground: 'hsl(var(--secondary-foreground))'
 				},
 				accent: {
 					'50': '#f0f9ff',
@@ -68,7 +70,8 @@ const config: Config = {
 					'700': '#0369a1',
 					'800': '#075985',
 					'900': '#0c4a6e',
-					DEFAULT: 'var(--accent)'
+					DEFAULT: 'var(--accent)',
+					foreground: 'hsl(var(--accent-foreground))'
 				},
 				success: '#a6e3a1',
 				warning: '#f9e2af',

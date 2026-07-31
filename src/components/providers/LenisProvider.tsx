@@ -91,20 +91,25 @@ export function LenisProvider({
 
         // RAF loop for smooth scrolling and Framer Motion integration
         // Skip Lenis when a modal is open so the modal can scroll instead
+        // The id is tracked so cleanup can stop the loop; without that it keeps
+        // running forever and calls .raf() on an already-destroyed instance.
+        let rafId = 0
+
         function raf(time: number) {
             if (!isModalOpenRef.current) {
                 lenisInstance.raf(time)
             }
-            requestAnimationFrame(raf)
+            rafId = requestAnimationFrame(raf)
         }
 
-        requestAnimationFrame(raf)
+        rafId = requestAnimationFrame(raf)
 
         // Handle route changes - scroll to top
         lenisInstance.scrollTo(0, { immediate: true })
 
         // Cleanup
         return () => {
+            cancelAnimationFrame(rafId)
             lenisInstance.destroy()
             setLenisInstance(null) // Clear global reference
             lenisRef.current = null

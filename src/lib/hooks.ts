@@ -78,37 +78,6 @@ export function useReducedMotion() {
     return prefersReducedMotion
 }
 
-/**
- * Custom hook for theme detection
- */
-export function useTheme() {
-    const [isDarkMode, setIsDarkMode] = useState(false)
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme')
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            setIsDarkMode(true)
-            document.documentElement.classList.add('dark')
-        } else {
-            setIsDarkMode(false)
-            document.documentElement.classList.remove('dark')
-        }
-    }, [])
-
-    const toggleTheme = () => {
-        const newTheme = !isDarkMode
-        setIsDarkMode(newTheme)
-
-        if (newTheme) {
-            document.documentElement.classList.add('dark')
-            localStorage.setItem('theme', 'dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-            localStorage.setItem('theme', 'light')
-        }
-    }
-
-    return { isDarkMode, toggleTheme }
-}
+/* Theme state is owned by next-themes — import { useTheme } from 'next-themes'.
+   A local copy used to live here; it wrote the same localStorage key and fought
+   the provider, so it was removed rather than left as a trap. */

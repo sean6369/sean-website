@@ -6,6 +6,31 @@ import { scrollToSection } from '@/lib/utils'
 import { useEffect, useState, useRef } from 'react'
 import { useLenis } from '@/components/providers/LenisProvider'
 
+const HERO_BLUR_RANGE = 200
+const HERO_MAX_BLUR = 15 // Slightly lower for cheaper filter cost
+
+/**
+ * Scroll-driven blur + overlay for the fixed hero.
+ *
+ * Shared by both the Lenis listener and the Framer Motion fallback. These were
+ * previously two copies of the same maths that had drifted apart — light-mode
+ * overlay was 0.6 in one and 0.4 in the other — so the hero faded differently
+ * depending on which scroll source happened to be driving it.
+ */
+function heroScrollValues(scroll: number, isDark: boolean) {
+    const scrollThreshold = window.innerHeight * 0.5
+    if (scroll <= scrollThreshold) return { blur: 0, opacity: 0 }
+
+    const blurProgress = Math.min((scroll - scrollThreshold) / HERO_BLUR_RANGE, 1)
+    const maxOverlayOpacity = isDark ? 0.85 : 0.6
+
+    // Round to reduce repaints: blur to whole pixels, opacity to 2 decimals
+    return {
+        blur: Math.round(blurProgress * HERO_MAX_BLUR),
+        opacity: Math.round(blurProgress * maxOverlayOpacity * 100) / 100,
+    }
+}
+
 export function Hero() {
     const [isMobile, setIsMobile] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -55,29 +80,14 @@ export function Hero() {
         if (!lenis) return
 
         const THROTTLE_MS = 40 // ~25 updates/sec instead of 60
-        const maxBlur = 15 // Slightly lower for cheaper filter cost
         let rafId: number | null = null
         let lastUpdate = 0
         let pendingScroll: number | null = null
 
         const applyScroll = (scroll: number) => {
-            const viewportHeight = window.innerHeight
-            const scrollThreshold = viewportHeight * 0.5
-            const blurRange = 200
-            const maxOverlayOpacity = isDarkMode ? 0.85 : 0.6
-
-            if (scroll <= scrollThreshold) {
-                setBlurAmount(0)
-                setOverlayOpacity(0)
-            } else {
-                const scrollPast = scroll - scrollThreshold
-                const blurProgress = Math.min(scrollPast / blurRange, 1)
-                // Round to reduce repaints: blur to whole pixels, opacity to 2 decimals
-                const blur = Math.round(blurProgress * maxBlur)
-                const opacity = Math.round(blurProgress * maxOverlayOpacity * 100) / 100
-                setBlurAmount(blur)
-                setOverlayOpacity(opacity)
-            }
+            const { blur, opacity } = heroScrollValues(scroll, isDarkMode)
+            setBlurAmount(blur)
+            setOverlayOpacity(opacity)
         }
 
         const handleScroll = ({ scroll }: { scroll: number; limit: number }) => {
@@ -111,23 +121,10 @@ export function Hero() {
 
     // Fallback to Framer Motion scroll when Lenis is not available
     useMotionValueEvent(scrollY, 'change', (latest) => {
-        if (!lenis) {
-            const viewportHeight = window.innerHeight
-            const scrollThreshold = viewportHeight * 0.5
-            const blurRange = 200
-            const maxBlur = 15
-            const maxOverlayOpacity = isDarkMode ? 0.85 : 0.4
-
-            if (latest <= scrollThreshold) {
-                setBlurAmount(0)
-                setOverlayOpacity(0)
-            } else {
-                const scrollPast = latest - scrollThreshold
-                const blurProgress = Math.min(scrollPast / blurRange, 1)
-                setBlurAmount(Math.round(blurProgress * maxBlur))
-                setOverlayOpacity(Math.round(blurProgress * maxOverlayOpacity * 100) / 100)
-            }
-        }
+        if (lenis) return
+        const { blur, opacity } = heroScrollValues(latest, isDarkMode)
+        setBlurAmount(blur)
+        setOverlayOpacity(opacity)
     })
     return (
         <motion.section

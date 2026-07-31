@@ -1,15 +1,15 @@
+/* Clash Display Font from Fontshare */
+/* Must stay above the @tailwind directives: CSS ignores @import once any other rule precedes it */
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Clash Display Font from Fontshare */
-@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600&display=swap');
 
 @layer base {
     :root {
         --font-new-york: 'New York', 'Times New Roman', Georgia, serif;
         --font-menlo: Menlo, Monaco, 'Courier New', monospace;
-        --font-bebas-neue: var(--font-bebas-neue), 'Arial Black', sans-serif;
 
         /* Light theme colors - Custom backgrounds with Anupuccin Latte text */
         --background: #F1E7DD;
@@ -44,7 +44,9 @@
         --card-foreground: 0 0% 3.9%;
         --popover: 0 0% 100%;
         --popover-foreground: 0 0% 3.9%;
-        --primary-foreground: 0 0% 98%;
+        /* --primary is a light gold here, not the stock near-black, so its
+           foreground must be dark. White on #e6a85c is 1.99:1 (fails WCAG). */
+        --primary-foreground: 0 0% 9%;
         --secondary-foreground: 0 0% 9%;
         --muted: 0 0% 96.1%;
         --muted-foreground: 0 0% 45.1%;
@@ -88,10 +90,12 @@
         --popover: 0 0% 3.9%;
         --popover-foreground: 0 0% 98%;
         --primary-foreground: 0 0% 9%;
-        --secondary-foreground: 0 0% 98%;
+        /* Light pink surface — needs dark text. White would be 1.46:1. */
+        --secondary-foreground: 0 0% 9%;
         --muted: 0 0% 14.9%;
         --muted-foreground: 0 0% 63.9%;
-        --accent-foreground: 0 0% 98%;
+        /* Light cyan surface — needs dark text. White would be 1.49:1. */
+        --accent-foreground: 0 0% 9%;
         --destructive: 0 91% 71%;
         --destructive-foreground: 0 0% 98%;
         --border: 0 0% 14.9%;
@@ -139,8 +143,11 @@
         opacity: 0.2;
     }
 
+    /* Deliberately no `scroll-behavior: smooth` here. Lenis animates scroll
+       position itself; native smooth scrolling animates the same value at the
+       same time, and the two fight, making programmatic scrollTo stutter.
+       The reduced-motion block below still forces `auto` as a safety net. */
     html {
-        scroll-behavior: smooth;
         overflow-x: hidden;
     }
 

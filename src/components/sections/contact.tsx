@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { contactFormSchema } from '@/lib/validation'
 import * as z from 'zod'
 import { toast } from 'sonner'
+import { EMAIL_LOGO_URL } from '@/lib/site'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -90,7 +91,7 @@ export function Contact() {
                 message: data.message,
                 to_email: 'seanleesukiat@gmail.com',
                 current_date: new Date().toLocaleString(),
-                logo_url: `https://sean-website.vercel.app/images/sean logo.png`,
+                logo_url: EMAIL_LOGO_URL,
             }
 
             // Prepare template parameters for confirmation email (to sender)
@@ -101,7 +102,7 @@ export function Contact() {
                 message: data.message,
                 to_email: data.email,
                 current_date: new Date().toLocaleString(),
-                logo_url: `https://sean-website.vercel.app/images/sean logo.png`,
+                logo_url: EMAIL_LOGO_URL,
             }
 
             // Send notification email to you first

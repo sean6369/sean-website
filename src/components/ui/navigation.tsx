@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Moon, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { cn, scrollToSection } from '@/lib/utils'
 import { useModal } from '@/lib/modal-context'
 import StaggeredMenu from './StaggeredMenu'
@@ -37,25 +38,16 @@ const socialItems = [
 ]
 
 export function Navigation() {
-    const [isDarkMode, setIsDarkMode] = useState(false)
     const { isModalOpen } = useModal()
     const [activeSection, setActiveSection] = useState('home')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-
-    useEffect(() => {
-        // Initialize theme from localStorage or system preference
-        const savedTheme = localStorage.getItem('theme')
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            setIsDarkMode(true)
-            document.documentElement.classList.add('dark')
-        } else {
-            setIsDarkMode(false)
-            document.documentElement.classList.remove('dark')
-        }
-    }, [])
+    // Theme is owned entirely by next-themes (see ThemeProvider in app/layout.tsx).
+    // resolvedTheme collapses "system" to the concrete light/dark actually in effect.
+    // It is undefined on the server and on the first client render, so this is false
+    // in both places and hydration matches; it settles to the real value after mount.
+    const { resolvedTheme, setTheme } = useTheme()
+    const isDarkMode = resolvedTheme === 'dark'
 
     useEffect(() => {
         const navbarOffset = 120 // Account for navbar height
@@ -118,16 +110,7 @@ export function Navigation() {
     }, [])
 
     const toggleDarkMode = () => {
-        const newTheme = !isDarkMode
-        setIsDarkMode(newTheme)
-
-        if (newTheme) {
-            document.documentElement.classList.add('dark')
-            localStorage.setItem('theme', 'dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-            localStorage.setItem('theme', 'light')
-        }
+        setTheme(isDarkMode ? 'light' : 'dark')
     }
 
     const handleNavClick = (sectionId: string) => {
@@ -177,11 +160,10 @@ export function Navigation() {
                         <Image
                             src="/logos/sean_logo.svg"
                             alt="Sean logo"
-                            className="h-14 w-auto"
+                            className="h-14 w-auto brightness-0 dark:invert"
                             width={168}
                             height={56}
                             priority
-                            style={{ filter: isDarkMode ? 'brightness(0) invert(1)' : 'brightness(0)' }}
                         />
                     </motion.div>
 
@@ -209,11 +191,10 @@ export function Navigation() {
                             className="p-2 rounded-lg hover:bg-surface transition-colors duration-200"
                             aria-label="Toggle dark mode"
                         >
-                            {isDarkMode ? (
-                                <Sun className="w-5 h-5 text-foreground" />
-                            ) : (
-                                <Moon className="w-5 h-5 text-foreground" />
-                            )}
+                            {/* CSS-driven so the correct icon is right on first paint,
+                                before next-themes has resolved on the client */}
+                            <Sun className="w-5 h-5 text-foreground hidden dark:block" />
+                            <Moon className="w-5 h-5 text-foreground block dark:hidden" />
                         </motion.button>
                     </div>
                 </NavBody>
@@ -233,11 +214,10 @@ export function Navigation() {
                             <Image
                                 src="/logos/sean_logo.svg"
                                 alt="Sean logo"
-                                className="h-10 w-auto"
+                                className="h-10 w-auto brightness-0 dark:invert"
                                 width={120}
                                 height={40}
                                 priority
-                                style={{ filter: isDarkMode ? 'brightness(0) invert(1)' : 'brightness(0)' }}
                             />
                         </motion.div>
 
@@ -273,7 +253,6 @@ export function Navigation() {
                                     openMenuButtonColor="var(--foreground)"
                                     changeMenuColorOnOpen={false}
                                     colors={isDarkMode ? ['#1e1e2e', '#313244', '#45475a'] : ['#F0E6DD', '#E6DBD1', '#D4C4B0']}
-                                    logoUrl="/src/assets/logos/reactbits-gh-white.svg"
                                     accentColor="var(--primary)"
                                     open={mobileMenuOpen}
                                     onOpenChange={setMobileMenuOpen}
@@ -299,11 +278,8 @@ export function Navigation() {
                                 className="p-2 rounded-lg hover:bg-surface transition-colors duration-200"
                                 aria-label="Toggle dark mode"
                             >
-                                {isDarkMode ? (
-                                    <Sun className="w-4 h-4 text-foreground" />
-                                ) : (
-                                    <Moon className="w-4 h-4 text-foreground" />
-                                )}
+                                <Sun className="w-4 h-4 text-foreground hidden dark:block" />
+                                <Moon className="w-4 h-4 text-foreground block dark:hidden" />
                             </motion.button>
                         </div>
                     </MobileNavHeader>
